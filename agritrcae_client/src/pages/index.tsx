@@ -97,7 +97,7 @@ const Home = () => {
                     xl: "inline",
                   }}
                 >
-                  Data to enrich your{" "}
+                  BlockChain Solution for {" "}
                 </chakra.span>
                 <chakra.span
                   display={{
@@ -109,7 +109,7 @@ const Home = () => {
                     color: "brand.400",
                   }}
                 >
-                  online business
+                  Dairy Industry
                 </chakra.span>
               </chakra.h1>
               <chakra.p
@@ -131,9 +131,11 @@ const Home = () => {
                 }}
                 color="gray.500"
               >
-                Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui
-                lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat
-                fugiat aliqua.
+                Agritrace is a blockchain solution for dairy industry. It is a
+                decentralized platform that allows farmers to trace their
+                products from the farm to the consumer. It also allows
+                consumers to verify the authenticity of the product.
+
               </chakra.p>
               <Box
                 mt={{
@@ -177,39 +179,10 @@ const Home = () => {
                     }}
                     cursor="pointer"
                   >
-                    Get started
+                    Learn More
                   </chakra.a>
                 </Box>
-                <Box mt={[3, 0]} ml={[null, 3]}>
-                  <chakra.a
-                    w="full"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    px={{
-                      base: 8,
-                      md: 10,
-                    }}
-                    py={{
-                      base: 3,
-                      md: 4,
-                    }}
-                    border="solid 1px transparent"
-                    fontSize={{
-                      base: "md",
-                      md: "lg",
-                    }}
-                    rounded="md"
-                    color="brand.700"
-                    bg="brand.100"
-                    _hover={{
-                      bg: "brand.200",
-                    }}
-                    cursor="pointer"
-                  >
-                    Live demo
-                  </chakra.a>
-                </Box>
+               
               </Box>
             </Box>
           </Box>
@@ -237,7 +210,7 @@ const Home = () => {
           h={[56, 72, 96, "full"]}
           w="full"
           fit="cover"
-          src="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2850&q=80"
+          src="https://cdn.britannica.com/55/174255-050-526314B6/brown-Guernsey-cow.jpg"
           alt=""
           loading="lazy"
         />
