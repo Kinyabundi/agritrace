@@ -13,7 +13,7 @@ const inconsolata = Inconsolata({
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
   return (
-    <>
+    <main className={inconsolata.className}>
       <Head>
         <meta
           name="viewport"
@@ -37,6 +37,6 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         </ChakraProvider>
         <Toaster />
       </UseInkathonProvider>
-    </>
+    </main>
   );
 }
