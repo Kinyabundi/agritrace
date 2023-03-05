@@ -52,7 +52,7 @@ const LinkItems: Array<LinkItemProps> = [
     href: `/manufacturer/add-supplier`,
   },
   { name: "Suppliers", icon: GiSwapBag, href: "/manufacturer/suppliers" },
-  { name: "Add Product", icon: BsCreditCard, href: "#" },
+  { name: "Add Product", icon: BsCreditCard, href: "/manufacturer/add-product"},
   { name: "Faucet", icon: FaPeopleCarry, href: "#" },
   { name: "Account", icon: MdAccountBalanceWallet, href: "#" },
 ];
@@ -193,7 +193,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         fontFamily="monospace"
         fontWeight="bold"
       >
-        Logo
+        AT
       </Text>
 
       <HStack spacing={{ base: "0", md: "6" }}>
