@@ -2,7 +2,7 @@ import { IInviteBody, InviteTarget } from "@/types/Supplier";
 import { useCallback } from "react";
 import axios from "axios";
 import { invitesCollections } from "@/helpers/firebaseDBHelpers";
-import { addDoc } from "firebase/firestore";
+import { addDoc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { IApiResponse } from "@/types/Api";
 
 const BASE_URL = "/api";
@@ -43,8 +43,30 @@ const useInvite = () => {
     }
   }, []);
 
+  const getInviteInfo = useCallback(async (inviteCode: string) => {
+    const q = query(invitesCollections, where("inviteCode", "==", inviteCode));
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) {
+      return {
+        status: "error",
+        msg: "Document couldn't be retrieved",
+        data: null,
+      } as IApiResponse;
+    } else {
+      return {
+        status: "ok",
+        msg: "Document retrived",
+        data: {
+          id: querySnapshot.docs[0].id,
+          ...querySnapshot.docs[0].data(),
+        },
+      } as IApiResponse;
+    }
+  }, []);
+
   return {
     sendInvite,
+    getInviteInfo,
   };
 };
 

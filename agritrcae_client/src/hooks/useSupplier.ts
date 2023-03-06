@@ -1,5 +1,8 @@
 import { useCallback } from "react";
-import { supplierCollections } from "@/helpers/firebaseDBHelpers";
+import {
+  invitesCollections,
+  supplierCollections,
+} from "@/helpers/firebaseDBHelpers";
 import {
   addDoc,
   where,
@@ -53,13 +56,35 @@ const useSupplier = () => {
     }
   }, []);
 
-  const joinViaInviteCode = useCallback(async (supplierInfo: ISupplier) => {
-    // Validate if invite code is valid
-    // If valid, update supplier status to active
-    // If invalid, return error
-    
+  const joinViaInviteCode = useCallback(
+    async (supplierInfo: ISupplier, inviteCode: string) => {
+      // Validate if invite code is valid
+      // If valid, update supplier status to active
+      const q = query(
+        invitesCollections,
+        where("inviteCode", "==", inviteCode)
+      );
 
-  }, [])
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        return {
+          status: "error",
+          msg: "Invalid invite code",
+        } as IApiResponse;
+      }
+
+      const supplierDocRef = await addDoc(supplierCollections, supplierInfo);
+
+      console.log("Document written with ID: ", supplierDocRef.id);
+
+      return {
+        status: "ok",
+        msg: "Supplier added successfully",
+      } as IApiResponse;
+    },
+    []
+  );
 
   const getSuppliers = async (manufacturer_address: string) => {
     const q = query(
@@ -79,7 +104,7 @@ const useSupplier = () => {
     return allsuppliers;
   };
 
-  return { saveSupplier, getSuppliers };
+  return { saveSupplier, getSuppliers, joinViaInviteCode };
 };
 
 export default useSupplier;
