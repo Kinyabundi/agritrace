@@ -21,7 +21,7 @@ import { useInkathon } from "@scio-labs/use-inkathon";
 
 const AddSupplier: NextPageWithLayout = () => {
   const toast = useToast();
-  const { activeAccount } = useInkathon();
+  const { activeAccount, isConnected } = useInkathon();
   const { saveSupplier } = useSupplier();
   const [name, setName] = useState<string>("");
   const [phoneNo, setPhoneNo] = useState<string>("");
@@ -108,6 +108,15 @@ const AddSupplier: NextPageWithLayout = () => {
       customToast({
         title: "Location is required",
         description: "Please enter the location of the supplier",
+        status: "error",
+      });
+      return;
+    }
+
+    if (!isConnected) {
+      customToast({
+        title: "Wallet not connected",
+        description: "Please connect to your wallet",
         status: "error",
       });
       return;

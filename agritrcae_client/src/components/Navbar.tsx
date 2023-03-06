@@ -21,6 +21,7 @@ import {
   AiFillBell,
 } from "react-icons/ai";
 import { BsFillCameraVideoFill, BsPlus } from "react-icons/bs";
+import ConnectButton from "./ConnectButton";
 
 const Navbar = () => {
   const bg = useColorModeValue("white", "gray.800");
@@ -131,9 +132,7 @@ const Navbar = () => {
             display={mobileNav.isOpen ? "none" : "flex"}
             alignItems="center"
           >
-            <Button colorScheme="blue">
-              Join Us
-            </Button>
+            <ConnectButton />
 
             <chakra.a
               p={3}
