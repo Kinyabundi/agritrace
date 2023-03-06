@@ -53,6 +53,14 @@ const useSupplier = () => {
     }
   }, []);
 
+  const joinViaInviteCode = useCallback(async (supplierInfo: ISupplier) => {
+    // Validate if invite code is valid
+    // If valid, update supplier status to active
+    // If invalid, return error
+    
+
+  }, [])
+
   const getSuppliers = async (manufacturer_address: string) => {
     const q = query(
       supplierCollections,

@@ -4,7 +4,7 @@ import {
   CollectionReference,
 } from "firebase/firestore";
 import { db } from "@/lib/initFirebase";
-import { ISupplier } from "@/types/Supplier";
+import { IInviteBody, ISupplier } from "@/types/Supplier";
 
 const createCollection = <T = DocumentData>(collectionName: string) => {
   return collection(db, collectionName) as CollectionReference<T>;
@@ -12,3 +12,5 @@ const createCollection = <T = DocumentData>(collectionName: string) => {
 
 //export all collections
 export const supplierCollections = createCollection<ISupplier>("suppliers");
+export const invitesCollections = createCollection<IInviteBody>("invites");
+

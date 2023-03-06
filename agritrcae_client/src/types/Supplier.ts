@@ -19,13 +19,17 @@ export enum SupplierStatus {
   Pending = "Pending",
 }
 
+export enum InviteTarget {
+  Supplier = "Supplier",
+  Manufacturer = "Manufacturer",
+}
+
 export interface IInviteBody {
-  email: string;
+  email?: string;
   name: string;
   company: string;
   link: string;
-}
-export interface IInviteMessageBody {
-  phoneno: string;
-  inviteCode?: string
+  phoneno?: string;
+  inviteCode?: string;
+  target: InviteTarget;
 }

@@ -1,4 +1,4 @@
-import { IInviteMessageBody } from "@/types/Supplier";
+import { IInviteBody } from "@/types/Supplier";
 import { Client } from "africastalking-ts";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { africastalking_api_key } from "../../../../env";
@@ -14,7 +14,7 @@ export default async function handler(
 }
 
 async function invite(req: NextApiRequest, res: NextApiResponse) {
-  const reqBody = req.body as IInviteMessageBody;
+  const reqBody = req.body as IInviteBody;
 
   const client = new Client({
     // @ts-ignore
@@ -24,6 +24,7 @@ async function invite(req: NextApiRequest, res: NextApiResponse) {
 
   client
     .sendSms({
+      // @ts-ignore
       to: reqBody.phoneno,
       message: reqBody.inviteCode || "Something sleek",
     })
