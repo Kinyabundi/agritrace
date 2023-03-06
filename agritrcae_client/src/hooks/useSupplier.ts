@@ -1,7 +1,14 @@
 import { useCallback } from "react";
 import { supplierCollections } from "@/helpers/firebaseDBHelpers";
-import { addDoc, where, query, getDocs } from "firebase/firestore";
-import { IInviteBody, ISupplier } from "@/types/Supplier";
+import {
+  addDoc,
+  where,
+  query,
+  getDocs,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
+import { IInviteBody, ISupplier, SupplierStatus } from "@/types/Supplier";
 import axios from "axios";
 import { IApiResponse } from "@/types/Api";
 
@@ -22,12 +29,19 @@ const useSupplier = () => {
         `${BASE_URL}/email/supplier-invite`,
         {
           email: supplierInfo.email,
-          company: supplierInfo.manufacturer_address,
+          company: supplierInfo.manufacturer_name,
           name: supplierInfo.name,
           link: supplierInfo.invitelink,
         } as IInviteBody,
         config
       );
+
+      const supplierDocRef = doc(supplierCollections, docRef.id);
+
+      await updateDoc(supplierDocRef, {
+        status: SupplierStatus.Invited,
+        updated: new Date(),
+      });
 
       return resp.data as IApiResponse;
     } catch (err) {

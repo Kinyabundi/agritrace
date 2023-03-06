@@ -1,16 +1,16 @@
 export interface ISupplier {
   name: string;
-  phoneno: string;
-  email?: string;
+  phoneNo: string;
+  email: string;
   address?: string;
   location: string;
-  invitelink: string,
-  created: Date,
-  updated:Date,
-  manufacturer_address:string,
-  id?:string,
-  status: SupplierStatus,
-  
+  invitelink: string;
+  created: Date;
+  updated: Date;
+  manufacturer_address: string;
+  manufacturer_name: string;
+  id?: string;
+  status: SupplierStatus;
 }
 export enum SupplierStatus {
   Active = "Active",

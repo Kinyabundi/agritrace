@@ -1,18 +1,13 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { createGmailTransport, EmailTemplate, sendEmail } from "@/lib/email";
+import { IApiResponse } from "@/types/Api";
 import { WorkSpaceGmails } from "@/types/Email";
 import { IInviteBody } from "@/types/Supplier";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-type Data = {
-  status: "ok" | "error";
-  msg: string;
-  data?: any;
-};
-
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse<IApiResponse>
 ) {
   switch (req.method) {
     case "GET":

@@ -10,14 +10,19 @@ import {
   Heading,
   Button,
   Box,
-  Text,
   useToast,
 } from "@chakra-ui/react";
 import { FiEdit3 } from "react-icons/fi";
 import { IToastProps } from "@/types/Toast";
+import useSupplier from "@/hooks/useSupplier";
+import { ISupplier, SupplierStatus } from "@/types/Supplier";
+import { nanoid } from "nanoid";
+import { useInkathon } from "@scio-labs/use-inkathon";
 
 const AddSupplier: NextPageWithLayout = () => {
   const toast = useToast();
+  const { activeAccount } = useInkathon();
+  const { saveSupplier } = useSupplier();
   const [name, setName] = useState<string>("");
   const [phoneNo, setPhoneNo] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -25,11 +30,11 @@ const AddSupplier: NextPageWithLayout = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const resetFields = () => {
-    setName("")
-    setEmail("")
-    setPhoneNo("")
-    setLocation("")
-  }
+    setName("");
+    setEmail("");
+    setPhoneNo("");
+    setLocation("");
+  };
 
   const customToast = ({
     title,
@@ -81,7 +86,16 @@ const AddSupplier: NextPageWithLayout = () => {
       return;
     }
 
-    if (email && !emailRegex.test(email)) {
+    if (!email) {
+      customToast({
+        title: "Email is required",
+        description: "Please enter the email of the supplier",
+        status: "error",
+      });
+      return;
+    }
+
+    if (!emailRegex.test(email)) {
       customToast({
         title: "Invalid email",
         description: "Please enter a valid email",
@@ -99,17 +113,48 @@ const AddSupplier: NextPageWithLayout = () => {
       return;
     }
 
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    setTimeout(() => {
-      setLoading(false);
-      resetFields()
+      const supplier: ISupplier = {
+        name,
+        phoneNo,
+        email,
+        location,
+        invitelink: `http://localhost:3000/join/supplier/${nanoid(10)}`,
+        created: new Date(),
+        updated: new Date(),
+        manufacturer_address: activeAccount?.meta?.name || "",
+        manufacturer_name: activeAccount?.address || "",
+        status: SupplierStatus.Pending,
+      };
+
+      const res = await saveSupplier(supplier);
+
+      if (res.status === "ok") {
+        customToast({
+          title: "Supplier added successfully",
+          description: "Supplier added successfully",
+          status: "success",
+        });
+        resetFields();
+      } else {
+        customToast({
+          title: "Error adding supplier",
+          description: res.msg,
+          status: "error",
+        });
+      }
+    } catch (err) {
+      console.log("err on add-supplier.tsx", err);
       customToast({
-        title: "Details Submitted",
-        description: "Supplier  details submitted and invite link sent",
-        status: "success",
+        title: "Error adding supplier",
+        description: "Something went wrong",
+        status: "error",
       });
-    }, 2000);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
