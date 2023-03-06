@@ -5,6 +5,7 @@ export interface ISupplier {
   address?: string;
   location: string;
   invitelink: string;
+  invitecode?: string;
   created: Date;
   updated: Date;
   manufacturer_address: string;

@@ -47,9 +47,9 @@ interface LinkItemProps {
 }
 const LinkItems: Array<LinkItemProps> = [
   {
-    name: "Add Supplier",
+    name: "Invite Supplier",
     icon: RiSwapFill,
-    href: `/manufacturer/add-supplier`,
+    href: `/manufacturer/invite-supplier`,
   },
   { name: "Suppliers", icon: GiSwapBag, href: "/manufacturer/suppliers" },
   { name: "Add Product", icon: BsCreditCard, href: "/manufacturer/add-product"},

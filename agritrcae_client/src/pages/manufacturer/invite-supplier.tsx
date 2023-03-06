@@ -1,8 +1,6 @@
 import CustomFormControl from "@/components/CustomFormControl";
 import ManufacturerLayout from "@/layouts/ManufacturerLayout";
 import { NextPageWithLayout } from "@/types/Layout";
-import { useState } from "react";
-import Head from "next/head";
 import {
   Flex,
   useColorModeValue,
@@ -12,30 +10,18 @@ import {
   Box,
   useToast,
 } from "@chakra-ui/react";
+import React, { useState } from "react";
 import { FiEdit3 } from "react-icons/fi";
-import { IToastProps } from "@/types/Toast";
-import useSupplier from "@/hooks/useSupplier";
-import { ISupplier, SupplierStatus } from "@/types/Supplier";
-import { nanoid } from "nanoid";
 import { useInkathon } from "@scio-labs/use-inkathon";
+import { IToastProps } from "@/types/Toast";
+import Head from "next/head";
 
-const AddSupplier: NextPageWithLayout = () => {
+const InviteSupplier: NextPageWithLayout = () => {
   const toast = useToast();
   const { activeAccount, isConnected } = useInkathon();
-  const { saveSupplier } = useSupplier();
-  const [name, setName] = useState<string>("");
   const [phoneNo, setPhoneNo] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-  const [location, setLocation] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-
-  const resetFields = () => {
-    setName("");
-    setEmail("");
-    setPhoneNo("");
-    setLocation("");
-  };
-
   const customToast = ({
     title,
     description,
@@ -52,21 +38,16 @@ const AddSupplier: NextPageWithLayout = () => {
     });
   };
 
+  const resetFields = () => {
+    setEmail("");
+    setPhoneNo("");
+  };
   const handleSubmit = async () => {
     // kenya phoneno regex
     const phoneNoRegex = /^(\+254|0)[7][0-9]{8}$/;
     // email regex the best one
     const emailRegex =
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-    if (!name) {
-      customToast({
-        title: "Name is required",
-        description: "Please enter the name of the supplier",
-        status: "error",
-      });
-      return;
-    }
 
     if (!phoneNo) {
       customToast({
@@ -104,15 +85,6 @@ const AddSupplier: NextPageWithLayout = () => {
       return;
     }
 
-    if (!location) {
-      customToast({
-        title: "Location is required",
-        description: "Please enter the location of the supplier",
-        status: "error",
-      });
-      return;
-    }
-
     if (!isConnected) {
       customToast({
         title: "Wallet not connected",
@@ -122,49 +94,10 @@ const AddSupplier: NextPageWithLayout = () => {
       return;
     }
 
-    try {
-      setLoading(true);
 
-      const supplier: ISupplier = {
-        name,
-        phoneNo,
-        email,
-        location,
-        invitelink: `http://localhost:3000/join/supplier/${nanoid(10)}`,
-        invitecode: nanoid(8),
-        created: new Date(),
-        updated: new Date(),
-        manufacturer_address: activeAccount?.meta?.name || "",
-        manufacturer_name: activeAccount?.address || "",
-        status: SupplierStatus.Pending,
-      };
 
-      const res = await saveSupplier(supplier);
+  resetFields();
 
-      if (res.status === "ok") {
-        customToast({
-          title: "Supplier added successfully",
-          description: "Supplier added successfully",
-          status: "success",
-        });
-        resetFields();
-      } else {
-        customToast({
-          title: "Error adding supplier",
-          description: res.msg,
-          status: "error",
-        });
-      }
-    } catch (err) {
-      console.log("err on add-supplier.tsx", err);
-      customToast({
-        title: "Error adding supplier",
-        description: "Something went wrong",
-        status: "error",
-      });
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (
@@ -175,12 +108,12 @@ const AddSupplier: NextPageWithLayout = () => {
       bg={useColorModeValue("gray.50", "gray.800")}
     >
       <Head>
-        <title>AgriTrace | Add Supplier</title>
+        <title>AgriTrace | Invite Supplier</title>
       </Head>
       <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
         <Stack align={"center"}>
           <Heading fontSize={"4xl"} textAlign={"center"}>
-            Add New Supplier to Ecosystem
+            Send an Invite To Supplier
           </Heading>
         </Stack>
         <Box
@@ -190,12 +123,6 @@ const AddSupplier: NextPageWithLayout = () => {
           p={8}
         >
           <Stack spacing={4}>
-            <CustomFormControl
-              labelText="Name of Supplier"
-              placeholder="Muthauti Dairy Cooperative"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
             <CustomFormControl
               labelText="Phone No"
               placeholder="0712345678"
@@ -207,12 +134,6 @@ const AddSupplier: NextPageWithLayout = () => {
               placeholder="muthaiti@gmail.com"
               value={email}
               setValue={setEmail}
-            />
-            <CustomFormControl
-              labelText="Location"
-              placeholder="Muthaiti, Kiambu County"
-              value={location}
-              setValue={setLocation}
             />
             <Stack spacing={10} pt={2}>
               <Button
@@ -227,7 +148,7 @@ const AddSupplier: NextPageWithLayout = () => {
                 isLoading={loading}
                 onClick={handleSubmit}
               >
-                Add Supplier
+                Invite Supplier
               </Button>
             </Stack>
           </Stack>
@@ -237,8 +158,8 @@ const AddSupplier: NextPageWithLayout = () => {
   );
 };
 
-AddSupplier.getLayout = (page) => (
+InviteSupplier.getLayout = (page) => (
   <ManufacturerLayout>{page}</ManufacturerLayout>
 );
 
-export default AddSupplier;
+export default InviteSupplier;
