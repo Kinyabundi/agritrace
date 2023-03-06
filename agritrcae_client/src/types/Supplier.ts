@@ -18,3 +18,10 @@ export enum SupplierStatus {
   Revoked = "Revoked",
   Pending = "Pending",
 }
+
+export interface IInviteBody {
+  email: string;
+  name: string;
+  company: string;
+  link: string;
+}
