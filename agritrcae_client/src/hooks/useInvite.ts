@@ -16,15 +16,28 @@ const useInvite = () => {
       },
     };
     if (inviteInfo.target === InviteTarget.Supplier) {
-      //send email
-      const resp = await axios.post(
-        `${BASE_URL}/email/supplier-invite`,
-        inviteInfo,
-        config
-      );
-      const docRef = await addDoc(invitesCollections, inviteInfo);
-      console.log("Document written with ID: ", docRef.id);
-      return resp.data as IApiResponse;
+      // check if email is set
+      if (!inviteInfo.email) {
+        const resp = await axios.post(
+          `${BASE_URL}/message/supplier-invite`,
+          inviteInfo,
+          config
+        );
+
+        const docRef = await addDoc(invitesCollections, inviteInfo);
+        console.log("Document written with ID: ", docRef.id);
+        return resp.data as IApiResponse;
+      } else {
+        //send email
+        const resp = await axios.post(
+          `${BASE_URL}/email/supplier-invite`,
+          inviteInfo,
+          config
+        );
+        const docRef = await addDoc(invitesCollections, inviteInfo);
+        console.log("Document written with ID: ", docRef.id);
+        return resp.data as IApiResponse;
+      }
     } else {
       // Todo Add for Manufacture
     }

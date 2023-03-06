@@ -33,4 +33,5 @@ export interface IInviteBody {
   phoneno?: string;
   inviteCode?: string;
   target: InviteTarget;
+  sender: string // wallet address of the one sending the invite
 }
