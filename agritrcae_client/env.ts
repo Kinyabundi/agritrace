@@ -9,3 +9,4 @@ export const firebaseConfig = {
 };
 
 export const serviceAccount = process.env.SERVICE_ACCOUNT_JSON;
+export const africastalking_api_key = process.env.NEXT_AFRICASTALKING_API_KEY

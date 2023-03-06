@@ -25,3 +25,7 @@ export interface IInviteBody {
   company: string;
   link: string;
 }
+export interface IInviteMessageBody {
+  phoneno: string;
+  inviteCode?: string
+}
