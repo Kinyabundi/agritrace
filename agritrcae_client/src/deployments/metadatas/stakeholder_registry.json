@@ -1,846 +1,1053 @@
 {
-    "source": {
-      "hash": "0x144f6c9ec9facef484d6bede4eb1353d08d658b11a355c96532894c97723d2f6",
-      "language": "ink! 4.0.1",
-      "compiler": "rustc 1.69.0-nightly",
-      "build_info": {
-        "build_mode": "Release",
-        "cargo_contract_version": "2.0.1",
-        "rust_toolchain": "nightly-aarch64-apple-darwin",
-        "wasm_opt_settings": {
-          "keep_debug_symbols": false,
-          "optimization_passes": "Z"
-        }
+  "source": {
+    "hash": "0xf30f5dc36b55c044935de0ddac8b9b2e254aae52a28d3f32f6924aa4b997976d",
+    "language": "ink! 4.0.1",
+    "compiler": "rustc 1.69.0-nightly",
+    "build_info": {
+      "build_mode": "Release",
+      "cargo_contract_version": "2.0.1",
+      "rust_toolchain": "nightly-aarch64-apple-darwin",
+      "wasm_opt_settings": {
+        "keep_debug_symbols": false,
+        "optimization_passes": "Z"
       }
-    },
-    "contract": {
-      "name": "stakeholder_registry",
-      "version": "0.1.0",
-      "authors": [
-        "[your_name] <[your_email]>"
-      ]
-    },
-    "spec": {
-      "constructors": [
-        {
-          "args": [],
-          "docs": [],
-          "label": "new",
-          "payable": false,
-          "returnType": {
-            "displayName": [
-              "ink_primitives",
-              "ConstructorResult"
-            ],
-            "type": 7
-          },
-          "selector": "0x9bae9d5e"
-        }
-      ],
-      "docs": [],
-      "events": [
-        {
-          "args": [
-            {
-              "docs": [],
-              "indexed": true,
-              "label": "manufacturer",
-              "type": {
-                "displayName": [
-                  "AccountId"
-                ],
-                "type": 2
-              }
-            }
-          ],
-          "docs": [],
-          "label": "ManufacturerAdded"
-        },
-        {
-          "args": [
-            {
-              "docs": [],
-              "indexed": true,
-              "label": "manufacturer",
-              "type": {
-                "displayName": [
-                  "AccountId"
-                ],
-                "type": 2
-              }
-            },
-            {
-              "docs": [],
-              "indexed": true,
-              "label": "supplier",
-              "type": {
-                "displayName": [
-                  "AccountId"
-                ],
-                "type": 2
-              }
-            }
-          ],
-          "docs": [],
-          "label": "SupplierAdded"
-        }
-      ],
-      "lang_error": {
-        "displayName": [
-          "ink",
-          "LangError"
-        ],
-        "type": 9
-      },
-      "messages": [
-        {
-          "args": [
-            {
-              "label": "name",
-              "type": {
-                "displayName": [
-                  "String"
-                ],
-                "type": 0
-              }
-            },
-            {
-              "label": "corporate_no",
-              "type": {
-                "displayName": [
-                  "String"
-                ],
-                "type": 0
-              }
-            },
-            {
-              "label": "phone_nos",
-              "type": {
-                "displayName": [
-                  "Vec"
-                ],
-                "type": 1
-              }
-            },
-            {
-              "label": "products",
-              "type": {
-                "displayName": [
-                  "Vec"
-                ],
-                "type": 1
-              }
-            },
-            {
-              "label": "location",
-              "type": {
-                "displayName": [
-                  "String"
-                ],
-                "type": 0
-              }
-            }
-          ],
-          "docs": [
-            " Onboards manufacturer"
-          ],
-          "label": "add_manufacturer",
-          "mutates": true,
-          "payable": false,
-          "returnType": {
-            "displayName": [
-              "ink",
-              "MessageResult"
-            ],
-            "type": 10
-          },
-          "selector": "0x60f84c1b"
-        },
-        {
-          "args": [
-            {
-              "label": "address",
-              "type": {
-                "displayName": [
-                  "AccountId"
-                ],
-                "type": 2
-              }
-            }
-          ],
-          "docs": [
-            " Returns manufacturer"
-          ],
-          "label": "get_manufacturer",
-          "mutates": false,
-          "payable": false,
-          "returnType": {
-            "displayName": [
-              "ink",
-              "MessageResult"
-            ],
-            "type": 13
-          },
-          "selector": "0x136f6a81"
-        },
-        {
-          "args": [],
-          "docs": [
-            " Returns all manufacturers"
-          ],
-          "label": "get_manufacturers",
-          "mutates": false,
-          "payable": false,
-          "returnType": {
-            "displayName": [
-              "ink",
-              "MessageResult"
-            ],
-            "type": 17
-          },
-          "selector": "0x353f3f08"
-        },
-        {
-          "args": [
-            {
-              "label": "address",
-              "type": {
-                "displayName": [
-                  "AccountId"
-                ],
-                "type": 2
-              }
-            }
-          ],
-          "docs": [
-            " Join as Supplier when they accept the join link when they connect their wallet",
-            " address belongs to manufacturer",
-            ""
-          ],
-          "label": "join_as_supplier",
-          "mutates": true,
-          "payable": false,
-          "returnType": {
-            "displayName": [
-              "ink",
-              "MessageResult"
-            ],
-            "type": 10
-          },
-          "selector": "0xd74a114f"
-        }
-      ]
-    },
-    "storage": {
-      "root": {
-        "layout": {
-          "struct": {
-            "fields": [
-              {
-                "layout": {
-                  "root": {
-                    "layout": {
-                      "struct": {
-                        "fields": [
-                          {
-                            "layout": {
-                              "leaf": {
-                                "key": "0x6e101554",
-                                "ty": 0
-                              }
-                            },
-                            "name": "name"
-                          },
-                          {
-                            "layout": {
-                              "leaf": {
-                                "key": "0x6e101554",
-                                "ty": 0
-                              }
-                            },
-                            "name": "corporate_no"
-                          },
-                          {
-                            "layout": {
-                              "leaf": {
-                                "key": "0x6e101554",
-                                "ty": 1
-                              }
-                            },
-                            "name": "phone_nos"
-                          },
-                          {
-                            "layout": {
-                              "leaf": {
-                                "key": "0x6e101554",
-                                "ty": 1
-                              }
-                            },
-                            "name": "products"
-                          },
-                          {
-                            "layout": {
-                              "leaf": {
-                                "key": "0x6e101554",
-                                "ty": 0
-                              }
-                            },
-                            "name": "location"
-                          },
-                          {
-                            "layout": {
-                              "leaf": {
-                                "key": "0x6e101554",
-                                "ty": 2
-                              }
-                            },
-                            "name": "address"
-                          },
-                          {
-                            "layout": {
-                              "leaf": {
-                                "key": "0x6e101554",
-                                "ty": 5
-                              }
-                            },
-                            "name": "timestamp"
-                          },
-                          {
-                            "layout": {
-                              "enum": {
-                                "dispatchKey": "0x6e101554",
-                                "name": "Option",
-                                "variants": {
-                                  "0": {
-                                    "fields": [],
-                                    "name": "None"
-                                  },
-                                  "1": {
-                                    "fields": [
-                                      {
-                                        "layout": {
-                                          "leaf": {
-                                            "key": "0x6e101554",
-                                            "ty": 6
-                                          }
-                                        },
-                                        "name": "0"
-                                      }
-                                    ],
-                                    "name": "Some"
-                                  }
-                                }
-                              }
-                            },
-                            "name": "suppliers"
-                          }
-                        ],
-                        "name": "Manufacturer"
-                      }
-                    },
-                    "root_key": "0x6e101554"
-                  }
-                },
-                "name": "manufacturers"
-              },
-              {
-                "layout": {
-                  "leaf": {
-                    "key": "0x00000000",
-                    "ty": 6
-                  }
-                },
-                "name": "manufacturers_accounts"
-              }
-            ],
-            "name": "StakeholderRegistry"
-          }
-        },
-        "root_key": "0x00000000"
-      }
-    },
-    "types": [
+    }
+  },
+  "contract": {
+    "name": "stakeholder_registry",
+    "version": "0.1.0",
+    "authors": [
+      "[your_name] <[your_email]>"
+    ]
+  },
+  "spec": {
+    "constructors": [
       {
-        "id": 0,
-        "type": {
-          "def": {
-            "primitive": "str"
-          }
-        }
-      },
-      {
-        "id": 1,
-        "type": {
-          "def": {
-            "sequence": {
-              "type": 0
-            }
-          }
-        }
-      },
-      {
-        "id": 2,
-        "type": {
-          "def": {
-            "composite": {
-              "fields": [
-                {
-                  "type": 3,
-                  "typeName": "[u8; 32]"
-                }
-              ]
-            }
-          },
-          "path": [
+        "args": [],
+        "docs": [],
+        "label": "new",
+        "payable": false,
+        "returnType": {
+          "displayName": [
             "ink_primitives",
-            "types",
-            "AccountId"
-          ]
-        }
-      },
+            "ConstructorResult"
+          ],
+          "type": 7
+        },
+        "selector": "0x9bae9d5e"
+      }
+    ],
+    "docs": [],
+    "events": [
       {
-        "id": 3,
-        "type": {
-          "def": {
-            "array": {
-              "len": 32,
-              "type": 4
-            }
-          }
-        }
-      },
-      {
-        "id": 4,
-        "type": {
-          "def": {
-            "primitive": "u8"
-          }
-        }
-      },
-      {
-        "id": 5,
-        "type": {
-          "def": {
-            "primitive": "u64"
-          }
-        }
-      },
-      {
-        "id": 6,
-        "type": {
-          "def": {
-            "sequence": {
+        "args": [
+          {
+            "docs": [],
+            "indexed": true,
+            "label": "manufacturer",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
               "type": 2
             }
           }
-        }
+        ],
+        "docs": [],
+        "label": "ManufacturerAdded"
       },
       {
-        "id": 7,
-        "type": {
-          "def": {
-            "variant": {
-              "variants": [
-                {
-                  "fields": [
-                    {
-                      "type": 8
-                    }
-                  ],
-                  "index": 0,
-                  "name": "Ok"
-                },
-                {
-                  "fields": [
-                    {
-                      "type": 9
-                    }
-                  ],
-                  "index": 1,
-                  "name": "Err"
-                }
-              ]
+        "args": [
+          {
+            "docs": [],
+            "indexed": true,
+            "label": "manufacturer",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 2
             }
           },
-          "params": [
-            {
-              "name": "T",
-              "type": 8
-            },
-            {
-              "name": "E",
-              "type": 9
+          {
+            "docs": [],
+            "indexed": true,
+            "label": "supplier",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 2
             }
-          ],
-          "path": [
-            "Result"
-          ]
-        }
-      },
-      {
-        "id": 8,
-        "type": {
-          "def": {
-            "tuple": []
           }
-        }
-      },
+        ],
+        "docs": [],
+        "label": "SupplierAdded"
+      }
+    ],
+    "lang_error": {
+      "displayName": [
+        "ink",
+        "LangError"
+      ],
+      "type": 9
+    },
+    "messages": [
       {
-        "id": 9,
-        "type": {
-          "def": {
-            "variant": {
-              "variants": [
-                {
-                  "index": 1,
-                  "name": "CouldNotReadInput"
-                }
-              ]
+        "args": [
+          {
+            "label": "name",
+            "type": {
+              "displayName": [
+                "String"
+              ],
+              "type": 0
             }
           },
-          "path": [
-            "ink_primitives",
-            "LangError"
-          ]
-        }
-      },
-      {
-        "id": 10,
-        "type": {
-          "def": {
-            "variant": {
-              "variants": [
-                {
-                  "fields": [
-                    {
-                      "type": 11
-                    }
-                  ],
-                  "index": 0,
-                  "name": "Ok"
-                },
-                {
-                  "fields": [
-                    {
-                      "type": 9
-                    }
-                  ],
-                  "index": 1,
-                  "name": "Err"
-                }
-              ]
+          {
+            "label": "corporate_no",
+            "type": {
+              "displayName": [
+                "String"
+              ],
+              "type": 0
             }
           },
-          "params": [
+          {
+            "label": "phone_nos",
+            "type": {
+              "displayName": [
+                "Vec"
+              ],
+              "type": 1
+            }
+          },
+          {
+            "label": "products",
+            "type": {
+              "displayName": [
+                "Vec"
+              ],
+              "type": 1
+            }
+          },
+          {
+            "label": "location",
+            "type": {
+              "displayName": [
+                "String"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "docs": [
+          " Onboards manufacturer"
+        ],
+        "label": "add_manufacturer",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 10
+        },
+        "selector": "0x60f84c1b"
+      },
+      {
+        "args": [
+          {
+            "label": "address",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 2
+            }
+          }
+        ],
+        "docs": [
+          " Returns manufacturer"
+        ],
+        "label": "get_manufacturer",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 13
+        },
+        "selector": "0x136f6a81"
+      },
+      {
+        "args": [],
+        "docs": [
+          " Returns all manufacturers"
+        ],
+        "label": "get_manufacturers",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 18
+        },
+        "selector": "0x353f3f08"
+      },
+      {
+        "args": [
+          {
+            "label": "name",
+            "type": {
+              "displayName": [
+                "String"
+              ],
+              "type": 0
+            }
+          },
+          {
+            "label": "phone_no",
+            "type": {
+              "displayName": [
+                "String"
+              ],
+              "type": 0
+            }
+          },
+          {
+            "label": "raw_materials",
+            "type": {
+              "displayName": [
+                "Vec"
+              ],
+              "type": 1
+            }
+          }
+        ],
+        "docs": [],
+        "label": "save_supplier",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 10
+        },
+        "selector": "0xf655d005"
+      },
+      {
+        "args": [
+          {
+            "label": "address",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 2
+            }
+          }
+        ],
+        "docs": [
+          " Join as Supplier when they accept the join link when they connect their wallet",
+          " address belongs to manufacturer",
+          ""
+        ],
+        "label": "join_as_supplier",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 10
+        },
+        "selector": "0xd74a114f"
+      }
+    ]
+  },
+  "storage": {
+    "root": {
+      "layout": {
+        "struct": {
+          "fields": [
             {
-              "name": "T",
-              "type": 11
+              "layout": {
+                "root": {
+                  "layout": {
+                    "struct": {
+                      "fields": [
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x6e101554",
+                              "ty": 0
+                            }
+                          },
+                          "name": "name"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x6e101554",
+                              "ty": 0
+                            }
+                          },
+                          "name": "corporate_no"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x6e101554",
+                              "ty": 1
+                            }
+                          },
+                          "name": "phone_nos"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x6e101554",
+                              "ty": 1
+                            }
+                          },
+                          "name": "products"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x6e101554",
+                              "ty": 0
+                            }
+                          },
+                          "name": "location"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x6e101554",
+                              "ty": 2
+                            }
+                          },
+                          "name": "address"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x6e101554",
+                              "ty": 5
+                            }
+                          },
+                          "name": "timestamp"
+                        },
+                        {
+                          "layout": {
+                            "enum": {
+                              "dispatchKey": "0x6e101554",
+                              "name": "Role",
+                              "variants": {
+                                "0": {
+                                  "fields": [],
+                                  "name": "Manufacturer"
+                                },
+                                "1": {
+                                  "fields": [],
+                                  "name": "Supplier"
+                                },
+                                "2": {
+                                  "fields": [],
+                                  "name": "Retailer"
+                                },
+                                "3": {
+                                  "fields": [],
+                                  "name": "Distributor"
+                                }
+                              }
+                            }
+                          },
+                          "name": "role"
+                        },
+                        {
+                          "layout": {
+                            "enum": {
+                              "dispatchKey": "0x6e101554",
+                              "name": "Option",
+                              "variants": {
+                                "0": {
+                                  "fields": [],
+                                  "name": "None"
+                                },
+                                "1": {
+                                  "fields": [
+                                    {
+                                      "layout": {
+                                        "leaf": {
+                                          "key": "0x6e101554",
+                                          "ty": 6
+                                        }
+                                      },
+                                      "name": "0"
+                                    }
+                                  ],
+                                  "name": "Some"
+                                }
+                              }
+                            }
+                          },
+                          "name": "suppliers"
+                        }
+                      ],
+                      "name": "Manufacturer"
+                    }
+                  },
+                  "root_key": "0x6e101554"
+                }
+              },
+              "name": "manufacturers"
             },
             {
-              "name": "E",
-              "type": 9
-            }
-          ],
-          "path": [
-            "Result"
-          ]
-        }
-      },
-      {
-        "id": 11,
-        "type": {
-          "def": {
-            "variant": {
-              "variants": [
-                {
-                  "fields": [
-                    {
-                      "type": 8
-                    }
-                  ],
-                  "index": 0,
-                  "name": "Ok"
-                },
-                {
-                  "fields": [
-                    {
-                      "type": 12
-                    }
-                  ],
-                  "index": 1,
-                  "name": "Err"
+              "layout": {
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 6
                 }
-              ]
-            }
-          },
-          "params": [
-            {
-              "name": "T",
-              "type": 8
+              },
+              "name": "manufacturers_accounts"
             },
             {
-              "name": "E",
-              "type": 12
-            }
-          ],
-          "path": [
-            "Result"
-          ]
-        }
-      },
-      {
-        "id": 12,
-        "type": {
-          "def": {
-            "variant": {
-              "variants": [
-                {
-                  "index": 0,
-                  "name": "ManufacturerAlreadyExists"
-                },
-                {
-                  "index": 1,
-                  "name": "ManufacturerDoesNotExist"
-                },
-                {
-                  "index": 2,
-                  "name": "SupplierAlreadyExists"
-                }
-              ]
-            }
-          },
-          "path": [
-            "stakeholder_registry",
-            "stakeholder_registry",
-            "Error"
-          ]
-        }
-      },
-      {
-        "id": 13,
-        "type": {
-          "def": {
-            "variant": {
-              "variants": [
-                {
-                  "fields": [
-                    {
-                      "type": 14
+              "layout": {
+                "root": {
+                  "layout": {
+                    "struct": {
+                      "fields": [
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x789a7e6c",
+                              "ty": 0
+                            }
+                          },
+                          "name": "name"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x789a7e6c",
+                              "ty": 0
+                            }
+                          },
+                          "name": "phone_no"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x789a7e6c",
+                              "ty": 1
+                            }
+                          },
+                          "name": "raw_materials"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x789a7e6c",
+                              "ty": 2
+                            }
+                          },
+                          "name": "address"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x789a7e6c",
+                              "ty": 5
+                            }
+                          },
+                          "name": "timestamp"
+                        },
+                        {
+                          "layout": {
+                            "enum": {
+                              "dispatchKey": "0x789a7e6c",
+                              "name": "Role",
+                              "variants": {
+                                "0": {
+                                  "fields": [],
+                                  "name": "Manufacturer"
+                                },
+                                "1": {
+                                  "fields": [],
+                                  "name": "Supplier"
+                                },
+                                "2": {
+                                  "fields": [],
+                                  "name": "Retailer"
+                                },
+                                "3": {
+                                  "fields": [],
+                                  "name": "Distributor"
+                                }
+                              }
+                            }
+                          },
+                          "name": "role"
+                        }
+                      ],
+                      "name": "Supplier"
                     }
-                  ],
-                  "index": 0,
-                  "name": "Ok"
-                },
-                {
-                  "fields": [
-                    {
-                      "type": 9
-                    }
-                  ],
-                  "index": 1,
-                  "name": "Err"
+                  },
+                  "root_key": "0x789a7e6c"
                 }
-              ]
-            }
-          },
-          "params": [
-            {
-              "name": "T",
-              "type": 14
+              },
+              "name": "suppliers"
             },
             {
-              "name": "E",
-              "type": 9
+              "layout": {
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 6
+                }
+              },
+              "name": "suppliers_accounts"
             }
           ],
-          "path": [
-            "Result"
-          ]
+          "name": "StakeholderRegistry"
         }
       },
-      {
-        "id": 14,
-        "type": {
-          "def": {
-            "variant": {
-              "variants": [
-                {
-                  "fields": [
-                    {
-                      "type": 15
-                    }
-                  ],
-                  "index": 0,
-                  "name": "Ok"
-                },
-                {
-                  "fields": [
-                    {
-                      "type": 12
-                    }
-                  ],
-                  "index": 1,
-                  "name": "Err"
-                }
-              ]
-            }
-          },
-          "params": [
-            {
-              "name": "T",
-              "type": 15
-            },
-            {
-              "name": "E",
-              "type": 12
-            }
-          ],
-          "path": [
-            "Result"
-          ]
+      "root_key": "0x00000000"
+    }
+  },
+  "types": [
+    {
+      "id": 0,
+      "type": {
+        "def": {
+          "primitive": "str"
         }
-      },
-      {
-        "id": 15,
-        "type": {
-          "def": {
-            "composite": {
-              "fields": [
-                {
-                  "name": "name",
-                  "type": 0,
-                  "typeName": "String"
-                },
-                {
-                  "name": "corporate_no",
-                  "type": 0,
-                  "typeName": "String"
-                },
-                {
-                  "name": "phone_nos",
-                  "type": 1,
-                  "typeName": "Vec<String>"
-                },
-                {
-                  "name": "products",
-                  "type": 1,
-                  "typeName": "Vec<String>"
-                },
-                {
-                  "name": "location",
-                  "type": 0,
-                  "typeName": "String"
-                },
-                {
-                  "name": "address",
-                  "type": 2,
-                  "typeName": "AccountId"
-                },
-                {
-                  "name": "timestamp",
-                  "type": 5,
-                  "typeName": "Timestamp"
-                },
-                {
-                  "name": "suppliers",
-                  "type": 16,
-                  "typeName": "Option<Vec<AccountId>>"
-                }
-              ]
-            }
-          },
-          "path": [
-            "stakeholder_registry",
-            "stakeholder_registry",
-            "Manufacturer"
-          ]
-        }
-      },
-      {
-        "id": 16,
-        "type": {
-          "def": {
-            "variant": {
-              "variants": [
-                {
-                  "index": 0,
-                  "name": "None"
-                },
-                {
-                  "fields": [
-                    {
-                      "type": 6
-                    }
-                  ],
-                  "index": 1,
-                  "name": "Some"
-                }
-              ]
-            }
-          },
-          "params": [
-            {
-              "name": "T",
-              "type": 6
-            }
-          ],
-          "path": [
-            "Option"
-          ]
-        }
-      },
-      {
-        "id": 17,
-        "type": {
-          "def": {
-            "variant": {
-              "variants": [
-                {
-                  "fields": [
-                    {
-                      "type": 18
-                    }
-                  ],
-                  "index": 0,
-                  "name": "Ok"
-                },
-                {
-                  "fields": [
-                    {
-                      "type": 9
-                    }
-                  ],
-                  "index": 1,
-                  "name": "Err"
-                }
-              ]
-            }
-          },
-          "params": [
-            {
-              "name": "T",
-              "type": 18
-            },
-            {
-              "name": "E",
-              "type": 9
-            }
-          ],
-          "path": [
-            "Result"
-          ]
-        }
-      },
-      {
-        "id": 18,
-        "type": {
-          "def": {
-            "sequence": {
-              "type": 15
-            }
+      }
+    },
+    {
+      "id": 1,
+      "type": {
+        "def": {
+          "sequence": {
+            "type": 0
           }
         }
       }
-    ],
-    "version": "4"
-  }
+    },
+    {
+      "id": 2,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "type": 3,
+                "typeName": "[u8; 32]"
+              }
+            ]
+          }
+        },
+        "path": [
+          "ink_primitives",
+          "types",
+          "AccountId"
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "type": {
+        "def": {
+          "array": {
+            "len": 32,
+            "type": 4
+          }
+        }
+      }
+    },
+    {
+      "id": 4,
+      "type": {
+        "def": {
+          "primitive": "u8"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "type": {
+        "def": {
+          "primitive": "u64"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "type": {
+        "def": {
+          "sequence": {
+            "type": 2
+          }
+        }
+      }
+    },
+    {
+      "id": 7,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 8
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 9
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 8
+          },
+          {
+            "name": "E",
+            "type": 9
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 8,
+      "type": {
+        "def": {
+          "tuple": []
+        }
+      }
+    },
+    {
+      "id": 9,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 1,
+                "name": "CouldNotReadInput"
+              }
+            ]
+          }
+        },
+        "path": [
+          "ink_primitives",
+          "LangError"
+        ]
+      }
+    },
+    {
+      "id": 10,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 11
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 9
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 11
+          },
+          {
+            "name": "E",
+            "type": 9
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 11,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 8
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 12
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 8
+          },
+          {
+            "name": "E",
+            "type": 12
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 12,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "ManufacturerAlreadyExists"
+              },
+              {
+                "index": 1,
+                "name": "ManufacturerDoesNotExist"
+              },
+              {
+                "index": 2,
+                "name": "SupplierAlreadyExists"
+              },
+              {
+                "index": 3,
+                "name": "SupplierDoesNotExist"
+              }
+            ]
+          }
+        },
+        "path": [
+          "stakeholder_registry",
+          "stakeholder_registry",
+          "Error"
+        ]
+      }
+    },
+    {
+      "id": 13,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 14
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 9
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 14
+          },
+          {
+            "name": "E",
+            "type": 9
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 14,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 15
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 12
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 15
+          },
+          {
+            "name": "E",
+            "type": 12
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 15,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "name",
+                "type": 0,
+                "typeName": "String"
+              },
+              {
+                "name": "corporate_no",
+                "type": 0,
+                "typeName": "String"
+              },
+              {
+                "name": "phone_nos",
+                "type": 1,
+                "typeName": "Vec<String>"
+              },
+              {
+                "name": "products",
+                "type": 1,
+                "typeName": "Vec<String>"
+              },
+              {
+                "name": "location",
+                "type": 0,
+                "typeName": "String"
+              },
+              {
+                "name": "address",
+                "type": 2,
+                "typeName": "AccountId"
+              },
+              {
+                "name": "timestamp",
+                "type": 5,
+                "typeName": "Timestamp"
+              },
+              {
+                "name": "role",
+                "type": 16,
+                "typeName": "Role"
+              },
+              {
+                "name": "suppliers",
+                "type": 17,
+                "typeName": "Option<Vec<AccountId>>"
+              }
+            ]
+          }
+        },
+        "path": [
+          "stakeholder_registry",
+          "stakeholder_registry",
+          "Manufacturer"
+        ]
+      }
+    },
+    {
+      "id": 16,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "Manufacturer"
+              },
+              {
+                "index": 1,
+                "name": "Supplier"
+              },
+              {
+                "index": 2,
+                "name": "Retailer"
+              },
+              {
+                "index": 3,
+                "name": "Distributor"
+              }
+            ]
+          }
+        },
+        "path": [
+          "stakeholder_registry",
+          "stakeholder_registry",
+          "Role"
+        ]
+      }
+    },
+    {
+      "id": 17,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "None"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 6
+                  }
+                ],
+                "index": 1,
+                "name": "Some"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 6
+          }
+        ],
+        "path": [
+          "Option"
+        ]
+      }
+    },
+    {
+      "id": 18,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 19
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 9
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 19
+          },
+          {
+            "name": "E",
+            "type": 9
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 19,
+      "type": {
+        "def": {
+          "sequence": {
+            "type": 15
+          }
+        }
+      }
+    }
+  ],
+  "version": "4"
+}

@@ -10,15 +10,20 @@ import {
   Box,
   useToast,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { useState } from "react";
 import { FiEdit3 } from "react-icons/fi";
 import { useInkathon } from "@scio-labs/use-inkathon";
 import { IToastProps } from "@/types/Toast";
 import Head from "next/head";
+import { IInviteBody, InviteTarget } from "@/types/Supplier";
+import { nanoid } from "nanoid";
+import useInvite from "@/hooks/useInvite";
 
 const InviteSupplier: NextPageWithLayout = () => {
   const toast = useToast();
   const { activeAccount, isConnected } = useInkathon();
+  const { sendInvite } = useInvite();
+  const [name, setName] = useState<string>("");
   const [phoneNo, setPhoneNo] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -48,6 +53,15 @@ const InviteSupplier: NextPageWithLayout = () => {
     // email regex the best one
     const emailRegex =
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    if (!name) {
+      customToast({
+        title: "Name is required",
+        description: "Please enter the name of the supplier",
+        status: "error",
+      });
+      return;
+    }
 
     if (!phoneNo) {
       customToast({
@@ -94,10 +108,44 @@ const InviteSupplier: NextPageWithLayout = () => {
       return;
     }
 
+    const inviteInfo: IInviteBody = {
+      name,
+      phoneno: phoneNo,
+      email: email ? email : "",
+      company: activeAccount?.meta?.name || "",
+      target: InviteTarget.Supplier,
+      inviteCode: nanoid(),
+      sender: activeAccount?.address || "",
+    };
 
+    try {
+      setLoading(true);
+      const resp = await sendInvite(inviteInfo);
+      if (resp?.status === "ok") {
+        customToast({
+          title: "Invite sent",
+          description: "Invite sent successfully",
+          status: "success",
+        });
+      } else {
+        customToast({
+          title: "Invite not sent",
+          description: "Invite not sent successfully",
+          status: "error",
+        });
+      }
+    } catch (err) {
+      console.log(err);
+      customToast({
+        title: "Invite not sent",
+        description: "Something went wrong",
+        status: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
 
-  resetFields();
-
+    resetFields();
   };
 
   return (
@@ -124,6 +172,12 @@ const InviteSupplier: NextPageWithLayout = () => {
         >
           <Stack spacing={4}>
             <CustomFormControl
+              labelText="Supplier Name"
+              placeholder="Muthaiti Suppliers"
+              value={name}
+              setValue={setName}
+            />
+            <CustomFormControl
               labelText="Phone No"
               placeholder="0712345678"
               value={phoneNo}
@@ -137,7 +191,7 @@ const InviteSupplier: NextPageWithLayout = () => {
             />
             <Stack spacing={10} pt={2}>
               <Button
-                loadingText="Submitting"
+                loadingText="Sending ..."
                 size="lg"
                 bg={"cyan.400"}
                 color={"white"}

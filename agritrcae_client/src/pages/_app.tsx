@@ -1,10 +1,11 @@
+import { UseInkathonProvider, alephzeroTestnet } from "@scio-labs/use-inkathon";
 import { getDeployments } from "@/deployments";
 import { AppPropsWithLayout } from "@/types/Layout";
 import { ChakraProvider } from "@chakra-ui/react";
-import { UseInkathonProvider, alephzeroTestnet } from "@scio-labs/use-inkathon";
 import { Inconsolata } from "next/font/google";
 import Head from "next/head";
 import { Toaster } from "react-hot-toast";
+import { env } from "@/config/enviroment";
 
 const inconsolata = Inconsolata({
   subsets: ["latin"],
@@ -29,7 +30,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
       <UseInkathonProvider
         appName="agritrace"
         connectOnInit={true}
-        defaultChain={alephzeroTestnet}
+        defaultChain={env.defaultChain || alephzeroTestnet}
         deployments={getDeployments()}
       >
         <ChakraProvider>

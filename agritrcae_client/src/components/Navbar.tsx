@@ -22,6 +22,7 @@ import {
 } from "react-icons/ai";
 import { BsFillCameraVideoFill, BsPlus } from "react-icons/bs";
 import ConnectButton from "./ConnectButton";
+import TextLink from "./TextLink";
 
 const Navbar = () => {
   const bg = useColorModeValue("white", "gray.800");
@@ -111,7 +112,9 @@ const Navbar = () => {
                 md: "2xl",
               }}
                 fontWeight="bold"
-                // color="blue"
+                color="blue"
+                as={TextLink}
+                href="/"
             >
               AgriTrace
               <VisuallyHidden>Choc</VisuallyHidden>

@@ -14,14 +14,19 @@ import AuthLayout from "@/layouts/AuthLayout";
 import CustomFormControl from "@/components/CustomFormControl";
 import { IToastProps } from "@/types/Toast";
 import { IInviteBody, ISupplier, SupplierStatus } from "@/types/Supplier";
-import { useInkathon } from "@scio-labs/use-inkathon";
+import {
+  contractTx,
+  useInkathon,
+  useRegisteredContract,
+} from "@scio-labs/use-inkathon";
 import useInvite from "@/hooks/useInvite";
 import useSupplier from "@/hooks/useSupplier";
+import { ContractID } from "@/types/Contracts";
 
 const OnboardingSupplier: NextPageWithLayout = () => {
-  const { activeAccount } = useInkathon();
+  const { activeAccount, activeSigner, api } = useInkathon();
+  const { contract } = useRegisteredContract(ContractID.StakeholderRegistry);
   const { getInviteInfo } = useInvite();
-  const { joinViaInviteCode } = useSupplier();
   const toast = useToast();
   const [name, setName] = useState<string>("");
   const [phoneNo, setPhoneNo] = useState<string>("");
@@ -89,50 +94,37 @@ const OnboardingSupplier: NextPageWithLayout = () => {
       return;
     }
 
+    if (!activeAccount || !contract || !api || !activeSigner) {
+      customToast({
+        title: "Wallet not connected",
+        description: "Please connect your wallet",
+        status: "error",
+      });
+      return;
+    }
+
     try {
       setLoading(true);
       const resp = await getInviteInfo(inviteCode);
 
       if (resp.status === "ok") {
-        const inviteInfo = resp.data as IInviteBody;
-        const supplier: ISupplier = {
-          name,
-          email: email,
-          phoneNo,
-          address: activeAccount?.address,
-          location,
-          invitelink: inviteInfo.inviteCode as string,
-          invitecode: inviteInfo.inviteCode as string,
-          created: new Date(),
-          updated: new Date(),
-          manufacturer_address: inviteInfo?.sender,
-          manufacturer_name: inviteInfo?.company,
-          status: SupplierStatus.Active,
-        };
+        api.setSigner(activeSigner);
 
-        const res = await joinViaInviteCode(supplier, inviteCode);
-
-        if (res.status === "ok") {
-          customToast({
-            status: "success",
-            title: "Account Creation",
-            description: "Your Account has been created successfully",
-          });
-          resetFields();
-        } else {
-          customToast({
-            status: "error",
-            title: "Error",
-            description: "An error was encountered",
-          });
-        }
+        await contractTx(
+          api,
+          activeAccount.address,
+          contract,
+          "saveSupplier",
+          {},
+          [name, phoneNo, [], ]
+        );
       } else {
         customToast({
-          status: "error",
           title: "Error",
-          description:
-            "Unable to find the invite code, check the code and then try again.",
+          description: "Invalid invite code",
+          status: "error",
         });
+        return;
       }
     } catch (err) {
       console.log(err);
@@ -141,6 +133,8 @@ const OnboardingSupplier: NextPageWithLayout = () => {
         title: "Error",
         description: "An error was encontered",
       });
+    } finally {
+      setLoading(false);
     }
   };
 

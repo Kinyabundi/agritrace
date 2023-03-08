@@ -2,6 +2,7 @@ import { ContractID, IProduct } from "@/types/Contracts";
 import {
   contractQuery,
   contractTx,
+  unwrapResultOrError,
   useInkathon,
   useRegisteredContract,
 } from "@scio-labs/use-inkathon";
@@ -9,11 +10,24 @@ import { useCallback } from "react";
 
 const useManufacturer = () => {
   const { api, activeAccount } = useInkathon();
-  const { contract } = useRegisteredContract(
-    ContractID.EntityRegistry
+  const { contract } = useRegisteredContract(ContractID.EntityRegistry);
+  const { contract: stakeholderContract } = useRegisteredContract(
+    ContractID.StakeholderRegistry
   );
 
-  const registerAsManufacturer = useCallback(async () => {}, []);
+  const getManufacturerAcccount = async () => {
+    if (stakeholderContract && api && activeAccount) {
+      const result = await contractQuery(
+        api,
+        activeAccount?.address,
+        stakeholderContract,
+        "getManufacturer",
+        {},
+        [activeAccount.address]
+      );
+      return unwrapResultOrError(result);
+    }
+  };
 
   const addProduct = async (product: IProduct) => {
     if (contract) {
@@ -33,7 +47,7 @@ const useManufacturer = () => {
       }
     }
   };
-  return { addProduct };
+  return { addProduct, getManufacturerAcccount };
 };
 
 export default useManufacturer;

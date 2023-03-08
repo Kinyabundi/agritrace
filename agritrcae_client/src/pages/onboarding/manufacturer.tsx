@@ -17,7 +17,9 @@ import CustomFormControl from "@/components/CustomFormControl";
 import { CgTrash } from "react-icons/cg";
 import { IToastProps } from "@/types/Toast";
 import {
+  contractQuery,
   contractTx,
+  unwrapResultOrError,
   useInkathon,
   useRegisteredContract,
 } from "@scio-labs/use-inkathon";
@@ -25,7 +27,7 @@ import { ContractID } from "@/types/Contracts";
 
 const OnboardingManufacturer: NextPageWithLayout = () => {
   const toast = useToast();
-  const { isConnected, api, activeAccount } = useInkathon();
+  const { activeSigner, api, activeAccount } = useInkathon();
   const { contract } = useRegisteredContract(ContractID.StakeholderRegistry);
   const [phonenos, setPhonenos] = useState<string[]>([""]);
   const [products, setProducts] = useState<string[]>([""]);
@@ -83,15 +85,7 @@ const OnboardingManufacturer: NextPageWithLayout = () => {
   };
 
   const handleSubmit = async () => {
-    // check if wallet is connected
-    if (!isConnected) {
-      return customToast({
-        title: "Wallet not connected",
-        description: "Please connect your wallet",
-        status: "error",
-      });
-    }
-    // Validate
+    //Validate
     if (!name) {
       return customToast({
         title: "Name is required",
@@ -128,36 +122,44 @@ const OnboardingManufacturer: NextPageWithLayout = () => {
       });
     }
 
+    // check if wallet is connected
+    if (!activeAccount || !contract || !activeSigner || !api) {
+      return customToast({
+        title: "Wallet not connected",
+        description: "Please connect your wallet",
+        status: "error",
+      });
+    }
     try {
       setLoading(true);
-      if (contract) {
-        if (activeAccount && api) {
-          await contractTx(
-            api,
-            activeAccount?.address,
-            contract,
-            "addManufacturer",
-            {},
-            [name, corporateNo, phonenos, products, location],
-            (sth) => {
-              if (sth?.status.isInBlock) {
-                customToast({
-                  title: "Manufacturer added",
-                  description: "Manufacturer added successfully",
-                  status: "success",
-                });
-                setLoading(false);
-              }
-            }
-          );
+      api.setSigner(activeSigner);
+
+      await contractTx(
+        api,
+        activeAccount.address,
+        contract,
+        "addManufacturer",
+        undefined,
+        [name, corporateNo, phonenos, products, location],
+        (sth) => {
+          if (sth?.status.isInBlock) {
+            customToast({
+              title: "Manufacturer added",
+              description: "Manufacturer added successfully",
+              status: "success",
+            });
+            setLoading(false);
+          }
         }
-      }
+      )
     } catch (err) {
+      console.log(err);
       customToast({
         title: "Error",
         description: "Something went wrong",
         status: "error",
       });
+    } finally {
       setLoading(false);
     }
   };
@@ -198,8 +200,8 @@ const OnboardingManufacturer: NextPageWithLayout = () => {
               setValue={setCorporateNo}
             />
             {phonenos.map((phone, i) => (
-              <>
-                <HStack key={i}>
+              <div key={i}>
+                <HStack>
                   <CustomFormControl
                     labelText="Phone No"
                     placeholder="Enter phone number"
@@ -224,7 +226,7 @@ const OnboardingManufacturer: NextPageWithLayout = () => {
                     marginBottom: 6,
                   }}
                 />
-              </>
+              </div>
             ))}
             <Button
               onClick={handleAddNewPhoneNo}
@@ -234,8 +236,8 @@ const OnboardingManufacturer: NextPageWithLayout = () => {
               Add New Phone No
             </Button>
             {products.map((product, i) => (
-              <>
-                <HStack key={i}>
+              <div key={i}>
+                <HStack>
                   <CustomFormControl
                     labelText="Product"
                     placeholder="Enter product"
@@ -260,7 +262,7 @@ const OnboardingManufacturer: NextPageWithLayout = () => {
                     marginBottom: 6,
                   }}
                 />
-              </>
+              </div>
             ))}
             <Button
               onClick={handleAddNewProduct}

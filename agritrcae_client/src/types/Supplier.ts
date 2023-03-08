@@ -29,7 +29,7 @@ export interface IInviteBody {
   email?: string;
   name: string;
   company: string;
-  link: string;
+  link?: string;
   phoneno?: string;
   inviteCode?: string;
   target: InviteTarget;

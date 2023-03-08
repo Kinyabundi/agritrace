@@ -11,3 +11,10 @@ export interface IProduct {
   batchNo: number;
   raw_materials: number[];
 }
+export interface IRawMaterial {
+  name: string,
+  entityCode: string,
+  quantity: number,
+  quantityUnits: string,
+  batchNo: number,
+}

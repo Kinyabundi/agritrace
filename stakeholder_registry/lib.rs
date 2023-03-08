@@ -16,9 +16,24 @@ mod stakeholder_registry {
         ManufacturerDoesNotExist,
         /// Supplier already exists
         SupplierAlreadyExists,
+        ///supplier does not exists
+        SupplierDoesNotExist,
     }
 
     pub type Result<T> = core::result::Result<T, Error>;
+
+    #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
+    #[cfg_attr(
+        feature = "std",
+        derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)
+    )]
+    #[derive(Clone)]
+    pub enum Role {
+        Manufacturer,
+        Supplier,
+        Retailer,
+        Distributor,
+    }
 
     #[ink(event)]
     pub struct ManufacturerAdded {
@@ -47,6 +62,7 @@ mod stakeholder_registry {
         location: String,
         address: AccountId,
         timestamp: Timestamp,
+        role: Role,
         suppliers: Option<Vec<AccountId>>,
     }
 
@@ -60,7 +76,36 @@ mod stakeholder_registry {
                 location: String::from(""),
                 address: AccountId::from([0x0; 32]),
                 timestamp: Timestamp::default(),
+                role: Role::Manufacturer,
                 suppliers: None,
+            }
+        }
+    }
+    #[derive(scale::Decode, scale::Encode, Debug, PartialEq, Eq)]
+    #[cfg_attr(
+        feature = "std",
+        derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)
+    )]
+    pub struct Supplier {
+        name: String,
+        phone_no: String,
+        email: String,
+        raw_materials: Option<Vec<String>>,
+        address: AccountId,
+        timestamp: Timestamp,
+        role: Role,
+    }
+
+    impl Default for Supplier {
+        fn default() -> Self {
+            Self {
+                name: String::from(""),
+                phone_no: String::from(""),
+                email: String::from(""),
+                raw_materials: None,
+                address: AccountId::from([0x0; 32]),
+                timestamp: Timestamp::default(),
+                role: Role::Supplier,
             }
         }
     }
@@ -69,6 +114,8 @@ mod stakeholder_registry {
     pub struct StakeholderRegistry {
         manufacturers: Mapping<AccountId, Manufacturer>,
         manufacturers_accounts: Vec<AccountId>,
+        suppliers: Mapping<AccountId, Supplier>,
+        suppliers_accounts: Vec<AccountId>,
     }
 
     impl StakeholderRegistry {
@@ -77,6 +124,8 @@ mod stakeholder_registry {
             Self {
                 manufacturers: Mapping::new(),
                 manufacturers_accounts: Vec::new(),
+                suppliers: Mapping::new(),
+                suppliers_accounts: Vec::new(),
             }
         }
 
@@ -100,15 +149,17 @@ mod stakeholder_registry {
                 address: self.env().caller(),
                 timestamp: self.env().block_timestamp(),
                 suppliers: None,
+                role: Role::Manufacturer,
             };
 
             if self.manufacturers.contains(&address) {
-                self.env().emit_event(ManufacturerAdded {
-                    manufacturer: address,
-                });
+                return Err(Error::ManufacturerAlreadyExists);
             } else {
                 self.manufacturers_accounts.push(address);
                 self.manufacturers.insert(address, &manufacturer);
+                self.env().emit_event(ManufacturerAdded {
+                    manufacturer: address,
+                });
             }
 
             Ok(())
@@ -134,9 +185,40 @@ mod stakeholder_registry {
             manufacturers
         }
 
+        //save supplier
+        #[ink(message)]
+        pub fn save_supplier(
+            &mut self,
+            name: String,
+            phone_no: String,
+            email: String,
+        ) -> Result<()> {
+            let address = self.env().caller();
+            let supplier = Supplier {
+                name,
+                phone_no,
+                email,
+                raw_materials: None,
+                address: self.env().caller(),
+                timestamp: self.env().block_timestamp(),
+                role: Role::Supplier,
+            };
+            if self.suppliers.contains(&address) {
+                return Err(Error::SupplierAlreadyExists);
+            } else {
+                self.suppliers_accounts.push(address);
+                self.suppliers.insert(address, &supplier);
+                self.env().emit_event(SupplierAdded {
+                    manufacturer: address,
+                    supplier: address,
+                });
+            }
+
+            Ok(())
+        }
         /// Join as Supplier when they accept the join link when they connect their wallet
         /// address belongs to manufacturer
-        ///
+
         #[ink(message)]
         pub fn join_as_supplier(&mut self, address: AccountId) -> Result<()> {
             let caller = self.env().caller();

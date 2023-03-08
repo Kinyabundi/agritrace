@@ -2,7 +2,7 @@ import { IInviteBody, InviteTarget } from "@/types/Supplier";
 import { useCallback } from "react";
 import axios from "axios";
 import { invitesCollections } from "@/helpers/firebaseDBHelpers";
-import { addDoc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { addDoc, getDocs, query, where } from "firebase/firestore";
 import { IApiResponse } from "@/types/Api";
 
 const BASE_URL = "/api";
