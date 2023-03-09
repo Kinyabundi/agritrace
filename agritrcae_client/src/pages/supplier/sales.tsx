@@ -16,7 +16,7 @@ import {
   Divider,
 } from "@chakra-ui/react";
 
-const ViewRawMaterials: NextPageWithLayout = () => {
+const Sales: NextPageWithLayout = () => {
   const dataColor = useColorModeValue("white", "gray.800");
   const bg = useColorModeValue("white", "gray.800");
   const bg2 = useColorModeValue("gray.100", "gray.700");
@@ -45,7 +45,7 @@ const ViewRawMaterials: NextPageWithLayout = () => {
   return (
     <>
       <Head>
-        <title>AgriTrace | Raw Materials</title>
+        <title>AgriTrace | Sales</title>
       </Head>
       <Text px={50} fontSize={"2xl"} fontWeight={"semibold"}>
         Suppliers
@@ -74,7 +74,7 @@ const ViewRawMaterials: NextPageWithLayout = () => {
             spacingY={3}
             columns={{
               base: 1,
-              md: 6,
+              md: 7,
             }}
             w={{
               base: 120,
@@ -85,7 +85,7 @@ const ViewRawMaterials: NextPageWithLayout = () => {
             color={"gray.800"}
             py={{
               base: 1,
-              md: 6,
+              md: 7,
             }}
             px={{
               base: 2,
@@ -109,6 +109,9 @@ const ViewRawMaterials: NextPageWithLayout = () => {
             <chakra.span color="blue.800" fontWeight="600">
               Status
             </chakra.span>
+            <chakra.span color="blue.800" fontWeight="600">
+              Buyer
+            </chakra.span>
             <chakra.span
               color="blue.800"
               fontWeight="600"
@@ -120,7 +123,7 @@ const ViewRawMaterials: NextPageWithLayout = () => {
             </chakra.span>
           </SimpleGrid>
           {rawMaterials.length === 0 ? (
-            <Text px={50}>No Raw Materials Added Yet</Text>
+            <Text px={50}>No Sales Made Yet</Text>
           ) : (
             rawMaterials?.map((item, pid) => (
               <div key={pid}>
@@ -135,7 +138,7 @@ const ViewRawMaterials: NextPageWithLayout = () => {
                     spacingY={3}
                     columns={{
                       base: 1,
-                      md: 6,
+                      md: 7,
                     }}
                     w="full"
                     py={2}
@@ -147,13 +150,16 @@ const ViewRawMaterials: NextPageWithLayout = () => {
                     <chakra.span>{item?.quantity}</chakra.span>
                     <chakra.span>{item?.batchNo}</chakra.span>
                     <chakra.span></chakra.span>
+                    <chakra.span>{truncateHash(item?.buyer)}</chakra.span>
+                   
+
                     <Flex
                       justify={{
                         md: "end",
                       }}
                     >
                       <Button variant="solid" colorScheme="red" size="sm">
-                        sell
+                        Delete
                       </Button>
                     </Flex>
                   </SimpleGrid>
@@ -168,6 +174,6 @@ const ViewRawMaterials: NextPageWithLayout = () => {
   );
 };
 
-ViewRawMaterials.getLayout = (page) => <SupplierLayout>{page} </SupplierLayout>;
+Sales.getLayout = (page) => <SupplierLayout>{page} </SupplierLayout>;
 
-export default ViewRawMaterials;
+export default Sales;

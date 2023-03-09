@@ -1,12 +1,10 @@
 import React, { ReactNode } from "react";
 import {
   IconButton,
-  Avatar,
   Box,
   CloseButton,
   Flex,
   HStack,
-  VStack,
   Icon,
   useColorModeValue,
   Link,
@@ -16,21 +14,10 @@ import {
   useDisclosure,
   BoxProps,
   FlexProps,
-  Menu,
-  MenuButton,
-  MenuDivider,
-  MenuItem,
-  MenuList,
 } from "@chakra-ui/react";
 import {
-  FiHome,
-  FiTrendingUp,
-  FiCompass,
-  FiStar,
-  FiSettings,
   FiMenu,
   FiBell,
-  FiChevronDown,
 } from "react-icons/fi";
 import { RiSwapFill } from "react-icons/ri";
 import { GiSwapBag } from "react-icons/gi";
@@ -51,8 +38,12 @@ const LinkItems: Array<LinkItemProps> = [
     icon: RiSwapFill,
     href: "/supplier/view-rawmaterials",
   },
-  { name: "AddRawMaterials", icon: GiSwapBag, href: "/supplier/add-rawmaterial" },
-  { name: "Sale", icon: BsCreditCard, href: "#"},
+  {
+    name: "AddRawMaterials",
+    icon: GiSwapBag,
+    href: "/supplier/add-rawmaterial",
+  },
+  { name: "Sale", icon: BsCreditCard, href: "/supplier/sales" },
   { name: "Faucet", icon: FaPeopleCarry, href: "#" },
   { name: "Account", icon: MdAccountBalanceWallet, href: "#" },
 ];
@@ -169,6 +160,7 @@ interface MobileProps extends FlexProps {
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   return (
     <Flex
+    //@ts-ignore
       ml={{ base: 0, md: 60 }}
       px={{ base: 4, md: 4 }}
       height="20"
@@ -204,7 +196,6 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
           icon={<FiBell />}
         />
         <ConnectButton />
-        
       </HStack>
     </Flex>
   );

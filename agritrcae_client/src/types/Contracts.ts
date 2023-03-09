@@ -17,4 +17,11 @@ export interface IRawMaterial {
   quantity: number,
   quantityUnits: string,
   batchNo: number,
+  buyer: string,
+}
+export enum TransactionStatus {
+ Initiated = "Initiated",
+ InProgress = "InProgress",
+ Completed = "Completed",
+ Reverted = "Reverted",
 }
