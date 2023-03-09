@@ -1,0 +1,1780 @@
+{
+    "source": {
+      "hash": "0xf2aee9f9559d062f38b3f66d53295672f5e4041bb28b55427d34441fb39233df",
+      "language": "ink! 4.0.1",
+      "compiler": "rustc 1.69.0-nightly",
+      "build_info": {
+        "build_mode": "Release",
+        "cargo_contract_version": "2.0.1",
+        "rust_toolchain": "nightly-aarch64-apple-darwin",
+        "wasm_opt_settings": {
+          "keep_debug_symbols": false,
+          "optimization_passes": "Z"
+        }
+      }
+    },
+    "contract": {
+      "name": "transactions",
+      "version": "0.1.0",
+      "authors": [
+        "[your_name] <[your_email]>"
+      ]
+    },
+    "spec": {
+      "constructors": [
+        {
+          "args": [],
+          "docs": [],
+          "label": "new",
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "ink_primitives",
+              "ConstructorResult"
+            ],
+            "type": 8
+          },
+          "selector": "0x9bae9d5e"
+        }
+      ],
+      "docs": [],
+      "events": [
+        {
+          "args": [
+            {
+              "docs": [],
+              "indexed": true,
+              "label": "entity",
+              "type": {
+                "displayName": [
+                  "EntityPurchase"
+                ],
+                "type": 16
+              }
+            },
+            {
+              "docs": [],
+              "indexed": true,
+              "label": "buyer",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 3
+              }
+            },
+            {
+              "docs": [],
+              "indexed": true,
+              "label": "seller",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 3
+              }
+            }
+          ],
+          "docs": [],
+          "label": "TransactionEvent"
+        },
+        {
+          "args": [
+            {
+              "docs": [],
+              "indexed": true,
+              "label": "product",
+              "type": {
+                "displayName": [
+                  "ProductPurchase"
+                ],
+                "type": 22
+              }
+            },
+            {
+              "docs": [],
+              "indexed": true,
+              "label": "buyer",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 3
+              }
+            },
+            {
+              "docs": [],
+              "indexed": true,
+              "label": "seller",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 3
+              }
+            }
+          ],
+          "docs": [],
+          "label": "ProductTransactionEvent"
+        }
+      ],
+      "lang_error": {
+        "displayName": [
+          "ink",
+          "LangError"
+        ],
+        "type": 10
+      },
+      "messages": [
+        {
+          "args": [
+            {
+              "label": "entity_code",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 0
+              }
+            },
+            {
+              "label": "quantity",
+              "type": {
+                "displayName": [
+                  "u32"
+                ],
+                "type": 1
+              }
+            },
+            {
+              "label": "quantity_unit",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 0
+              }
+            },
+            {
+              "label": "batch_no",
+              "type": {
+                "displayName": [
+                  "u64"
+                ],
+                "type": 2
+              }
+            },
+            {
+              "label": "buyer",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 3
+              }
+            }
+          ],
+          "docs": [
+            " This function initiate sell of an entity by the seller to a buyer"
+          ],
+          "label": "initiate_sell",
+          "mutates": true,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "ink",
+              "MessageResult"
+            ],
+            "type": 11
+          },
+          "selector": "0x03aef6e8"
+        },
+        {
+          "args": [
+            {
+              "label": "entity_code",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 0
+              }
+            }
+          ],
+          "docs": [
+            " This function is for buyer actually purchasing the item"
+          ],
+          "label": "purchase",
+          "mutates": true,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "ink",
+              "MessageResult"
+            ],
+            "type": 11
+          },
+          "selector": "0x44b97dba"
+        },
+        {
+          "args": [
+            {
+              "label": "entity_code",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 0
+              }
+            }
+          ],
+          "docs": [
+            " This function is for marking the transaction as complete"
+          ],
+          "label": "complete",
+          "mutates": true,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "ink",
+              "MessageResult"
+            ],
+            "type": 11
+          },
+          "selector": "0x0740d2e1"
+        },
+        {
+          "args": [
+            {
+              "label": "entity_code",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 0
+              }
+            }
+          ],
+          "docs": [
+            " This function is for marking the transaction as reverted"
+          ],
+          "label": "revert",
+          "mutates": true,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "ink",
+              "MessageResult"
+            ],
+            "type": 11
+          },
+          "selector": "0x069a343d"
+        },
+        {
+          "args": [
+            {
+              "label": "entity_code",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 0
+              }
+            }
+          ],
+          "docs": [
+            " This function returns the transaction details for a given entity code"
+          ],
+          "label": "get_transaction",
+          "mutates": false,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "ink",
+              "MessageResult"
+            ],
+            "type": 14
+          },
+          "selector": "0xfeeb858e"
+        },
+        {
+          "args": [
+            {
+              "label": "seller",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 3
+              }
+            }
+          ],
+          "docs": [
+            "  This function returns all transactions for a given seller"
+          ],
+          "label": "get_transactions_by_seller",
+          "mutates": false,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "ink",
+              "MessageResult"
+            ],
+            "type": 18
+          },
+          "selector": "0xe7764acc"
+        },
+        {
+          "args": [
+            {
+              "label": "buyer",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 3
+              }
+            }
+          ],
+          "docs": [
+            "  This function returns all transactions for a given buyer"
+          ],
+          "label": "get_transactions_by_buyer",
+          "mutates": false,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "ink",
+              "MessageResult"
+            ],
+            "type": 18
+          },
+          "selector": "0x5d944a59"
+        },
+        {
+          "args": [],
+          "docs": [
+            " This function returns all transactions"
+          ],
+          "label": "get_all_transactions",
+          "mutates": false,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "ink",
+              "MessageResult"
+            ],
+            "type": 18
+          },
+          "selector": "0xcf6c9f8d"
+        },
+        {
+          "args": [
+            {
+              "label": "status",
+              "type": {
+                "displayName": [
+                  "TransactionStatus"
+                ],
+                "type": 17
+              }
+            },
+            {
+              "label": "account_id",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 3
+              }
+            }
+          ],
+          "docs": [
+            " This function returns all transactions for a given status by AccountId"
+          ],
+          "label": "get_transactions_by_status",
+          "mutates": false,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "ink",
+              "MessageResult"
+            ],
+            "type": 18
+          },
+          "selector": "0xb15e35ac"
+        },
+        {
+          "args": [
+            {
+              "label": "product_code",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 0
+              }
+            },
+            {
+              "label": "quantity",
+              "type": {
+                "displayName": [
+                  "u32"
+                ],
+                "type": 1
+              }
+            },
+            {
+              "label": "quantity_unit",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 0
+              }
+            },
+            {
+              "label": "batch_no",
+              "type": {
+                "displayName": [
+                  "Vec"
+                ],
+                "type": 7
+              }
+            },
+            {
+              "label": "buyer",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 3
+              }
+            },
+            {
+              "label": "serial_no",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 0
+              }
+            }
+          ],
+          "docs": [
+            " Initiate sell of a product item"
+          ],
+          "label": "sell_product",
+          "mutates": true,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "ink",
+              "MessageResult"
+            ],
+            "type": 11
+          },
+          "selector": "0x6a67086f"
+        },
+        {
+          "args": [
+            {
+              "label": "product_code",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 0
+              }
+            }
+          ],
+          "docs": [
+            " This function is for marking the transaction as complete"
+          ],
+          "label": "complete_product",
+          "mutates": true,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "ink",
+              "MessageResult"
+            ],
+            "type": 11
+          },
+          "selector": "0xb5848b7f"
+        },
+        {
+          "args": [
+            {
+              "label": "product_code",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 0
+              }
+            }
+          ],
+          "docs": [
+            " This function is for marking the transaction as reverted"
+          ],
+          "label": "revert_product",
+          "mutates": true,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "ink",
+              "MessageResult"
+            ],
+            "type": 11
+          },
+          "selector": "0x94b2240e"
+        },
+        {
+          "args": [
+            {
+              "label": "product_code",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 0
+              }
+            }
+          ],
+          "docs": [
+            " This function returns the transaction details for a given product code"
+          ],
+          "label": "get_product_transaction",
+          "mutates": false,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "ink",
+              "MessageResult"
+            ],
+            "type": 20
+          },
+          "selector": "0x38e4850f"
+        },
+        {
+          "args": [
+            {
+              "label": "seller",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 3
+              }
+            }
+          ],
+          "docs": [
+            " This function returns all transactions for a given seller"
+          ],
+          "label": "get_product_transactions_by_seller",
+          "mutates": false,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "ink",
+              "MessageResult"
+            ],
+            "type": 23
+          },
+          "selector": "0xc1fa188f"
+        },
+        {
+          "args": [
+            {
+              "label": "buyer",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 3
+              }
+            }
+          ],
+          "docs": [
+            "  This function returns all transactions for a given buyer"
+          ],
+          "label": "get_product_transactions_by_buyer",
+          "mutates": false,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "ink",
+              "MessageResult"
+            ],
+            "type": 23
+          },
+          "selector": "0xd0712cbc"
+        },
+        {
+          "args": [],
+          "docs": [
+            " This function returns all transactions"
+          ],
+          "label": "get_all_product_transactions",
+          "mutates": false,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "ink",
+              "MessageResult"
+            ],
+            "type": 23
+          },
+          "selector": "0x6e7c61f8"
+        },
+        {
+          "args": [
+            {
+              "label": "status",
+              "type": {
+                "displayName": [
+                  "TransactionStatus"
+                ],
+                "type": 17
+              }
+            },
+            {
+              "label": "account_id",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 3
+              }
+            }
+          ],
+          "docs": [
+            " This function returns all transactions for a given status by AccountId"
+          ],
+          "label": "get_product_transactions_by_status",
+          "mutates": false,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "ink",
+              "MessageResult"
+            ],
+            "type": 23
+          },
+          "selector": "0x7ac4574f"
+        },
+        {
+          "args": [
+            {
+              "label": "serial_no",
+              "type": {
+                "displayName": [
+                  "String"
+                ],
+                "type": 0
+              }
+            }
+          ],
+          "docs": [
+            " This function performs backtracing by use of product code.",
+            " This by using serial_no and after retriving the product check the batch nos to determine the entities used for production"
+          ],
+          "label": "get_product_backtrace",
+          "mutates": false,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "ink",
+              "MessageResult"
+            ],
+            "type": 25
+          },
+          "selector": "0xed31fda5"
+        }
+      ]
+    },
+    "storage": {
+      "root": {
+        "layout": {
+          "struct": {
+            "fields": [
+              {
+                "layout": {
+                  "root": {
+                    "layout": {
+                      "struct": {
+                        "fields": [
+                          {
+                            "layout": {
+                              "leaf": {
+                                "key": "0xb45ddfc9",
+                                "ty": 0
+                              }
+                            },
+                            "name": "entity_code"
+                          },
+                          {
+                            "layout": {
+                              "leaf": {
+                                "key": "0xb45ddfc9",
+                                "ty": 1
+                              }
+                            },
+                            "name": "quantity"
+                          },
+                          {
+                            "layout": {
+                              "leaf": {
+                                "key": "0xb45ddfc9",
+                                "ty": 0
+                              }
+                            },
+                            "name": "quantity_unit"
+                          },
+                          {
+                            "layout": {
+                              "leaf": {
+                                "key": "0xb45ddfc9",
+                                "ty": 2
+                              }
+                            },
+                            "name": "batch_no"
+                          },
+                          {
+                            "layout": {
+                              "leaf": {
+                                "key": "0xb45ddfc9",
+                                "ty": 2
+                              }
+                            },
+                            "name": "created_at"
+                          },
+                          {
+                            "layout": {
+                              "leaf": {
+                                "key": "0xb45ddfc9",
+                                "ty": 3
+                              }
+                            },
+                            "name": "buyer"
+                          },
+                          {
+                            "layout": {
+                              "leaf": {
+                                "key": "0xb45ddfc9",
+                                "ty": 3
+                              }
+                            },
+                            "name": "seller"
+                          },
+                          {
+                            "layout": {
+                              "enum": {
+                                "dispatchKey": "0xb45ddfc9",
+                                "name": "TransactionStatus",
+                                "variants": {
+                                  "0": {
+                                    "fields": [],
+                                    "name": "Initiated"
+                                  },
+                                  "1": {
+                                    "fields": [],
+                                    "name": "InProgress"
+                                  },
+                                  "2": {
+                                    "fields": [],
+                                    "name": "Completed"
+                                  },
+                                  "3": {
+                                    "fields": [],
+                                    "name": "Reverted"
+                                  }
+                                }
+                              }
+                            },
+                            "name": "status"
+                          },
+                          {
+                            "layout": {
+                              "leaf": {
+                                "key": "0xb45ddfc9",
+                                "ty": 2
+                              }
+                            },
+                            "name": "updated_at"
+                          }
+                        ],
+                        "name": "EntityPurchase"
+                      }
+                    },
+                    "root_key": "0xb45ddfc9"
+                  }
+                },
+                "name": "transactions"
+              },
+              {
+                "layout": {
+                  "leaf": {
+                    "key": "0x00000000",
+                    "ty": 6
+                  }
+                },
+                "name": "transaction_items"
+              },
+              {
+                "layout": {
+                  "root": {
+                    "layout": {
+                      "struct": {
+                        "fields": [
+                          {
+                            "layout": {
+                              "leaf": {
+                                "key": "0x26622bee",
+                                "ty": 0
+                              }
+                            },
+                            "name": "product_code"
+                          },
+                          {
+                            "layout": {
+                              "leaf": {
+                                "key": "0x26622bee",
+                                "ty": 1
+                              }
+                            },
+                            "name": "quantity"
+                          },
+                          {
+                            "layout": {
+                              "leaf": {
+                                "key": "0x26622bee",
+                                "ty": 0
+                              }
+                            },
+                            "name": "quantity_unit"
+                          },
+                          {
+                            "layout": {
+                              "leaf": {
+                                "key": "0x26622bee",
+                                "ty": 7
+                              }
+                            },
+                            "name": "batch_no"
+                          },
+                          {
+                            "layout": {
+                              "leaf": {
+                                "key": "0x26622bee",
+                                "ty": 2
+                              }
+                            },
+                            "name": "created_at"
+                          },
+                          {
+                            "layout": {
+                              "leaf": {
+                                "key": "0x26622bee",
+                                "ty": 3
+                              }
+                            },
+                            "name": "buyer"
+                          },
+                          {
+                            "layout": {
+                              "leaf": {
+                                "key": "0x26622bee",
+                                "ty": 3
+                              }
+                            },
+                            "name": "seller"
+                          },
+                          {
+                            "layout": {
+                              "enum": {
+                                "dispatchKey": "0x26622bee",
+                                "name": "TransactionStatus",
+                                "variants": {
+                                  "0": {
+                                    "fields": [],
+                                    "name": "Initiated"
+                                  },
+                                  "1": {
+                                    "fields": [],
+                                    "name": "InProgress"
+                                  },
+                                  "2": {
+                                    "fields": [],
+                                    "name": "Completed"
+                                  },
+                                  "3": {
+                                    "fields": [],
+                                    "name": "Reverted"
+                                  }
+                                }
+                              }
+                            },
+                            "name": "status"
+                          },
+                          {
+                            "layout": {
+                              "leaf": {
+                                "key": "0x26622bee",
+                                "ty": 2
+                              }
+                            },
+                            "name": "updated_at"
+                          },
+                          {
+                            "layout": {
+                              "leaf": {
+                                "key": "0x26622bee",
+                                "ty": 0
+                              }
+                            },
+                            "name": "serial_no"
+                          }
+                        ],
+                        "name": "ProductPurchase"
+                      }
+                    },
+                    "root_key": "0x26622bee"
+                  }
+                },
+                "name": "product_transactions"
+              },
+              {
+                "layout": {
+                  "leaf": {
+                    "key": "0x00000000",
+                    "ty": 6
+                  }
+                },
+                "name": "product_items"
+              }
+            ],
+            "name": "Transactions"
+          }
+        },
+        "root_key": "0x00000000"
+      }
+    },
+    "types": [
+      {
+        "id": 0,
+        "type": {
+          "def": {
+            "primitive": "str"
+          }
+        }
+      },
+      {
+        "id": 1,
+        "type": {
+          "def": {
+            "primitive": "u32"
+          }
+        }
+      },
+      {
+        "id": 2,
+        "type": {
+          "def": {
+            "primitive": "u64"
+          }
+        }
+      },
+      {
+        "id": 3,
+        "type": {
+          "def": {
+            "composite": {
+              "fields": [
+                {
+                  "type": 4,
+                  "typeName": "[u8; 32]"
+                }
+              ]
+            }
+          },
+          "path": [
+            "ink_primitives",
+            "types",
+            "AccountId"
+          ]
+        }
+      },
+      {
+        "id": 4,
+        "type": {
+          "def": {
+            "array": {
+              "len": 32,
+              "type": 5
+            }
+          }
+        }
+      },
+      {
+        "id": 5,
+        "type": {
+          "def": {
+            "primitive": "u8"
+          }
+        }
+      },
+      {
+        "id": 6,
+        "type": {
+          "def": {
+            "sequence": {
+              "type": 0
+            }
+          }
+        }
+      },
+      {
+        "id": 7,
+        "type": {
+          "def": {
+            "sequence": {
+              "type": 2
+            }
+          }
+        }
+      },
+      {
+        "id": 8,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "fields": [
+                    {
+                      "type": 9
+                    }
+                  ],
+                  "index": 0,
+                  "name": "Ok"
+                },
+                {
+                  "fields": [
+                    {
+                      "type": 10
+                    }
+                  ],
+                  "index": 1,
+                  "name": "Err"
+                }
+              ]
+            }
+          },
+          "params": [
+            {
+              "name": "T",
+              "type": 9
+            },
+            {
+              "name": "E",
+              "type": 10
+            }
+          ],
+          "path": [
+            "Result"
+          ]
+        }
+      },
+      {
+        "id": 9,
+        "type": {
+          "def": {
+            "tuple": []
+          }
+        }
+      },
+      {
+        "id": 10,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "index": 1,
+                  "name": "CouldNotReadInput"
+                }
+              ]
+            }
+          },
+          "path": [
+            "ink_primitives",
+            "LangError"
+          ]
+        }
+      },
+      {
+        "id": 11,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "fields": [
+                    {
+                      "type": 12
+                    }
+                  ],
+                  "index": 0,
+                  "name": "Ok"
+                },
+                {
+                  "fields": [
+                    {
+                      "type": 10
+                    }
+                  ],
+                  "index": 1,
+                  "name": "Err"
+                }
+              ]
+            }
+          },
+          "params": [
+            {
+              "name": "T",
+              "type": 12
+            },
+            {
+              "name": "E",
+              "type": 10
+            }
+          ],
+          "path": [
+            "Result"
+          ]
+        }
+      },
+      {
+        "id": 12,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "fields": [
+                    {
+                      "type": 9
+                    }
+                  ],
+                  "index": 0,
+                  "name": "Ok"
+                },
+                {
+                  "fields": [
+                    {
+                      "type": 13
+                    }
+                  ],
+                  "index": 1,
+                  "name": "Err"
+                }
+              ]
+            }
+          },
+          "params": [
+            {
+              "name": "T",
+              "type": 9
+            },
+            {
+              "name": "E",
+              "type": 13
+            }
+          ],
+          "path": [
+            "Result"
+          ]
+        }
+      },
+      {
+        "id": 13,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "index": 0,
+                  "name": "TransactionAlreadyExists"
+                },
+                {
+                  "index": 1,
+                  "name": "TransactionDoesNotExist"
+                },
+                {
+                  "index": 2,
+                  "name": "InvalidBuyer"
+                },
+                {
+                  "index": 3,
+                  "name": "InvalidSeller"
+                },
+                {
+                  "index": 4,
+                  "name": "BacktraceDoesNotExist"
+                }
+              ]
+            }
+          },
+          "path": [
+            "transactions",
+            "transactions",
+            "Error"
+          ]
+        }
+      },
+      {
+        "id": 14,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "fields": [
+                    {
+                      "type": 15
+                    }
+                  ],
+                  "index": 0,
+                  "name": "Ok"
+                },
+                {
+                  "fields": [
+                    {
+                      "type": 10
+                    }
+                  ],
+                  "index": 1,
+                  "name": "Err"
+                }
+              ]
+            }
+          },
+          "params": [
+            {
+              "name": "T",
+              "type": 15
+            },
+            {
+              "name": "E",
+              "type": 10
+            }
+          ],
+          "path": [
+            "Result"
+          ]
+        }
+      },
+      {
+        "id": 15,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "fields": [
+                    {
+                      "type": 16
+                    }
+                  ],
+                  "index": 0,
+                  "name": "Ok"
+                },
+                {
+                  "fields": [
+                    {
+                      "type": 13
+                    }
+                  ],
+                  "index": 1,
+                  "name": "Err"
+                }
+              ]
+            }
+          },
+          "params": [
+            {
+              "name": "T",
+              "type": 16
+            },
+            {
+              "name": "E",
+              "type": 13
+            }
+          ],
+          "path": [
+            "Result"
+          ]
+        }
+      },
+      {
+        "id": 16,
+        "type": {
+          "def": {
+            "composite": {
+              "fields": [
+                {
+                  "name": "entity_code",
+                  "type": 0,
+                  "typeName": "String"
+                },
+                {
+                  "name": "quantity",
+                  "type": 1,
+                  "typeName": "u32"
+                },
+                {
+                  "name": "quantity_unit",
+                  "type": 0,
+                  "typeName": "String"
+                },
+                {
+                  "name": "batch_no",
+                  "type": 2,
+                  "typeName": "u64"
+                },
+                {
+                  "name": "created_at",
+                  "type": 2,
+                  "typeName": "Timestamp"
+                },
+                {
+                  "name": "buyer",
+                  "type": 3,
+                  "typeName": "AccountId"
+                },
+                {
+                  "name": "seller",
+                  "type": 3,
+                  "typeName": "AccountId"
+                },
+                {
+                  "name": "status",
+                  "type": 17,
+                  "typeName": "TransactionStatus"
+                },
+                {
+                  "name": "updated_at",
+                  "type": 2,
+                  "typeName": "Timestamp"
+                }
+              ]
+            }
+          },
+          "path": [
+            "transactions",
+            "transactions",
+            "EntityPurchase"
+          ]
+        }
+      },
+      {
+        "id": 17,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "index": 0,
+                  "name": "Initiated"
+                },
+                {
+                  "index": 1,
+                  "name": "InProgress"
+                },
+                {
+                  "index": 2,
+                  "name": "Completed"
+                },
+                {
+                  "index": 3,
+                  "name": "Reverted"
+                }
+              ]
+            }
+          },
+          "path": [
+            "transactions",
+            "transactions",
+            "TransactionStatus"
+          ]
+        }
+      },
+      {
+        "id": 18,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "fields": [
+                    {
+                      "type": 19
+                    }
+                  ],
+                  "index": 0,
+                  "name": "Ok"
+                },
+                {
+                  "fields": [
+                    {
+                      "type": 10
+                    }
+                  ],
+                  "index": 1,
+                  "name": "Err"
+                }
+              ]
+            }
+          },
+          "params": [
+            {
+              "name": "T",
+              "type": 19
+            },
+            {
+              "name": "E",
+              "type": 10
+            }
+          ],
+          "path": [
+            "Result"
+          ]
+        }
+      },
+      {
+        "id": 19,
+        "type": {
+          "def": {
+            "sequence": {
+              "type": 16
+            }
+          }
+        }
+      },
+      {
+        "id": 20,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "fields": [
+                    {
+                      "type": 21
+                    }
+                  ],
+                  "index": 0,
+                  "name": "Ok"
+                },
+                {
+                  "fields": [
+                    {
+                      "type": 10
+                    }
+                  ],
+                  "index": 1,
+                  "name": "Err"
+                }
+              ]
+            }
+          },
+          "params": [
+            {
+              "name": "T",
+              "type": 21
+            },
+            {
+              "name": "E",
+              "type": 10
+            }
+          ],
+          "path": [
+            "Result"
+          ]
+        }
+      },
+      {
+        "id": 21,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "fields": [
+                    {
+                      "type": 22
+                    }
+                  ],
+                  "index": 0,
+                  "name": "Ok"
+                },
+                {
+                  "fields": [
+                    {
+                      "type": 13
+                    }
+                  ],
+                  "index": 1,
+                  "name": "Err"
+                }
+              ]
+            }
+          },
+          "params": [
+            {
+              "name": "T",
+              "type": 22
+            },
+            {
+              "name": "E",
+              "type": 13
+            }
+          ],
+          "path": [
+            "Result"
+          ]
+        }
+      },
+      {
+        "id": 22,
+        "type": {
+          "def": {
+            "composite": {
+              "fields": [
+                {
+                  "name": "product_code",
+                  "type": 0,
+                  "typeName": "String"
+                },
+                {
+                  "name": "quantity",
+                  "type": 1,
+                  "typeName": "u32"
+                },
+                {
+                  "name": "quantity_unit",
+                  "type": 0,
+                  "typeName": "String"
+                },
+                {
+                  "name": "batch_no",
+                  "type": 7,
+                  "typeName": "Vec<u64>"
+                },
+                {
+                  "name": "created_at",
+                  "type": 2,
+                  "typeName": "Timestamp"
+                },
+                {
+                  "name": "buyer",
+                  "type": 3,
+                  "typeName": "AccountId"
+                },
+                {
+                  "name": "seller",
+                  "type": 3,
+                  "typeName": "AccountId"
+                },
+                {
+                  "name": "status",
+                  "type": 17,
+                  "typeName": "TransactionStatus"
+                },
+                {
+                  "name": "updated_at",
+                  "type": 2,
+                  "typeName": "Timestamp"
+                },
+                {
+                  "name": "serial_no",
+                  "type": 0,
+                  "typeName": "String"
+                }
+              ]
+            }
+          },
+          "path": [
+            "transactions",
+            "transactions",
+            "ProductPurchase"
+          ]
+        }
+      },
+      {
+        "id": 23,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "fields": [
+                    {
+                      "type": 24
+                    }
+                  ],
+                  "index": 0,
+                  "name": "Ok"
+                },
+                {
+                  "fields": [
+                    {
+                      "type": 10
+                    }
+                  ],
+                  "index": 1,
+                  "name": "Err"
+                }
+              ]
+            }
+          },
+          "params": [
+            {
+              "name": "T",
+              "type": 24
+            },
+            {
+              "name": "E",
+              "type": 10
+            }
+          ],
+          "path": [
+            "Result"
+          ]
+        }
+      },
+      {
+        "id": 24,
+        "type": {
+          "def": {
+            "sequence": {
+              "type": 22
+            }
+          }
+        }
+      },
+      {
+        "id": 25,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "fields": [
+                    {
+                      "type": 26
+                    }
+                  ],
+                  "index": 0,
+                  "name": "Ok"
+                },
+                {
+                  "fields": [
+                    {
+                      "type": 10
+                    }
+                  ],
+                  "index": 1,
+                  "name": "Err"
+                }
+              ]
+            }
+          },
+          "params": [
+            {
+              "name": "T",
+              "type": 26
+            },
+            {
+              "name": "E",
+              "type": 10
+            }
+          ],
+          "path": [
+            "Result"
+          ]
+        }
+      },
+      {
+        "id": 26,
+        "type": {
+          "def": {
+            "variant": {
+              "variants": [
+                {
+                  "fields": [
+                    {
+                      "type": 27
+                    }
+                  ],
+                  "index": 0,
+                  "name": "Ok"
+                },
+                {
+                  "fields": [
+                    {
+                      "type": 13
+                    }
+                  ],
+                  "index": 1,
+                  "name": "Err"
+                }
+              ]
+            }
+          },
+          "params": [
+            {
+              "name": "T",
+              "type": 27
+            },
+            {
+              "name": "E",
+              "type": 13
+            }
+          ],
+          "path": [
+            "Result"
+          ]
+        }
+      },
+      {
+        "id": 27,
+        "type": {
+          "def": {
+            "composite": {
+              "fields": [
+                {
+                  "name": "product_transaction",
+                  "type": 22,
+                  "typeName": "ProductPurchase"
+                },
+                {
+                  "name": "entity_transactions",
+                  "type": 19,
+                  "typeName": "Vec<EntityPurchase>"
+                }
+              ]
+            }
+          },
+          "path": [
+            "transactions",
+            "transactions",
+            "Backtrace"
+          ]
+        }
+      }
+    ],
+    "version": "4"
+  }

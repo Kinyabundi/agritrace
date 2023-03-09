@@ -1,6 +1,7 @@
 export enum ContractID {
   EntityRegistry = "entity_registry",
   StakeholderRegistry = "stakeholder_registry",
+  Transactions = "Transactions"
 }
 
 export interface IProduct {

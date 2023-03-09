@@ -13,14 +13,12 @@ import { NextPageWithLayout } from "@/types/Layout";
 import AuthLayout from "@/layouts/AuthLayout";
 import CustomFormControl from "@/components/CustomFormControl";
 import { IToastProps } from "@/types/Toast";
-import { IInviteBody, ISupplier, SupplierStatus } from "@/types/Supplier";
 import {
   contractTx,
   useInkathon,
   useRegisteredContract,
 } from "@scio-labs/use-inkathon";
 import useInvite from "@/hooks/useInvite";
-import useSupplier from "@/hooks/useSupplier";
 import { ContractID } from "@/types/Contracts";
 
 const OnboardingSupplier: NextPageWithLayout = () => {
@@ -116,7 +114,7 @@ const OnboardingSupplier: NextPageWithLayout = () => {
           contract,
           "saveSupplier",
           {},
-          [name, phoneNo, [], ]
+          [name, phoneNo, email]
         );
       } else {
         customToast({
