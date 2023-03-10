@@ -4,6 +4,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 export interface IAuthStore {
+  hasAccount: boolean;
+  setHasAccount: (status: boolean) => void;
   user: IManufacturer | ISupplier | null;
   setUser: (user: IManufacturer | ISupplier | null) => void;
 }
@@ -12,7 +14,13 @@ export const useAuth = create(
   persist<IAuthStore>(
     (set) => ({
       user: null,
-      setUser: (user) => set({ user }),
+      hasAccount: false,
+      setHasAccount: (status) => {
+        set({ hasAccount: status });
+      },
+      setUser: (user) => {
+        set({ user });
+      },
     }),
     {
       name: "auth",

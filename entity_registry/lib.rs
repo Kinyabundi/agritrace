@@ -100,9 +100,9 @@ mod entity_registry {
 
     #[ink(storage)]
     pub struct EntityRegistry {
-        entities: Mapping<(String, AccountId), Entity>,
+        entities: Mapping<String, Entity>,
         entities_items: Vec<String>,
-        products: Mapping<(String, AccountId), Product>,
+        products: Mapping<String, Product>,
         products_items: Vec<String>,
     }
 
@@ -117,74 +117,40 @@ mod entity_registry {
             }
         }
 
-        #[ink(constructor)]
-        pub fn default() -> Self {
-            Self::new()
-        }
-
-        /// This fn adds new entity to the supply chain
         #[ink(message)]
         pub fn add_entity(
             &mut self,
             name: String,
-            quantity: u32,
+            quantity: u64,
             quantity_unit: String,
             entity_code: String,
             batch_no: u64,
             buyer: AccountId,
         ) -> Result<()> {
             let caller = self.env().caller();
+            let timestamp = self.env().block_timestamp();
             let entity = Entity {
                 name,
-                quantity,
+                quantity: quantity as u32,
                 quantity_unit,
                 entity_code: entity_code.clone(),
+                timestamp,
                 batch_no,
-                timestamp: self.env().block_timestamp(),
-                buyer,
                 addedby: caller,
+                buyer,
             };
-
-            if self.entities.contains(&(entity_code.clone(), caller)) {
+            if self.entities.contains(&entity_code) {
                 return Err(Error::EntityAlreadyExists);
             }
-
-            self.entities.insert((entity_code.clone(), caller), &entity);
+            self.entities.insert(entity_code.clone(), &entity);
             self.entities_items.push(entity_code.clone());
-
             self.env().emit_event(EntityAdded {
                 entity_code,
                 name: entity.name,
             });
-
             Ok(())
         }
 
-        /// This fn returns the entity details
-        #[ink(message)]
-        pub fn get_entity(&self, entity_code: String, caller: AccountId) -> Result<Entity> {
-            let entity = self
-                .entities
-                .get(&(entity_code.clone(), caller))
-                .ok_or(Error::EntityDoesNotExist)?;
-            Ok(entity)
-        }
-
-        /// Get all entities belonging to a given owner
-        #[ink(message)]
-        pub fn get_entities(&self, owner_address: AccountId) -> Result<Vec<Entity>> {
-            let mut entities = Vec::new();
-            for entity_code in self.entities_items.iter() {
-                let entity = self
-                    .entities
-                    .get(&(entity_code.clone(), owner_address))
-                    .ok_or(Error::EntityDoesNotExist)?;
-                entities.push(entity);
-            }
-            Ok(entities)
-        }
-
-        /// This fn adds new product to the supply chain
         #[ink(message)]
         pub fn add_product(
             &mut self,
@@ -196,75 +162,90 @@ mod entity_registry {
             raw_materials: Vec<u64>,
         ) -> Result<()> {
             let caller = self.env().caller();
+            let timestamp = self.env().block_timestamp();
             let product = Product {
                 name,
                 product_code: product_code.clone(),
                 quantity,
                 quantity_units,
                 batch_no,
-                timestamp: self.env().block_timestamp(),
+                timestamp,
                 raw_materials,
                 addedby: caller,
             };
-
-            if self.products.contains(&(product_code.clone(), caller)) {
+            if self.products.contains(&product_code) {
                 return Err(Error::ProductAlreadyExists);
             }
-
-            self.products
-                .insert((product_code.clone(), caller), &product);
+            self.products.insert(product_code.clone(), &product);
             self.products_items.push(product_code.clone());
-
             self.env().emit_event(ProductAdded {
                 product_code,
                 name: product.name,
             });
-
             Ok(())
         }
-
-        /// This fn returns the product details
+        /// get product by entity code
         #[ink(message)]
-        pub fn get_product(&self, product_code: String, caller: AccountId) -> Result<Product> {
-            let product = self
-                .products
-                .get(&(product_code.clone(), caller))
-                .ok_or(Error::ProductDoesNotExist)?;
-            Ok(product)
-        }
-
-        /// Get all products belonging to a given owner
-        #[ink(message)]
-        pub fn get_products(&self, owner_address: AccountId) -> Result<Vec<Product>> {
-            let mut products = Vec::new();
-            for product_code in self.products_items.iter() {
-                let product = self
-                    .products
-                    .get(&(product_code.clone(), owner_address))
-                    .ok_or(Error::ProductDoesNotExist)?;
-                products.push(product);
+        pub fn get_entity(&self, entity_code: String) -> Option<Entity> {
+            if !self.entities.contains(&entity_code) {
+                return None;
             }
-            Ok(products)
+            Some(self.entities.get(&entity_code).unwrap())
         }
 
-        /// This fn gets all entities belonging to a given buyer
+        /// get product by product code
         #[ink(message)]
-        pub fn get_entities_by_buyer(
-            &self,
-            buyer: AccountId,
-            owner_address: AccountId,
-        ) -> Result<Vec<Entity>> {
+        pub fn get_product(&self, product_code: String) -> Option<Product> {
+            if !self.products.contains(&product_code) {
+                return None;
+            }
+            Some(self.products.get(&product_code).unwrap())
+        }
+
+        /// Get all entities
+        #[ink(message)]
+        pub fn get_entities(&self) -> Vec<Entity> {
             let mut entities = Vec::new();
             for entity_code in self.entities_items.iter() {
-                let entity = self
-                    .entities
-                    .get(&(entity_code.clone(), owner_address))
-                    .ok_or(Error::EntityDoesNotExist)?;
+                entities.push(self.entities.get(entity_code).unwrap());
+            }
+            entities
+        }
+
+        /// Get all products
+        #[ink(message)]
+        pub fn get_products(&self) -> Vec<Product> {
+            let mut products = Vec::new();
+            for product_code in self.products_items.iter() {
+                products.push(self.products.get(product_code).unwrap());
+            }
+            products
+        }
+
+        /// Get all entities by added_by
+        #[ink(message)]
+        pub fn get_entities_by_added_by(&self, added_by: AccountId) -> Vec<Entity> {
+            let mut entities = Vec::new();
+            for entity_code in self.entities_items.iter() {
+                let entity = self.entities.get(entity_code).unwrap();
+                if entity.addedby == added_by {
+                    entities.push(entity);
+                }
+            }
+            entities
+        }
+
+        /// Get all entities by buyer
+        #[ink(message)]
+        pub fn get_entities_by_buyer(&self, buyer: AccountId) -> Vec<Entity> {
+            let mut entities = Vec::new();
+            for entity_code in self.entities_items.iter() {
+                let entity = self.entities.get(entity_code).unwrap();
                 if entity.buyer == buyer {
                     entities.push(entity);
                 }
             }
-            Ok(entities)
+            entities
         }
     }
 }

@@ -27,7 +27,7 @@ const AddRawMaterial: NextPageWithLayout = () => {
   const [name, setName] = useState<string>("");
   const [quantity, setQuantity] = useState<number>(0);
   const [quantityUnits, setQuantityUnits] = useState<string>("");
-  const [batchNo, setBatchNo] = useState<number>(0)
+  const [batchNo, setBatchNo] = useState<number>(0);
   const [entityCode, setEntityCode] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const toast = useToast();
@@ -91,47 +91,53 @@ const AddRawMaterial: NextPageWithLayout = () => {
     //   entityCode,
     //   batchNo: 8826669933,
     // }
-   //check if wallet is connected
-   if(!activeAccount || !contract || !activeSigner || !api) {
-    return customToast ({
-      title: "Wallet not connected",
-      description: "Please connect your wallet",
-      status: "error",
-    })
-   }
-   try {
-    setLoading(true);
-    api.setSigner(activeSigner);
+    //check if wallet is connected
+    if (!activeAccount || !contract || !activeSigner || !api) {
+      return customToast({
+        title: "Wallet not connected",
+        description: "Please connect your wallet",
+        status: "error",
+      });
+    }
+    try {
+      setLoading(true);
+      api.setSigner(activeSigner);
 
-    await contractTx(
-      api,
-      activeAccount.address,
-      contract,
-      "addEntity",
-      undefined,
-      [name,quantity,quantityUnits,entityCode,batchNo, "5Dy1SCkxhsGWGSzZoJpGjEvdopwxqZzK5Avn2c5jB2QmueF3"],
-      (sth) => {
-        if(sth?.status.isInBlock) {
-          customToast({
-            title: "Raw Material added",
-            description: "Raw Material added successfully",
-            status: "success",
-          });
-          setLoading(false);
+      await contractTx(
+        api,
+        activeAccount.address,
+        contract,
+        "addEntity",
+        undefined,
+        [
+          name,
+          quantity,
+          quantityUnits,
+          entityCode,
+          batchNo,
+          "5Dy1SCkxhsGWGSzZoJpGjEvdopwxqZzK5Avn2c5jB2QmueF3",
+        ],
+        (sth) => {
+          if (sth?.status.isInBlock) {
+            customToast({
+              title: "Raw Material added",
+              description: "Raw Material added successfully",
+              status: "success",
+            });
+            setLoading(false);
+          }
         }
-      }
-    )
-  
-   }catch (err) {
-    console.log(err);
-    customToast({
-      title: "Error",
-      description: "Something went wrong",
-      status: "error",
-    });
-   } finally {
-    setLoading(false);
-   }
+      );
+    } catch (err) {
+      console.log(err);
+      customToast({
+        title: "Error",
+        description: "Something went wrong",
+        status: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -194,6 +200,7 @@ const AddRawMaterial: NextPageWithLayout = () => {
                   bg: "cyan.500",
                 }}
                 leftIcon={<FiEdit3 />}
+                isLoading={loading}
               >
                 Add RawMaterialCode
               </Button>
@@ -204,7 +211,5 @@ const AddRawMaterial: NextPageWithLayout = () => {
     </Flex>
   );
 };
-AddRawMaterial.getLayout = (page) => (
-  <SupplierLayout>{page}</SupplierLayout>
-)
+AddRawMaterial.getLayout = (page) => <SupplierLayout>{page}</SupplierLayout>;
 export default AddRawMaterial;
