@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0xf30f5dc36b55c044935de0ddac8b9b2e254aae52a28d3f32f6924aa4b997976d",
+    "hash": "0xb0b677df39bb8dfb3354370a5dd8573c9a5a0188b0015e9fe70ae5a238bf42d4",
     "language": "ink! 4.0.1",
     "compiler": "rustc 1.69.0-nightly",
     "build_info": {
@@ -58,17 +58,6 @@
       },
       {
         "args": [
-          {
-            "docs": [],
-            "indexed": true,
-            "label": "manufacturer",
-            "type": {
-              "displayName": [
-                "AccountId"
-              ],
-              "type": 2
-            }
-          },
           {
             "docs": [],
             "indexed": true,
@@ -221,12 +210,12 @@
             }
           },
           {
-            "label": "raw_materials",
+            "label": "email",
             "type": {
               "displayName": [
-                "Vec"
+                "String"
               ],
-              "type": 1
+              "type": 0
             }
           }
         ],
@@ -257,8 +246,7 @@
         ],
         "docs": [
           " Join as Supplier when they accept the join link when they connect their wallet",
-          " address belongs to manufacturer",
-          ""
+          " address belongs to manufacturer"
         ],
         "label": "join_as_supplier",
         "mutates": true,
@@ -271,6 +259,50 @@
           "type": 10
         },
         "selector": "0xd74a114f"
+      },
+      {
+        "args": [
+          {
+            "label": "address",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 2
+            }
+          }
+        ],
+        "docs": [
+          " This fn gets the connected wallet and retrieves its data"
+        ],
+        "label": "get_supplier",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 20
+        },
+        "selector": "0x1a8755e8"
+      },
+      {
+        "args": [],
+        "docs": [
+          " Returns all suppliers"
+        ],
+        "label": "get_suppliers",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 24
+        },
+        "selector": "0x62b4549b"
       }
     ]
   },
@@ -450,7 +482,36 @@
                           "layout": {
                             "leaf": {
                               "key": "0x789a7e6c",
-                              "ty": 1
+                              "ty": 0
+                            }
+                          },
+                          "name": "email"
+                        },
+                        {
+                          "layout": {
+                            "enum": {
+                              "dispatchKey": "0x789a7e6c",
+                              "name": "Option",
+                              "variants": {
+                                "0": {
+                                  "fields": [],
+                                  "name": "None"
+                                },
+                                "1": {
+                                  "fields": [
+                                    {
+                                      "layout": {
+                                        "leaf": {
+                                          "key": "0x789a7e6c",
+                                          "ty": 1
+                                        }
+                                      },
+                                      "name": "0"
+                                    }
+                                  ],
+                                  "name": "Some"
+                                }
+                              }
                             }
                           },
                           "name": "raw_materials"
@@ -775,6 +836,14 @@
               {
                 "index": 3,
                 "name": "SupplierDoesNotExist"
+              },
+              {
+                "index": 4,
+                "name": "AccountIdAlreadyExistsAsSupplier"
+              },
+              {
+                "index": 5,
+                "name": "AccountIdAlreadyExistsAsManufacturer"
               }
             ]
           }
@@ -1044,6 +1113,226 @@
         "def": {
           "sequence": {
             "type": 15
+          }
+        }
+      }
+    },
+    {
+      "id": 20,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 21
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 9
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 21
+          },
+          {
+            "name": "E",
+            "type": 9
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 21,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 22
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 12
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 22
+          },
+          {
+            "name": "E",
+            "type": 12
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 22,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "name",
+                "type": 0,
+                "typeName": "String"
+              },
+              {
+                "name": "phone_no",
+                "type": 0,
+                "typeName": "String"
+              },
+              {
+                "name": "email",
+                "type": 0,
+                "typeName": "String"
+              },
+              {
+                "name": "raw_materials",
+                "type": 23,
+                "typeName": "Option<Vec<String>>"
+              },
+              {
+                "name": "address",
+                "type": 2,
+                "typeName": "AccountId"
+              },
+              {
+                "name": "timestamp",
+                "type": 5,
+                "typeName": "Timestamp"
+              },
+              {
+                "name": "role",
+                "type": 16,
+                "typeName": "Role"
+              }
+            ]
+          }
+        },
+        "path": [
+          "stakeholder_registry",
+          "stakeholder_registry",
+          "Supplier"
+        ]
+      }
+    },
+    {
+      "id": 23,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "None"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 1
+                  }
+                ],
+                "index": 1,
+                "name": "Some"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 1
+          }
+        ],
+        "path": [
+          "Option"
+        ]
+      }
+    },
+    {
+      "id": 24,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 25
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 9
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 25
+          },
+          {
+            "name": "E",
+            "type": 9
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 25,
+      "type": {
+        "def": {
+          "sequence": {
+            "type": 22
           }
         }
       }

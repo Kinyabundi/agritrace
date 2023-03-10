@@ -18,6 +18,10 @@ mod stakeholder_registry {
         SupplierAlreadyExists,
         ///supplier does not exists
         SupplierDoesNotExist,
+        /// error thrown whenever account id used already exists as Supplier
+        AccountIdAlreadyExistsAsSupplier,
+        /// error thrown whenever account id used already exists as Manufacturer
+        AccountIdAlreadyExistsAsManufacturer,
     }
 
     pub type Result<T> = core::result::Result<T, Error>;
@@ -43,8 +47,6 @@ mod stakeholder_registry {
 
     #[ink(event)]
     pub struct SupplierAdded {
-        #[ink(topic)]
-        manufacturer: AccountId,
         #[ink(topic)]
         supplier: AccountId,
     }
@@ -155,6 +157,10 @@ mod stakeholder_registry {
             if self.manufacturers.contains(&address) {
                 return Err(Error::ManufacturerAlreadyExists);
             } else {
+                // check if the account exists as supplier
+                if self.suppliers.contains(&address) {
+                    return Err(Error::AccountIdAlreadyExistsAsSupplier);
+                }
                 self.manufacturers_accounts.push(address);
                 self.manufacturers.insert(address, &manufacturer);
                 self.env().emit_event(ManufacturerAdded {
@@ -206,10 +212,13 @@ mod stakeholder_registry {
             if self.suppliers.contains(&address) {
                 return Err(Error::SupplierAlreadyExists);
             } else {
+                // check if the account exists as manufacturer
+                if self.manufacturers.contains(&address) {
+                    return Err(Error::ManufacturerAlreadyExists);
+                }
                 self.suppliers_accounts.push(address);
                 self.suppliers.insert(address, &supplier);
                 self.env().emit_event(SupplierAdded {
-                    manufacturer: address,
                     supplier: address,
                 });
             }
@@ -235,13 +244,32 @@ mod stakeholder_registry {
                 suppliers.push(caller);
                 self.manufacturers.insert(address, &manufacturer);
                 self.env().emit_event(SupplierAdded {
-                    manufacturer: address,
                     supplier: caller,
                 });
                 Ok(())
             } else {
                 Err(Error::ManufacturerDoesNotExist)
             }
+        }
+
+        /// This fn gets the connected wallet and retrieves its data
+        #[ink(message)]
+        pub fn get_supplier(&self, address: AccountId) -> Result<Supplier> {
+            if self.suppliers.contains(&address) {
+                Ok(self.suppliers.get(&address).unwrap())
+            } else {
+                Err(Error::SupplierDoesNotExist)
+            }
+        }
+
+        /// Returns all suppliers
+        #[ink(message)]
+        pub fn get_suppliers(&self) -> Vec<Supplier> {
+            let mut suppliers = Vec::new();
+            for address in self.suppliers_accounts.iter() {
+                suppliers.push(self.suppliers.get(address).unwrap());
+            }
+            suppliers
         }
     }
 }
