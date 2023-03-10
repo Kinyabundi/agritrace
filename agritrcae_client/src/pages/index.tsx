@@ -2,13 +2,14 @@ import { Box, Icon, useColorModeValue, chakra, Image } from "@chakra-ui/react";
 import { NextPageWithLayout } from "@/types/Layout";
 import HomeLayout from "@/layouts/HomeLayout";
 import useAuth from "@/hooks/store/useAuth";
+import { Role } from "@/types/Manufacturer";
 
 const Home: NextPageWithLayout = () => {
   const bg = useColorModeValue("white", "gray.800");
 
   const user = useAuth((state) => state.user);
 
-  console.log(user)
+  console.log(user);
 
   return (
     <Box pos="relative" overflow="hidden" bg={bg} mt={10}>
@@ -179,9 +180,19 @@ const Home: NextPageWithLayout = () => {
                       md: 4,
                     }}
                     cursor="pointer"
-                    href="/onboarding/manufacturer"
+                    href={
+                      user
+                        ? user?.role === Role.MANUFACTURER
+                          ? "/manufacturer/dashboard"
+                          : "/supplier/dashboard"
+                        : "/onboarding/manufacturer"
+                    }
                   >
-                    Join as a Manufacturer
+                    {user
+                      ? user?.role === Role.MANUFACTURER
+                        ? "Go to Dashboard"
+                        : "Go to Dashboard"
+                      : "Get Started"}
                   </chakra.a>
                 </Box>
               </Box>

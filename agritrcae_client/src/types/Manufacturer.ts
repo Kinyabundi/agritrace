@@ -7,4 +7,10 @@ export interface IManufacturer {
   location: string;
   timestamp?: number;
   suppliers?: string[];
+  role: Role;
+}
+
+export enum Role {
+  MANUFACTURER = 'Manufacturer',
+  SUPPLIER = 'Supplier',
 }

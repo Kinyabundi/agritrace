@@ -35,7 +35,8 @@ const useAuthStateListener = () => {
       const newResult = unwrapResultOrDefault(result, null);
 
       if (newResult) {
-        setUser(newResult);
+        // @ts-ignore
+        setUser(Object.values(newResult)[0]);
         setHasAccount(true);
         return;
       } else {
@@ -52,7 +53,8 @@ const useAuthStateListener = () => {
         const newSupplierResult = unwrapResultOrDefault(supplierResult, null);
 
         if (newSupplierResult) {
-          setUser(newSupplierResult);
+          // @ts-ignore
+          setUser(Object.values(newSupplierResult)[0]);
           setHasAccount(true);
           return;
         } else {

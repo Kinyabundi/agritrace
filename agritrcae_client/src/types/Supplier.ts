@@ -1,17 +1,13 @@
+import { Role } from "./Manufacturer";
+
 export interface ISupplier {
   name: string;
   phoneNo: string;
   email: string;
-  address?: string;
+  address: string;
   location: string;
-  invitelink: string;
-  invitecode?: string;
-  created: Date;
-  updated: Date;
-  manufacturer_address: string;
-  manufacturer_name: string;
-  id?: string;
-  status: SupplierStatus;
+  role: Role,
+  timestamp: number;
 }
 export enum SupplierStatus {
   Active = "Active",
