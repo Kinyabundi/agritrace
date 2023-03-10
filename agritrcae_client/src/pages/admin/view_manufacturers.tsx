@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { NextPageWithLayout } from "@/types/Layout";
-import SupplierLayout from "@/layouts/SupplierLayout";
+import AdminLayout from "@/layouts/AdminLayout";
 import Head from "next/head";
-import useRawMaterials from "@/hooks/useRawMaterials";
-import { IRawMaterial } from "@/types/Contracts";
-import { truncateHash } from "@/utils/truncateHash";
+import useManufacturer from "@/hooks/useManufacturer";
+import { IManufacturer } from "@/types/Manufacturer";
+import { IToastProps } from "@/types/Toast";
+import {
+  useInkathon,
+  useRegisteredContract,
+} from "@scio-labs/use-inkathon";
+import { ContractID } from "@/types/Contracts";
 import {
   useColorModeValue,
   Flex,
@@ -14,39 +19,65 @@ import {
   Button,
   Text,
   Divider,
+  useToast,
 } from "@chakra-ui/react";
+import { truncateHash } from "@/utils/truncateHash";
 
-const Sales: NextPageWithLayout = () => {
+const ViewManufacturers: NextPageWithLayout = () => {
+  const toast = useToast();
   const dataColor = useColorModeValue("white", "gray.800");
   const bg = useColorModeValue("white", "gray.800");
   const bg2 = useColorModeValue("gray.100", "gray.700");
-  const { getRawMaterials } = useRawMaterials();
-  const [rawMaterials, setRawMaterials] = useState<IRawMaterial[]>([]);
-  const fetchItems = async () => {
-    const items = await getRawMaterials();
-    if (items) {
-      const newItems = Object.values(items)[0];
-      // @ts-ignore
-      setRawMaterials(newItems);
-    }
+  const {getManufacturers} = useManufacturer();
+  const [manufacturers, setManufacturers] = useState<IManufacturer[]>([]);
+
+  const customToast = ({
+    title,
+    description,
+    status,
+    position,
+  }: IToastProps) => {
+    return toast({
+      title,
+      description,
+      status,
+      duration: 5000,
+      isClosable: true,
+      position: position || "top",
+    });
   };
+
+  
+ 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      console.log('This will run after 3 second!')
+    }, 3000);
     const abortController = new AbortController();
-    fetchItems();
+  fetchManufacturers();
+
     return () => {
       abortController.abort();
     };
   }, []);
 
-  console.log(rawMaterials);
+
+  const fetchManufacturers = async () => {
+    const manufacturers = await getManufacturers();
+    if (manufacturers) {
+      setManufacturers(manufacturers)
+    }
+  };
+ console.log(manufacturers)
+
 
   return (
     <>
       <Head>
-        <title>AgriTrace | Sales</title>
+        <title>AgriTrace | Manufacturers</title>
       </Head>
-      <Text px={50} fontSize={"2xl"} fontWeight={"semibold"}>
-        Sales
+      <Text px={50} fontSize={"2xl"}  fontWeight={"semibold"}>
+        Manufacturers
       </Text>
       <Flex
         w="full"
@@ -69,10 +100,10 @@ const Sales: NextPageWithLayout = () => {
           shadow="lg"
         >
           <SimpleGrid
-            spacingY={3}
+            spacingY={4}
             columns={{
               base: 1,
-              md: 7,
+              md: 6,
             }}
             w={{
               base: 120,
@@ -83,7 +114,7 @@ const Sales: NextPageWithLayout = () => {
             color={"gray.800"}
             py={{
               base: 1,
-              md: 7,
+              md: 6,
             }}
             px={{
               base: 2,
@@ -96,19 +127,16 @@ const Sales: NextPageWithLayout = () => {
               Name
             </chakra.span>
             <chakra.span color="blue.800" fontWeight="600">
-              EntityCode
+              Address
             </chakra.span>
             <chakra.span color="blue.800" fontWeight="600">
-              Quantity
+              CorporateNo
             </chakra.span>
             <chakra.span color="blue.800" fontWeight="600">
-              BatchNo
+              PhoneNos
             </chakra.span>
             <chakra.span color="blue.800" fontWeight="600">
-              Status
-            </chakra.span>
-            <chakra.span color="blue.800" fontWeight="600">
-              Buyer
+              Products
             </chakra.span>
             <chakra.span
               color="blue.800"
@@ -120,10 +148,10 @@ const Sales: NextPageWithLayout = () => {
               Actions
             </chakra.span>
           </SimpleGrid>
-          {rawMaterials.length === 0 ? (
-            <Text px={50}>No Sales Made Yet</Text>
+          {manufacturers.length === 0 ? (
+            <Text px={50}>No Manufacturer is listed Yet</Text>
           ) : (
-            rawMaterials?.map((item, pid) => (
+            manufacturers?.map((item, pid) => (
               <div key={pid}>
                 <Flex
                   direction={{
@@ -133,30 +161,33 @@ const Sales: NextPageWithLayout = () => {
                   bg={dataColor}
                 >
                   <SimpleGrid
-                    spacingY={3}
+                    spacingY={4}
                     columns={{
                       base: 1,
-                      md: 7,
+                      md: 6,
                     }}
                     w="full"
-                    py={2}
+                    py={5}
                     px={10}
                     fontWeight="400"
                   >
-                    <chakra.span>{item?.name}</chakra.span>
-                    <chakra.span>{item?.entityCode}</chakra.span>
-                    <chakra.span>{item?.quantity}</chakra.span>
-                    <chakra.span>{item?.batchNo}</chakra.span>
-                    <chakra.span></chakra.span>
-                    <chakra.span>{truncateHash(item?.buyer)}</chakra.span>
-
+                    <chakra.span >{item?.name}</chakra.span>
+                    <chakra.span>{truncateHash(item?.address)}</chakra.span>
+                    <chakra.span>{item?.corporateNo}</chakra.span>
+                    <chakra.span>{item?.phoneNos.join(", ")}</chakra.span>
+                    <chakra.span> {item?.products.join(", ")} </chakra.span>
                     <Flex
                       justify={{
                         md: "end",
                       }}
                     >
-                      <Button variant="solid" colorScheme="red" size="sm">
-                        Delete
+                      <Button
+                        variant="solid"
+                        colorScheme="red"
+                        size="sm"
+                        //  onClick={fetchManufacturers}
+                      >
+                        View Suppliers
                       </Button>
                     </Flex>
                   </SimpleGrid>
@@ -171,6 +202,6 @@ const Sales: NextPageWithLayout = () => {
   );
 };
 
-Sales.getLayout = (page) => <SupplierLayout>{page} </SupplierLayout>;
+ViewManufacturers.getLayout = (page) => <AdminLayout>{page} </AdminLayout>;
 
-export default Sales;
+export default ViewManufacturers;

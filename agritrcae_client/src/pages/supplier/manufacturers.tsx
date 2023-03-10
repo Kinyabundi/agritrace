@@ -3,9 +3,9 @@ import { NextPageWithLayout } from "@/types/Layout";
 import SupplierLayout from "@/layouts/SupplierLayout";
 import Head from "next/head";
 import useRawMaterials from "@/hooks/useRawMaterials";
-import useManufacturer from "@/hooks/useManufacturer";
+import getManufacturers from "@/hooks/useManufacturer";
 import { IRawMaterial } from "@/types/Contracts";
-import { IManufacturer } from "@/types/Manufacturer";
+import { IManufacturer } from "@types/Manufacturer";
 import { IToastProps } from "@/types/Toast";
 import {
   contractQuery,
@@ -27,18 +27,17 @@ import {
   useToast,
 } from "@chakra-ui/react";
 
-const ViewRawMaterials: NextPageWithLayout = () => {
+const Manufacturers: NextPageWithLayout = () => {
   const toast = useToast();
   const dataColor = useColorModeValue("white", "gray.800");
   const bg = useColorModeValue("white", "gray.800");
   const bg2 = useColorModeValue("gray.100", "gray.700");
   const { getRawMaterials } = useRawMaterials();
-  const {getManufacturers} = useManufacturer();
   const { activeSigner, api, activeAccount } = useInkathon();
   const [loading, setLoading] = useState<boolean>(false);
   const [rawMaterials, setRawMaterials] = useState<IRawMaterial[]>([]);
   const { contract } = useRegisteredContract(ContractID.Transactions);
-  const [manufacturers, setManufacturers] = useState<IManufacturer[]>([]);
+  const [manufacturer, setManufacturer] = useState<IManufacturer>([]);
 
   const customToast = ({
     title,
@@ -104,33 +103,28 @@ const ViewRawMaterials: NextPageWithLayout = () => {
     }
   };
 
-  const fetchItems = async () => {
-    const items = await getRawMaterials();
-    if (items) {
-      const newItems = Object.values(items)[0];
-      // @ts-ignore
-      setRawMaterials(newItems);
-    }
-  };
-  useEffect(() => {
-    const abortController = new AbortController();
-    fetchItems();
-  fetchManufacturers();
-
-    return () => {
-      abortController.abort();
-    };
-  }, []);
-
-
+  //   const fetchItems = async () => {
+  //     const items = await getRawMaterials();
+  //     if (items) {
+  //       const newItems = Object.values(items)[0];
+  //       // @ts-ignore
+  //       setRawMaterials(newItems);
+  //     }
+  //   };
   const fetchManufacturers = async () => {
     const manufacturers = await getManufacturers();
-    if (manufacturers) {
-      setManufacturers(manufacturers)
+    if (manufacturer) {
+      const newManufacturer = Object.values(manufacturers)[0];
+      setManufacturer(newManufacturer);
     }
   };
- console.log(rawMaterials)
-
+//   useEffect(() => {
+//     const abortController = new AbortController();
+//     fetchManufacturers();
+//     return () => {
+//       abortController.abort();
+//     };
+//   }, []);
 
   return (
     <>
@@ -138,7 +132,7 @@ const ViewRawMaterials: NextPageWithLayout = () => {
         <title>AgriTrace | Raw Materials</title>
       </Head>
       <Text px={50} fontSize={"2xl"} fontWeight={"semibold"}>
-        Raw Materials
+        Suppliers
       </Text>
       <Flex
         w="full"
@@ -209,10 +203,10 @@ const ViewRawMaterials: NextPageWithLayout = () => {
               Actions
             </chakra.span>
           </SimpleGrid>
-          {rawMaterials.length === 0 ? (
+          {manufacturer.length === 0 ? (
             <Text px={50}>No Raw Materials Added Yet</Text>
           ) : (
-            rawMaterials?.map((item, pid) => (
+            manufacturer?.map((item, pid) => (
               <div key={pid}>
                 <Flex
                   direction={{
@@ -233,9 +227,9 @@ const ViewRawMaterials: NextPageWithLayout = () => {
                     fontWeight="400"
                   >
                     <chakra.span>{item?.name}</chakra.span>
-                    <chakra.span>{item?.entityCode}</chakra.span>
-                    <chakra.span>{item?.quantity}</chakra.span>
-                    <chakra.span>{item?.batchNo}</chakra.span>
+                    <chakra.span>{item?.address}</chakra.span>
+                    <chakra.span>{item?.phonenos}</chakra.span>
+                    <chakra.span>{item?.location}</chakra.span>
                     <chakra.span></chakra.span>
                     <Flex
                       justify={{
@@ -263,6 +257,6 @@ const ViewRawMaterials: NextPageWithLayout = () => {
   );
 };
 
-ViewRawMaterials.getLayout = (page) => <SupplierLayout>{page} </SupplierLayout>;
+Manufacturers.getLayout = (page) => <SupplierLayout>{page} </SupplierLayout>;
 
-export default ViewRawMaterials;
+export default Manufacturers;

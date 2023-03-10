@@ -14,6 +14,7 @@ const useManufacturer = () => {
   const { contract: stakeholderContract } = useRegisteredContract(
     ContractID.StakeholderRegistry
   );
+ 
 
   const getManufacturerAcccount = async () => {
     if (stakeholderContract && api && activeAccount) {
@@ -29,25 +30,38 @@ const useManufacturer = () => {
     }
   };
 
-  const addProduct = async (product: IProduct) => {
-    if (contract) {
-      if (activeAccount && api) {
-        const result = await contractTx(
-          api,
-          activeAccount?.address,
-          contract,
-          "addProduct",
-          {},
-          Object.values(product),
-          ({ status }) => {
-            if (status?.isInBlock) {
-            }
-          }
-        );
-      }
+  // const addProduct = async (product: IProduct) => {
+  //   if (contract) {
+  //     if (activeAccount && api) {
+  //       const result = await contractTx(
+  //         api,
+  //         activeAccount?.address,
+  //         contract,
+  //         "addProduct",
+  //         {},
+  //         Object.values(product),
+  //         ({ status }) => {
+  //           if (status?.isInBlock) {
+  //           }
+  //         }
+  //       );
+  //     }
+  //   }
+  // };
+
+  const getManufacturers = useCallback(async () => {
+    if(stakeholderContract && api && activeAccount) {
+      const results = await contractQuery(
+        api,
+        activeAccount?.address,
+        stakeholderContract,
+        "getManufacturers",
+        {},
+      );
+      return unwrapResultOrError(results);
     }
-  };
-  return { addProduct, getManufacturerAcccount };
+  },[])
+  return { getManufacturerAcccount, getManufacturers };
 };
 
 export default useManufacturer;

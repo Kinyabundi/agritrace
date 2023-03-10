@@ -1,10 +1,12 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import {
   IconButton,
+  Avatar,
   Box,
   CloseButton,
   Flex,
   HStack,
+  VStack,
   Icon,
   useColorModeValue,
   Link,
@@ -14,18 +16,32 @@ import {
   useDisclosure,
   BoxProps,
   FlexProps,
+  Menu,
+  MenuButton,
+  MenuDivider,
+  MenuItem,
+  MenuList,
 } from "@chakra-ui/react";
 import {
+  FiHome,
+  FiTrendingUp,
+  FiCompass,
+  FiStar,
+  FiSettings,
   FiMenu,
   FiBell,
+  FiChevronDown,
 } from "react-icons/fi";
 import { RiSwapFill } from "react-icons/ri";
 import { GiSwapBag } from "react-icons/gi";
 import { BsCreditCard } from "react-icons/bs";
 import { FaPeopleCarry } from "react-icons/fa";
-import { MdAccountBalanceWallet } from "react-icons/md";
+import { MdAccountBalanceWallet, MdPeople } from "react-icons/md";
 import { IconType } from "react-icons";
 import ConnectButton from "@/components/ConnectButton";
+import useManufacturer from "@/hooks/useManufacturer";
+import { AiOutlineMessage } from "react-icons/ai";
+import { IManufacturer } from "@/types/Manufacturer";
 
 interface LinkItemProps {
   name: string;
@@ -34,18 +50,14 @@ interface LinkItemProps {
 }
 const LinkItems: Array<LinkItemProps> = [
   {
-    name: "View RawMaterials",
+    name: "Dashboard",
     icon: RiSwapFill,
-    href: "/supplier/view-rawmaterials",
+    href: `/admin/dashboard`,
   },
-  {
-    name: "AddRawMaterials",
-    icon: GiSwapBag,
-    href: "/supplier/add-rawmaterial",
-  },
-  { name: "Sale", icon: BsCreditCard, href: "/supplier/manufacturers" },
-  { name: "Faucet", icon: FaPeopleCarry, href: "#" },
-  { name: "Account", icon: MdAccountBalanceWallet, href: "#" },
+  { name: "Manufacturers", icon: FaPeopleCarry, href: "/admin/view_manufacturers" },
+  { name: "Supplier", icon: MdAccountBalanceWallet, href: "#" },
+  { name: "Products", icon: MdAccountBalanceWallet, href: "#" },
+
 ];
 
 export default function ManufacturerLayout({
@@ -54,6 +66,27 @@ export default function ManufacturerLayout({
   children: ReactNode;
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { getManufacturerAcccount } = useManufacturer();
+  const [manufacturer, setManufacturer] = useState<IManufacturer>();
+
+  const fetchManufacturer = async () => {
+    const item = await getManufacturerAcccount();
+    if (item) {
+      // @ts-ignore
+      setManufacturer(Object.values(item)[0]);
+    }
+  };
+
+  useEffect(() => {
+    // abort controller
+    const abortController = new AbortController();
+    fetchManufacturer();
+
+    return () => {
+      abortController.abort();
+    };
+  }, []);
+
   return (
     <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
       <SidebarContent
@@ -74,7 +107,8 @@ export default function ManufacturerLayout({
         </DrawerContent>
       </Drawer>
       {/* mobilenav */}
-      <MobileNav onOpen={onOpen} />
+      <MobileNav onOpen={onOpen} manufacturerName={manufacturer} />
+
       <Box ml={{ base: 0, md: 60 }} p="4">
         {children}
       </Box>
@@ -120,6 +154,7 @@ interface NavItemProps extends FlexProps {
 }
 const NavItem = ({ icon, href, children, ...rest }: NavItemProps) => {
   return (
+    //@ts-ignore
     <Link
       href={href}
       style={{ textDecoration: "none" }}
@@ -156,11 +191,11 @@ const NavItem = ({ icon, href, children, ...rest }: NavItemProps) => {
 
 interface MobileProps extends FlexProps {
   onOpen: () => void;
+  manufacturerName: any;
 }
-const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
+const MobileNav = ({ onOpen, manufacturerName, ...rest }: MobileProps) => {
   return (
     <Flex
-    //@ts-ignore
       ml={{ base: 0, md: 60 }}
       px={{ base: 4, md: 4 }}
       height="20"
@@ -196,6 +231,48 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
           icon={<FiBell />}
         />
         <ConnectButton />
+        <Flex alignItems={"center"}>
+          <Menu>
+            <MenuButton
+              py={2}
+              transition="all 0.3s"
+              _focus={{ boxShadow: "none" }}
+            >
+              <HStack>
+                <Avatar
+                  size={"sm"}
+                  src={
+                    "https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"
+                  }
+                />
+                <VStack
+                  display={{ base: "none", md: "flex" }}
+                  alignItems="flex-start"
+                  spacing="1px"
+                  ml="2"
+                >
+                  <Text fontSize="sm">{manufacturerName?.name}</Text>
+                  <Text fontSize="xs" color="gray.600">
+                    Admin
+                  </Text>
+                </VStack>
+                <Box display={{ base: "none", md: "flex" }}>
+                  <FiChevronDown />
+                </Box>
+              </HStack>
+            </MenuButton>
+            <MenuList
+              bg={useColorModeValue("white", "gray.900")}
+              borderColor={useColorModeValue("gray.200", "gray.700")}
+            >
+              <MenuItem>Profile</MenuItem>
+              <MenuItem>Settings</MenuItem>
+              <MenuItem>Billing</MenuItem>
+              <MenuDivider />
+              <MenuItem>Sign out</MenuItem>
+            </MenuList>
+          </Menu>
+        </Flex>
       </HStack>
     </Flex>
   );

@@ -1,6 +1,7 @@
-import { ContractID } from "@/types/Contracts";
+import { ContractID, IRawMaterial } from "@/types/Contracts";
 import {
   contractQuery,
+  contractTx,
   unwrapResultOrError,
   useInkathon,
   useRegisteredContract,
@@ -8,9 +9,12 @@ import {
 import { useCallback } from "react";
 
 const useRawMaterials = () => {
-  const { api, activeAccount } = useInkathon();
+  const { api, activeAccount, activeSigner } = useInkathon();
   const { contract: entityContract } = useRegisteredContract(
     ContractID.EntityRegistry
+  );
+  const { contract } = useRegisteredContract(
+    ContractID.Transactions
   );
 
   const getRawMaterials = useCallback(async () => {
@@ -21,11 +25,12 @@ const useRawMaterials = () => {
         entityContract,
         "getEntities",
         {},
-        [activeAccount.address]
+        [activeAccount?.address]
       );
       return unwrapResultOrError(results);
     }
   }, [activeAccount]);
+
   return { getRawMaterials };
 };
 
