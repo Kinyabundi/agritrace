@@ -1,9 +1,15 @@
 import { Box, Icon, useColorModeValue, chakra, Image } from "@chakra-ui/react";
 import { NextPageWithLayout } from "@/types/Layout";
 import HomeLayout from "@/layouts/HomeLayout";
+import useAuth from "@/hooks/store/useAuth";
 
 const Home: NextPageWithLayout = () => {
   const bg = useColorModeValue("white", "gray.800");
+
+  const user = useAuth((state) => state.user);
+
+  console.log(user)
+
   return (
     <Box pos="relative" overflow="hidden" bg={bg} mt={10}>
       <Box maxW="7xl" mx="auto">

@@ -10,7 +10,7 @@ export interface IAuthStore {
   setUser: (user: IManufacturer | ISupplier | null) => void;
 }
 
-export const useAuth = create(
+ const useAuth = create(
   persist<IAuthStore>(
     (set) => ({
       user: null,
