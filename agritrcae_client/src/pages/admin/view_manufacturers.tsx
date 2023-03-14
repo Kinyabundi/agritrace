@@ -5,10 +5,7 @@ import Head from "next/head";
 import useManufacturer from "@/hooks/useManufacturer";
 import { IManufacturer } from "@/types/Manufacturer";
 import { IToastProps } from "@/types/Toast";
-import {
-  useInkathon,
-  useRegisteredContract,
-} from "@scio-labs/use-inkathon";
+import { useInkathon, useRegisteredContract } from "@scio-labs/use-inkathon";
 import { ContractID } from "@/types/Contracts";
 import {
   useColorModeValue,
@@ -25,10 +22,11 @@ import { truncateHash } from "@/utils/truncateHash";
 
 const ViewManufacturers: NextPageWithLayout = () => {
   const toast = useToast();
+  const { activeAccount } = useInkathon();
   const dataColor = useColorModeValue("white", "gray.800");
   const bg = useColorModeValue("white", "gray.800");
   const bg2 = useColorModeValue("gray.100", "gray.700");
-  const {getManufacturers} = useManufacturer();
+  const { getManufacturers } = useManufacturer();
   const [manufacturers, setManufacturers] = useState<IManufacturer[]>([]);
 
   const customToast = ({
@@ -47,36 +45,24 @@ const ViewManufacturers: NextPageWithLayout = () => {
     });
   };
 
-  
- 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      console.log('This will run after 3 second!')
-    }, 3000);
-    const abortController = new AbortController();
-  fetchManufacturers();
-
-    return () => {
-      abortController.abort();
-    };
-  }, []);
-
+    fetchManufacturers();
+  }, [activeAccount]);
 
   const fetchManufacturers = async () => {
     const manufacturers = await getManufacturers();
     if (manufacturers) {
-      setManufacturers(manufacturers)
+      setManufacturers(manufacturers);
     }
   };
- console.log(manufacturers)
-
+  console.log(manufacturers);
 
   return (
     <>
       <Head>
         <title>AgriTrace | Manufacturers</title>
       </Head>
-      <Text px={50} fontSize={"2xl"}  fontWeight={"semibold"}>
+      <Text px={50} fontSize={"2xl"} fontWeight={"semibold"}>
         Manufacturers
       </Text>
       <Flex
@@ -171,7 +157,7 @@ const ViewManufacturers: NextPageWithLayout = () => {
                     px={10}
                     fontWeight="400"
                   >
-                    <chakra.span >{item?.name}</chakra.span>
+                    <chakra.span>{item?.name}</chakra.span>
                     <chakra.span>{truncateHash(item?.address)}</chakra.span>
                     <chakra.span>{item?.corporateNo}</chakra.span>
                     <chakra.span>{item?.phoneNos.join(", ")}</chakra.span>

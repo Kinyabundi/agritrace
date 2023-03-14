@@ -25,7 +25,7 @@ const useRawMaterials = () => {
         entityContract,
         "getEntities",
         {},
-        [activeAccount?.address]
+       
       );
       return unwrapResultOrError(results);
     }

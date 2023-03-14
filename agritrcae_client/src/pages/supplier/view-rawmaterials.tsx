@@ -113,14 +113,11 @@ const ViewRawMaterials: NextPageWithLayout = () => {
     }
   };
   useEffect(() => {
-    const abortController = new AbortController();
     fetchItems();
-  fetchManufacturers();
+    fetchManufacturers();
+  }, [activeAccount]);
 
-    return () => {
-      abortController.abort();
-    };
-  }, []);
+
 
 
   const fetchManufacturers = async () => {
