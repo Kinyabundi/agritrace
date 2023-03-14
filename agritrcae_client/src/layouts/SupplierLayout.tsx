@@ -15,22 +15,22 @@ import {
   BoxProps,
   FlexProps,
 } from "@chakra-ui/react";
-import {
-  FiMenu,
-  FiBell,
-} from "react-icons/fi";
-import { RiSwapFill } from "react-icons/ri";
+import { FiMenu, FiBell } from "react-icons/fi";
+import { RiSwapFill, RiLogoutCircleLine } from "react-icons/ri";
 import { GiSwapBag } from "react-icons/gi";
 import { BsCreditCard } from "react-icons/bs";
 import { FaPeopleCarry } from "react-icons/fa";
 import { MdAccountBalanceWallet } from "react-icons/md";
 import { IconType } from "react-icons";
 import ConnectButton from "@/components/ConnectButton";
+import useAuth from "@/hooks/store/useAuth";
+import Router from "next/router";
 
 interface LinkItemProps {
   name: string;
   icon: IconType;
-  href: string;
+  href?: string;
+  onClick?: () => void;
 }
 const LinkItems: Array<LinkItemProps> = [
   {
@@ -46,6 +46,14 @@ const LinkItems: Array<LinkItemProps> = [
   { name: "Sale", icon: BsCreditCard, href: "/supplier/manufacturers" },
   { name: "Faucet", icon: FaPeopleCarry, href: "#" },
   { name: "Account", icon: MdAccountBalanceWallet, href: "#" },
+  {
+    name: "Logout",
+    icon: RiLogoutCircleLine,
+    onClick: () => {
+      useAuth.getState().logout();
+      Router.push("/");
+    },
+  },
 ];
 
 export default function ManufacturerLayout({
@@ -105,7 +113,12 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon} href={link?.href}>
+        <NavItem
+          key={link.name}
+          icon={link.icon}
+          href={link?.href}
+          onClick={link?.onClick ? link?.onClick : null}
+        >
           {link.name}
         </NavItem>
       ))}
@@ -160,7 +173,7 @@ interface MobileProps extends FlexProps {
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   return (
     <Flex
-    //@ts-ignore
+      //@ts-ignore
       ml={{ base: 0, md: 60 }}
       px={{ base: 4, md: 4 }}
       height="20"

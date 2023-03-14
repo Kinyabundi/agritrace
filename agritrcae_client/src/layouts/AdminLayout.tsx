@@ -55,12 +55,12 @@ const LinkItems: Array<LinkItemProps> = [
     href: `/admin/dashboard`,
   },
   { name: "Manufacturers", icon: FaPeopleCarry, href: "/admin/view_manufacturers" },
-  { name: "Supplier", icon: MdAccountBalanceWallet, href: "#" },
+  { name: "Suppliers", icon: MdAccountBalanceWallet, href: "/admin/view-suppliers" },
   { name: "Products", icon: MdAccountBalanceWallet, href: "#" },
 
 ];
 
-export default function ManufacturerLayout({
+export default function AdminLayout({
   children,
 }: {
   children: ReactNode;

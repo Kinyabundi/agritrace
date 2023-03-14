@@ -20,10 +20,22 @@ import { IToastProps } from "@/types/Toast";
 import { NextPageWithLayout } from "@/types/Layout";
 import SupplierLayout from "@/layouts/SupplierLayout";
 import { ContractID } from "@/types/Contracts";
+import useAuth from "@/hooks/store/useAuth";
+import { shallow } from "zustand/shallow";
+import { Role } from "@/types/Manufacturer";
 
 const AddRawMaterial: NextPageWithLayout = () => {
   const { contract } = useRegisteredContract(ContractID.EntityRegistry);
   const { activeSigner, api, activeAccount } = useInkathon();
+
+  const { user, whichAccount } = useAuth(
+    (state) => ({
+      user: state.user,
+      whichAccount: state.whichAccount,
+    }),
+    shallow
+  );
+
   const [name, setName] = useState<string>("");
   const [quantity, setQuantity] = useState<number>(0);
   const [quantityUnits, setQuantityUnits] = useState<string>("");
@@ -99,6 +111,17 @@ const AddRawMaterial: NextPageWithLayout = () => {
         status: "error",
       });
     }
+
+    // Now check if the connect wallet is for supplier
+    if (user) {
+      if (whichAccount() !== Role.SUPPLIER) {
+        return customToast({
+          title: "Connect a supplier wallet",
+          description: "Please connect a supplier wallet",
+          status: "error",
+        });
+      }
+    }
     try {
       setLoading(true);
       api.setSigner(activeSigner);
@@ -139,6 +162,8 @@ const AddRawMaterial: NextPageWithLayout = () => {
       setLoading(false);
     }
   };
+
+  console.log(user)
 
   return (
     <Flex

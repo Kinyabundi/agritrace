@@ -60,7 +60,7 @@ const useManufacturer = () => {
       );
       return unwrapResultOrError(results);
     }
-  },[])
+  },[activeAccount])
   return { getManufacturerAcccount, getManufacturers };
 };
 

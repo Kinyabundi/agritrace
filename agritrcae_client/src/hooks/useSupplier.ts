@@ -14,10 +14,19 @@ import {
 import { IInviteBody, ISupplier, SupplierStatus } from "@/types/Supplier";
 import axios from "axios";
 import { IApiResponse } from "@/types/Api";
+import {
+  contractQuery,
+  unwrapResultOrDefault,
+  useInkathon,
+  useRegisteredContract,
+} from "@scio-labs/use-inkathon";
+import { ContractID } from "@/types/Contracts";
 
 const BASE_URL = "/api";
 
 const useSupplier = () => {
+  const { api, activeAccount } = useInkathon();
+  const { contract } = useRegisteredContract(ContractID.StakeholderRegistry);
   const saveSupplier = useCallback(async (supplierInfo: ISupplier) => {
     const docRef = await addDoc(supplierCollections, supplierInfo);
     console.log("Document written with ID: ", docRef.id);
@@ -104,7 +113,21 @@ const useSupplier = () => {
     return allsuppliers;
   };
 
-  return { saveSupplier, getSuppliers, joinViaInviteCode };
+  const getAllSuppliers = useCallback(async () => {
+    if (contract && api && activeAccount) {
+      const results = await contractQuery(
+        api,
+        activeAccount?.address,
+        contract,
+        "getSuppliers",
+        {},
+        []
+      );
+      return unwrapResultOrDefault(results, [] as ISupplier[]);
+    }
+  }, [activeAccount]);
+
+  return { saveSupplier, getSuppliers, joinViaInviteCode, getAllSuppliers };
 };
 
 export default useSupplier;

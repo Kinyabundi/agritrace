@@ -34,7 +34,9 @@ const useAuthStateListener = () => {
 
       const newResult = unwrapResultOrDefault(result, null);
 
-      if (newResult) {
+      console.log(Object.entries(newResult), "37");
+      // @ts-ignore
+      if (Object.entries(newResult)[0] === "ok") {
         // @ts-ignore
         setUser(Object.values(newResult)[0]);
         setHasAccount(true);
