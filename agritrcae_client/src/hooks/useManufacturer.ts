@@ -30,24 +30,18 @@ const useManufacturer = () => {
     }
   };
 
-  // const addProduct = async (product: IProduct) => {
-  //   if (contract) {
-  //     if (activeAccount && api) {
-  //       const result = await contractTx(
-  //         api,
-  //         activeAccount?.address,
-  //         contract,
-  //         "addProduct",
-  //         {},
-  //         Object.values(product),
-  //         ({ status }) => {
-  //           if (status?.isInBlock) {
-  //           }
-  //         }
-  //       );
-  //     }
-  //   }
-  // };
+//  const getProducts = useCallback(async () => {
+//   if (contract && api && activeAccount) {
+//     const results = await contractQuery(
+//       api,
+//       activeAccount?.address,
+//       contract,
+//       "getProducts",
+//       {},
+//     );
+//     return unwrapResultOrError(results);
+//   }
+//  }, [activeAccount])
 
   const getManufacturers = useCallback(async () => {
     if(stakeholderContract && api && activeAccount) {

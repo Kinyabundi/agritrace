@@ -19,11 +19,11 @@ import {
   useInkathon,
   useRegisteredContract,
 } from "@scio-labs/use-inkathon";
-import { ContractID, IProduct } from "@/types/Contracts";
+import { ContractID} from "@/types/Contracts";
 
 const AddProduct: NextPageWithLayout = () => {
-  const { api, activeAccount } = useInkathon();
-  const { contract, address } = useRegisteredContract(
+  const { activeSigner, api, activeAccount } = useInkathon();
+  const { contract } = useRegisteredContract(
     ContractID.EntityRegistry
   );
   const toast = useToast();
@@ -31,6 +31,8 @@ const AddProduct: NextPageWithLayout = () => {
   const [quantity, setQuantity] = useState<number>(0);
   const [quantityUnits, setQuantityUnits] = useState<string>("");
   const [productCode, setProductCode] = useState<string>("");
+  const [batchNo, setBatchNo] = useState<number>(0);
+ const [rawMaterials, setRawMaterials] = useState<string>("");
   const [statusMsg, setStatusMsg] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -87,59 +89,51 @@ const AddProduct: NextPageWithLayout = () => {
       return;
     }
 
-    const productInfo: IProduct = {
-      name,
-      quantity,
-      quantityUnits,
-      productCode,
-      batchNo: 8829839933,
-      raw_materials: [6727278283, 67252456262],
-    };
+    if (!activeAccount || !contract || !activeSigner || !api) {
+      return customToast({
+        title: "Wallet not connected",
+        description: "Please connect your wallet",
+        status: "error",
+      });
+    }
+    try {
+      setLoading(true);
+      api.setSigner(activeSigner);
 
-    if (contract) {
-      if (api) {
-        if (!activeAccount) {
-          customToast({
-            title: "No active account",
-            description: "Please connect your wallet to continue",
-            status: "error",
-          });
-          return;
+      await contractTx(
+        api,
+        activeAccount.address,
+        contract,
+        "addEntity",
+        undefined,
+        [
+          name,
+          productCode,
+          quantity,
+          quantityUnits,
+          batchNo,
+          rawMaterials,
+        ],
+        (sth) => {
+          if (sth?.status.isInBlock) {
+            customToast({
+              title: "Product added",
+              description: "product added successfully",
+              status: "success",
+            });
+            setLoading(false);
+          }
         }
-
-        setLoading(true);
-
-        try {
-          const result = await contractTx(
-            api,
-            activeAccount?.address,
-            contract,
-            "addProduct",
-            {},
-            Object.values(productInfo),
-            ({ status }) => {
-              if (status?.isInBlock) {
-                customToast({
-                  title: "Product added successfully",
-                  description: "Product added successfully",
-                  status: "success",
-                });
-                setLoading(false);
-              }
-            }
-          );
-          console.log(result);
-        } catch (err) {
-          console.log(err);
-          customToast({
-            title: "Error adding product",
-            description: "Error adding product",
-            status: "error",
-          });
-        } finally {
-          setLoading(false);
-        }
-      }
+      );
+    } catch (err) {
+      console.log(err);
+      customToast({
+        title: "Error",
+        description: "Something went wrong",
+        status: "error",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -195,6 +189,7 @@ const AddProduct: NextPageWithLayout = () => {
             <Stack spacing={10} pt={2}>
               <Button
                 loadingText="Submitting"
+                onClick={handleSubmit}
                 size="lg"
                 bg={"cyan.400"}
                 color={"white"}

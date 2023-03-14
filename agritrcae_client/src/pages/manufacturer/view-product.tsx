@@ -1,21 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { NextPageWithLayout } from "@/types/Layout";
-import SupplierLayout from "@/layouts/SupplierLayout";
 import Head from "next/head";
-import Manufacturer from "@/components/SaleModal";
-import useRawMaterials from "@/hooks/useRawMaterials";
 import useManufacturer from "@/hooks/useManufacturer";
-import { IRawMaterial } from "@/types/Contracts";
-import { IManufacturer } from "@/types/Manufacturer";
 import { IToastProps } from "@/types/Toast";
 import {
-  contractQuery,
-  contractTx,
-  unwrapResultOrError,
   useInkathon,
   useRegisteredContract,
 } from "@scio-labs/use-inkathon";
-import { ContractID } from "@/types/Contracts";
+import { ContractID, IProduct } from "@/types/Contracts";
+import ManufacturerLayout from "@/layouts/ManufacturerLayout";
+
 import {
   useColorModeValue,
   Flex,
@@ -27,21 +21,15 @@ import {
   Divider,
   useToast,
 } from "@chakra-ui/react";
-import SaleModal from "@/components/SaleModal";
 
-const ViewRawMaterials: NextPageWithLayout = () => {
+const ViewProducts: NextPageWithLayout = () => {
   const toast = useToast();
   const dataColor = useColorModeValue("white", "gray.800");
   const bg = useColorModeValue("white", "gray.800");
   const bg2 = useColorModeValue("gray.100", "gray.700");
-  const { getRawMaterials } = useRawMaterials();
-  const { getManufacturers } = useManufacturer();
-  const { activeSigner, api, activeAccount } = useInkathon();
-  const [loading, setLoading] = useState<boolean>(false);
-  const [rawMaterials, setRawMaterials] = useState<IRawMaterial[]>([]);
+  const { activeAccount } = useInkathon();
+  const [products, setProducts] = useState<IProduct[]>([]);
   const { contract } = useRegisteredContract(ContractID.Transactions);
-  const [manufacturers, setManufacturers] = useState<IManufacturer[]>([]);
-  const [showModal, setShowModal] = useState<boolean>(false)
 
   const customToast = ({
     title,
@@ -59,81 +47,27 @@ const ViewRawMaterials: NextPageWithLayout = () => {
     });
   };
 
-  const clickInitiateSale = async (
-    entityCode: string,
-    quantity: number,
-    quantityUnits: string,
-    batchNo: string,
-    buyer: string
-  ) => {
-    if (!activeAccount || !contract || !activeSigner || !api) {
-      return customToast({
-        title: "Wallet not connected",
-        description: "Please connect your wallet",
-        status: "error",
-      });
-    }
-    try {
-      setLoading(true);
-      api.setSigner(activeSigner);
-
-      await contractTx(
-        api,
-        activeAccount.address,
-        contract,
-        "initiateSale",
-        undefined,
-        [entityCode, quantity, quantityUnits, batchNo, buyer],
-        (sth) => {
-          if (sth?.status.isInBlock) {
-            customToast({
-              title: "Sale intialized",
-              description: "Sale intialized successfully",
-              status: "success",
-            });
-            setLoading(false);
-          }
-        }
-      );
-    } catch (err) {
-      console.log(err);
-      customToast({
-        title: "Error",
-        description: "Something went wrong",
-        status: "error",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchItems = async () => {
-    const items = await getRawMaterials();
-    if (items) {
-      setRawMaterials(items);
-    }
-  };
   useEffect(() => {
     fetchItems();
-    fetchManufacturers();
   }, [activeAccount]);
 
-  const fetchManufacturers = async () => {
-    const manufacturers = await getManufacturers();
-    if (manufacturers) {
-      setManufacturers(manufacturers);
+  const fetchItems = async () => {
+    const items = await getProducts();
+    if (items) {
+      setProducts(items);
     }
   };
-  console.log(rawMaterials);
+ 
+
+console.log(products)
 
   return (
     <>
       <Head>
-        <title>AgriTrace | Raw Materials</title>
+        <title>AgriTrace | Products </title>
       </Head>
-      <SaleModal open={showModal} setOpen={setShowModal} />
       <Text px={50} fontSize={"2xl"} fontWeight={"semibold"}>
-        Raw Materials
+        Products
       </Text>
       <Flex
         w="full"
@@ -145,6 +79,7 @@ const ViewRawMaterials: NextPageWithLayout = () => {
         alignItems="center"
         justifyContent="center"
       >
+        
         <Stack
           direction={{
             base: "column",
@@ -159,7 +94,7 @@ const ViewRawMaterials: NextPageWithLayout = () => {
             spacingY={3}
             columns={{
               base: 1,
-              md: 6,
+              md: 3,
             }}
             w={{
               base: 120,
@@ -170,7 +105,7 @@ const ViewRawMaterials: NextPageWithLayout = () => {
             color={"gray.800"}
             py={{
               base: 1,
-              md: 6,
+              md: 3,
             }}
             px={{
               base: 2,
@@ -183,18 +118,18 @@ const ViewRawMaterials: NextPageWithLayout = () => {
               Name
             </chakra.span>
             <chakra.span color="blue.800" fontWeight="600">
-              EntityCode
+              ProductCode
             </chakra.span>
             <chakra.span color="blue.800" fontWeight="600">
               Quantity
             </chakra.span>
+            {/* <chakra.span color="blue.800" fontWeight="600">
+              rawMaterials
+            </chakra.span> */}
             <chakra.span color="blue.800" fontWeight="600">
-              BatchNo
+              
             </chakra.span>
-            <chakra.span color="blue.800" fontWeight="600">
-              Status
-            </chakra.span>
-            <chakra.span
+            {/* <chakra.span
               color="blue.800"
               fontWeight="600"
               textAlign={{
@@ -202,13 +137,13 @@ const ViewRawMaterials: NextPageWithLayout = () => {
               }}
             >
               Actions
-            </chakra.span>
+            </chakra.span> */}
           </SimpleGrid>
           <>
-            {rawMaterials.length === 0 ? (
-              <Text px={50}>No Raw Materials Added Yet</Text>
+            {products.length === 0 ? (
+              <Text px={50}>No Products Added Yet</Text>
             ) : (
-              rawMaterials?.map((item, pid) => (
+              products?.map((item, pid) => (
                 <div key={pid}>
                   <Flex
                     direction={{
@@ -221,7 +156,7 @@ const ViewRawMaterials: NextPageWithLayout = () => {
                       spacingY={3}
                       columns={{
                         base: 1,
-                        md: 6,
+                        md: 3,
                       }}
                       w="full"
                       py={2}
@@ -229,10 +164,10 @@ const ViewRawMaterials: NextPageWithLayout = () => {
                       fontWeight="400"
                     >
                       <chakra.span>{item?.name}</chakra.span>
-                      <chakra.span>{item?.entityCode}</chakra.span>
+                      <chakra.span>{item?.productCode}</chakra.span>
                       <chakra.span>{item?.quantity}</chakra.span>
-                      <chakra.span>{item?.batchNo}</chakra.span>
-                      <chakra.span></chakra.span>
+                      {/* <chakra.span>{item?.rawMaterials}</chakra.span>
+                      <chakra.span></chakra.span> */}
                       <Flex
                         justify={{
                           md: "end",
@@ -242,7 +177,7 @@ const ViewRawMaterials: NextPageWithLayout = () => {
                           variant="solid"
                           colorScheme="red"
                           size="sm"
-                           onClick={() => setShowModal(true)}
+                          //  onClick={fetchManufacturers}
                         >
                           sell
                         </Button>
@@ -260,6 +195,6 @@ const ViewRawMaterials: NextPageWithLayout = () => {
   );
 };
 
-ViewRawMaterials.getLayout = (page) => <SupplierLayout>{page} </SupplierLayout>;
+ViewProducts.getLayout = (page) => <ManufacturerLayout>{page} </ManufacturerLayout>;
 
-export default ViewRawMaterials;
+export default ViewProducts;
