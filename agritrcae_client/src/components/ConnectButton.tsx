@@ -138,7 +138,7 @@ const ConnectButton: FC<ConnectButtonProps> = () => {
               <MenuItem
                 key={encodedAddress}
                 isDisabled={acc.address === activeAccount.address}
-                onClick={() => setActiveAccount?.(acc)}
+                onClick={() => setActiveAccount(acc)}
               >
                 <CheckboxIcon />
                 <VStack align={"start"} spacing={0}>

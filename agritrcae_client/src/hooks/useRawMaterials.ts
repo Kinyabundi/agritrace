@@ -13,9 +13,7 @@ const useRawMaterials = () => {
   const { contract: entityContract } = useRegisteredContract(
     ContractID.EntityRegistry
   );
-  const { contract } = useRegisteredContract(
-    ContractID.Transactions
-  );
+  const { contract } = useRegisteredContract(ContractID.Transactions);
 
   const getRawMaterials = useCallback(async () => {
     if (entityContract && api && activeAccount) {
@@ -23,9 +21,9 @@ const useRawMaterials = () => {
         api,
         activeAccount?.address,
         entityContract,
-        "getEntities",
+        "getEntitiesByAddedBy",
         {},
-       
+        [activeAccount?.address]
       );
       return unwrapResultOrError(results);
     }

@@ -33,7 +33,7 @@ const ViewRawMaterials: NextPageWithLayout = () => {
   const bg = useColorModeValue("white", "gray.800");
   const bg2 = useColorModeValue("gray.100", "gray.700");
   const { getRawMaterials } = useRawMaterials();
-  const {getManufacturers} = useManufacturer();
+  const { getManufacturers } = useManufacturer();
   const { activeSigner, api, activeAccount } = useInkathon();
   const [loading, setLoading] = useState<boolean>(false);
   const [rawMaterials, setRawMaterials] = useState<IRawMaterial[]>([]);
@@ -107,9 +107,7 @@ const ViewRawMaterials: NextPageWithLayout = () => {
   const fetchItems = async () => {
     const items = await getRawMaterials();
     if (items) {
-      const newItems = Object.values(items)[0];
-      // @ts-ignore
-      setRawMaterials(newItems);
+      setRawMaterials(items);
     }
   };
   useEffect(() => {
@@ -117,17 +115,13 @@ const ViewRawMaterials: NextPageWithLayout = () => {
     fetchManufacturers();
   }, [activeAccount]);
 
-
-
-
   const fetchManufacturers = async () => {
     const manufacturers = await getManufacturers();
     if (manufacturers) {
-      setManufacturers(manufacturers)
+      setManufacturers(manufacturers);
     }
   };
- console.log(rawMaterials)
-
+  console.log(rawMaterials);
 
   return (
     <>
@@ -206,54 +200,56 @@ const ViewRawMaterials: NextPageWithLayout = () => {
               Actions
             </chakra.span>
           </SimpleGrid>
-          {rawMaterials.length === 0 ? (
-            <Text px={50}>No Raw Materials Added Yet</Text>
-          ) : (
-            rawMaterials?.map((item, pid) => (
-              <div key={pid}>
-                <Flex
-                  direction={{
-                    base: "row",
-                    md: "column",
-                  }}
-                  bg={dataColor}
-                >
-                  <SimpleGrid
-                    spacingY={3}
-                    columns={{
-                      base: 1,
-                      md: 6,
+          <>
+            {rawMaterials.length === 0 ? (
+              <Text px={50}>No Raw Materials Added Yet</Text>
+            ) : (
+              rawMaterials?.map((item, pid) => (
+                <div key={pid}>
+                  <Flex
+                    direction={{
+                      base: "row",
+                      md: "column",
                     }}
-                    w="full"
-                    py={2}
-                    px={10}
-                    fontWeight="400"
+                    bg={dataColor}
                   >
-                    <chakra.span>{item?.name}</chakra.span>
-                    <chakra.span>{item?.entityCode}</chakra.span>
-                    <chakra.span>{item?.quantity}</chakra.span>
-                    <chakra.span>{item?.batchNo}</chakra.span>
-                    <chakra.span></chakra.span>
-                    <Flex
-                      justify={{
-                        md: "end",
+                    <SimpleGrid
+                      spacingY={3}
+                      columns={{
+                        base: 1,
+                        md: 6,
                       }}
+                      w="full"
+                      py={2}
+                      px={10}
+                      fontWeight="400"
                     >
-                      <Button
-                        variant="solid"
-                        colorScheme="red"
-                        size="sm"
-                        //  onClick={fetchManufacturers}
+                      <chakra.span>{item?.name}</chakra.span>
+                      <chakra.span>{item?.entityCode}</chakra.span>
+                      <chakra.span>{item?.quantity}</chakra.span>
+                      <chakra.span>{item?.batchNo}</chakra.span>
+                      <chakra.span></chakra.span>
+                      <Flex
+                        justify={{
+                          md: "end",
+                        }}
                       >
-                        sell
-                      </Button>
-                    </Flex>
-                  </SimpleGrid>
-                </Flex>
-                <Divider />
-              </div>
-            ))
-          )}
+                        <Button
+                          variant="solid"
+                          colorScheme="red"
+                          size="sm"
+                          //  onClick={fetchManufacturers}
+                        >
+                          sell
+                        </Button>
+                      </Flex>
+                    </SimpleGrid>
+                  </Flex>
+                  <Divider />
+                </div>
+              ))
+            )}
+          </>
         </Stack>
       </Flex>
     </>
