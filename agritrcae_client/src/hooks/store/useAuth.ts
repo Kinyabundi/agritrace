@@ -9,6 +9,8 @@ export interface IAuthStore {
   setHasAccount: (status: boolean) => void;
   user: IManufacturer | ISupplier | null;
   setUser: (user: IManufacturer | ISupplier | null) => void;
+  prevAccount: IManufacturer | ISupplier | null;
+  setPrevAccount: (user: IManufacturer | ISupplier | null) => void;
   getSpecificUser: (userType: Role) => IManufacturer | ISupplier;
   whichAccount: () => Role;
   logout: () => void;
@@ -18,6 +20,7 @@ const useAuth = create(
   persist<IAuthStore>(
     (set, get) => ({
       user: null,
+      prevAccount: null,
       hasAccount: false,
       setHasAccount: (status) => {
         set({ hasAccount: status });
@@ -46,6 +49,9 @@ const useAuth = create(
       },
       logout: () => {
         set((state) => _.omit(state, ["user"]), true);
+      },
+      setPrevAccount: (user) => {
+        set({ prevAccount: user });
       },
     }),
     {
