@@ -56,7 +56,7 @@ const LinkItems: Array<LinkItemProps> = [
   },
   { name: "Manufacturers", icon: FaPeopleCarry, href: "/admin/view_manufacturers" },
   { name: "Suppliers", icon: MdAccountBalanceWallet, href: "/admin/view-suppliers" },
-  { name: "Products", icon: MdAccountBalanceWallet, href: "#" },
+  { name: "Products", icon: MdAccountBalanceWallet, href: "/admin/view_products" },
 
 ];
 

@@ -12,7 +12,7 @@ import Head from "next/head";
 import { FiEdit3 } from "react-icons/fi";
 import { NextPageWithLayout } from "@/types/Layout";
 import ManufacturerLayout from "@/layouts/ManufacturerLayout";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IToastProps } from "@/types/Toast";
 import {
   contractTx,
@@ -20,6 +20,7 @@ import {
   useRegisteredContract,
 } from "@scio-labs/use-inkathon";
 import { ContractID} from "@/types/Contracts";
+import useRawMaterials from "@/hooks/useRawMaterials";
 
 const AddProduct: NextPageWithLayout = () => {
   const { activeSigner, api, activeAccount } = useInkathon();
@@ -32,6 +33,7 @@ const AddProduct: NextPageWithLayout = () => {
   const [quantityUnits, setQuantityUnits] = useState<string>("");
   const [productCode, setProductCode] = useState<string>("");
   const [batchNo, setBatchNo] = useState<number>(0);
+  const { getRawMaterialsByBuyer} = useRawMaterials();
  const [rawMaterials, setRawMaterials] = useState<string>("");
   const [statusMsg, setStatusMsg] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -51,6 +53,20 @@ const AddProduct: NextPageWithLayout = () => {
       position: position || "top",
     });
   };
+  useEffect(() => {
+    fetchrawMaterials();
+  }, [activeAccount]);
+
+  const fetchrawMaterials = async () => {
+    const items = await getRawMaterialsByBuyer();
+    if (items) {
+      setRawMaterials(items);
+    }
+  };
+ 
+
+console.log(rawMaterials)
+
 
   const handleSubmit = async () => {
     if (!name) {
@@ -186,6 +202,11 @@ const AddProduct: NextPageWithLayout = () => {
               value={productCode}
               setValue={setProductCode}
             />
+              <CustomFormControl
+            labelText="Select RawMaterial Used"
+            variant="select"
+            options={["Manu1 - yw7278181", "Manu2 - y253627"]}
+          />
             <Stack spacing={10} pt={2}>
               <Button
                 loadingText="Submitting"

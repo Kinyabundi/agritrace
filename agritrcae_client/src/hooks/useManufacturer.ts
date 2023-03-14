@@ -30,18 +30,18 @@ const useManufacturer = () => {
     }
   };
 
-//  const getProducts = useCallback(async () => {
-//   if (contract && api && activeAccount) {
-//     const results = await contractQuery(
-//       api,
-//       activeAccount?.address,
-//       contract,
-//       "getProducts",
-//       {},
-//     );
-//     return unwrapResultOrError(results);
-//   }
-//  }, [activeAccount])
+ const getProducts = useCallback(async () => {
+  if (contract && api && activeAccount) {
+    const results = await contractQuery(
+      api,
+      activeAccount?.address,
+      contract,
+      "getProducts",
+      {},
+    );
+    return unwrapResultOrError(results);
+  }
+ }, [activeAccount])
 
   const getManufacturers = useCallback(async () => {
     if(stakeholderContract && api && activeAccount) {
@@ -55,7 +55,7 @@ const useManufacturer = () => {
       return unwrapResultOrError(results);
     }
   },[activeAccount])
-  return { getManufacturerAcccount, getManufacturers };
+  return { getManufacturerAcccount, getManufacturers, getProducts};
 };
 
 export default useManufacturer;

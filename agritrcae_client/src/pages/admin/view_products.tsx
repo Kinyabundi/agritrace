@@ -8,7 +8,7 @@ import {
   useRegisteredContract,
 } from "@scio-labs/use-inkathon";
 import { ContractID, IProduct } from "@/types/Contracts";
-import ManufacturerLayout from "@/layouts/ManufacturerLayout";
+import AdminLayout from "@/layouts/AdminLayout";
 
 import {
   useColorModeValue,
@@ -28,6 +28,7 @@ const ViewProducts: NextPageWithLayout = () => {
   const bg = useColorModeValue("white", "gray.800");
   const bg2 = useColorModeValue("gray.100", "gray.700");
   const { activeAccount } = useInkathon();
+  const { getProducts } = useManufacturer();
   const [products, setProducts] = useState<IProduct[]>([]);
   const { contract } = useRegisteredContract(ContractID.Transactions);
 
@@ -52,7 +53,7 @@ const ViewProducts: NextPageWithLayout = () => {
   }, [activeAccount]);
 
   const fetchItems = async () => {
-    const items = await setProducts();
+    const items = await getProducts();
     if (items) {
       setProducts(items);
     }
@@ -195,6 +196,6 @@ console.log(products)
   );
 };
 
-ViewProducts.getLayout = (page) => <ManufacturerLayout>{page} </ManufacturerLayout>;
+ViewProducts.getLayout = (page) => <AdminLayout>{page} </AdminLayout>;
 
 export default ViewProducts;

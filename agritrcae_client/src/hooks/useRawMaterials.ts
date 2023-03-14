@@ -29,7 +29,21 @@ const useRawMaterials = () => {
     }
   }, [activeAccount]);
 
-  return { getRawMaterials };
+  const getRawMaterialsByBuyer = useCallback(async () => {
+    if (entityContract && api && activeAccount) {
+      const results = await contractQuery(
+        api,
+        activeAccount?.address,
+        entityContract,
+        "getEntitiesByBuyer",
+        {},
+        [activeAccount?.address]
+      );
+      return unwrapResultOrError(results);
+    }
+  }, [activeAccount]);
+
+  return { getRawMaterials, getRawMaterialsByBuyer };
 };
 
 export default useRawMaterials;

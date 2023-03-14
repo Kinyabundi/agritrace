@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { NextPageWithLayout } from "@/types/Layout";
+import SupplierLayout from "@/layouts/SupplierLayout";
 import Head from "next/head";
+import Manufacturer from "@/components/SaleModal";
+import useRawMaterials from "@/hooks/useRawMaterials";
 import useManufacturer from "@/hooks/useManufacturer";
+import { IRawMaterial } from "@/types/Contracts";
+import { IManufacturer } from "@/types/Manufacturer";
 import { IToastProps } from "@/types/Toast";
 import {
+  contractQuery,
+  contractTx,
+  unwrapResultOrError,
   useInkathon,
   useRegisteredContract,
 } from "@scio-labs/use-inkathon";
-import { ContractID, IProduct } from "@/types/Contracts";
-import ManufacturerLayout from "@/layouts/ManufacturerLayout";
-
+import { ContractID } from "@/types/Contracts";
 import {
   useColorModeValue,
   Flex,
@@ -21,15 +27,21 @@ import {
   Divider,
   useToast,
 } from "@chakra-ui/react";
+import SaleModal from "@/components/SaleModal";
 
-const ViewProducts: NextPageWithLayout = () => {
+const ViewRawMaterials: NextPageWithLayout = () => {
   const toast = useToast();
   const dataColor = useColorModeValue("white", "gray.800");
   const bg = useColorModeValue("white", "gray.800");
   const bg2 = useColorModeValue("gray.100", "gray.700");
-  const { activeAccount } = useInkathon();
-  const [products, setProducts] = useState<IProduct[]>([]);
+  const { getRawMaterials } = useRawMaterials();
+  const { getManufacturers } = useManufacturer();
+  const { activeSigner, api, activeAccount } = useInkathon();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [rawMaterials, setRawMaterials] = useState<IRawMaterial[]>([]);
   const { contract } = useRegisteredContract(ContractID.Transactions);
+  const [manufacturers, setManufacturers] = useState<IManufacturer[]>([]);
+  const [showModal, setShowModal] = useState<boolean>(false)
 
   const customToast = ({
     title,
@@ -47,27 +59,74 @@ const ViewProducts: NextPageWithLayout = () => {
     });
   };
 
+  const clickInitiateSale = async (
+    entityCode: string,
+    quantity: number,
+    quantityUnits: string,
+    batchNo: string,
+    buyer: string
+  ) => {
+    if (!activeAccount || !contract || !activeSigner || !api) {
+      return customToast({
+        title: "Wallet not connected",
+        description: "Please connect your wallet",
+        status: "error",
+      });
+    }
+    try {
+      setLoading(true);
+      api.setSigner(activeSigner);
+
+      await contractTx(
+        api,
+        activeAccount.address,
+        contract,
+        "initiateSale",
+        undefined,
+        [entityCode, quantity, quantityUnits, batchNo, buyer],
+        (sth) => {
+          if (sth?.status.isInBlock) {
+            customToast({
+              title: "Sale intialized",
+              description: "Sale intialized successfully",
+              status: "success",
+            });
+            setLoading(false);
+          }
+        }
+      );
+    } catch (err) {
+      console.log(err);
+      customToast({
+        title: "Error",
+        description: "Something went wrong",
+        status: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchItems = async () => {
+    const items = await getRawMaterials();
+    if (items) {
+      setRawMaterials(items);
+    }
+  };
   useEffect(() => {
     fetchItems();
   }, [activeAccount]);
 
-  const fetchItems = async () => {
-    const items = await setProducts();
-    if (items) {
-      setProducts(items);
-    }
-  };
- 
-
-console.log(products)
+  console.log(rawMaterials);
 
   return (
     <>
       <Head>
-        <title>AgriTrace | Products </title>
+        <title>AgriTrace | Raw Materials</title>
       </Head>
+      <SaleModal open={showModal} setOpen={setShowModal} />
       <Text px={50} fontSize={"2xl"} fontWeight={"semibold"}>
-        Products
+        Raw Materials
       </Text>
       <Flex
         w="full"
@@ -79,7 +138,6 @@ console.log(products)
         alignItems="center"
         justifyContent="center"
       >
-        
         <Stack
           direction={{
             base: "column",
@@ -94,7 +152,7 @@ console.log(products)
             spacingY={3}
             columns={{
               base: 1,
-              md: 3,
+              md: 6,
             }}
             w={{
               base: 120,
@@ -105,7 +163,7 @@ console.log(products)
             color={"gray.800"}
             py={{
               base: 1,
-              md: 3,
+              md: 6,
             }}
             px={{
               base: 2,
@@ -118,18 +176,18 @@ console.log(products)
               Name
             </chakra.span>
             <chakra.span color="blue.800" fontWeight="600">
-              ProductCode
+              EntityCode
             </chakra.span>
             <chakra.span color="blue.800" fontWeight="600">
               Quantity
             </chakra.span>
-            {/* <chakra.span color="blue.800" fontWeight="600">
-              rawMaterials
-            </chakra.span> */}
             <chakra.span color="blue.800" fontWeight="600">
-              
+              BatchNo
             </chakra.span>
-            {/* <chakra.span
+            <chakra.span color="blue.800" fontWeight="600">
+              Status
+            </chakra.span>
+            <chakra.span
               color="blue.800"
               fontWeight="600"
               textAlign={{
@@ -137,13 +195,13 @@ console.log(products)
               }}
             >
               Actions
-            </chakra.span> */}
+            </chakra.span>
           </SimpleGrid>
           <>
-            {products.length === 0 ? (
-              <Text px={50}>No Products Added Yet</Text>
+            {rawMaterials.length === 0 ? (
+              <Text px={50}>No Raw Materials Added Yet</Text>
             ) : (
-              products?.map((item, pid) => (
+              rawMaterials?.map((item, pid) => (
                 <div key={pid}>
                   <Flex
                     direction={{
@@ -156,7 +214,7 @@ console.log(products)
                       spacingY={3}
                       columns={{
                         base: 1,
-                        md: 3,
+                        md: 6,
                       }}
                       w="full"
                       py={2}
@@ -164,10 +222,10 @@ console.log(products)
                       fontWeight="400"
                     >
                       <chakra.span>{item?.name}</chakra.span>
-                      <chakra.span>{item?.productCode}</chakra.span>
+                      <chakra.span>{item?.entityCode}</chakra.span>
                       <chakra.span>{item?.quantity}</chakra.span>
-                      {/* <chakra.span>{item?.rawMaterials}</chakra.span>
-                      <chakra.span></chakra.span> */}
+                      <chakra.span>{item?.batchNo}</chakra.span>
+                      <chakra.span></chakra.span>
                       <Flex
                         justify={{
                           md: "end",
@@ -177,7 +235,7 @@ console.log(products)
                           variant="solid"
                           colorScheme="red"
                           size="sm"
-                          //  onClick={fetchManufacturers}
+                           onClick={() => setShowModal(true)}
                         >
                           sell
                         </Button>
@@ -195,6 +253,6 @@ console.log(products)
   );
 };
 
-ViewProducts.getLayout = (page) => <ManufacturerLayout>{page} </ManufacturerLayout>;
+ViewRawMaterials.getLayout = (page) => <AdminLayout>{page} </AdminLayout>;
 
-export default ViewProducts;
+export default ViewRawMaterials;

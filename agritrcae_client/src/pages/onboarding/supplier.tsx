@@ -65,14 +65,7 @@ const OnboardingSupplier: NextPageWithLayout = () => {
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     // validate fields
-    if (!name || !phoneNo || !email || !location || !inviteCode) {
-      customToast({
-        title: "Error",
-        description: "Please fill all fields",
-        status: "error",
-      });
-      return;
-    }
+    
 
     if (phoneNo && !phoneNoRegex.test(phoneNo)) {
       customToast({
@@ -103,27 +96,23 @@ const OnboardingSupplier: NextPageWithLayout = () => {
 
     try {
       setLoading(true);
-      const resp = await getInviteInfo(inviteCode);
+      api.setSigner(activeSigner);
+      
+      await contractTx(
+        api,
+        activeAccount.address,
+        contract,
+        "saveSupplier",
+        {},
+        [name, phoneNo, email]
+      );
 
-      if (resp.status === "ok") {
-        api.setSigner(activeSigner);
-
-        await contractTx(
-          api,
-          activeAccount.address,
-          contract,
-          "saveSupplier",
-          {},
-          [name, phoneNo, email]
-        );
-      } else {
-        customToast({
-          title: "Error",
-          description: "Invalid invite code",
-          status: "error",
-        });
-        return;
-      }
+      customToast({
+        status: "success",
+        title: "Onboard success",
+        description: "We've successfully onboarded your wallet as supplier",
+      });
+      
     } catch (err) {
       console.log(err);
       customToast({
