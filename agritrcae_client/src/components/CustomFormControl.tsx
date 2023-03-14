@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { ICustomFormControl } from "@/types/FormControl";
+import { ICustomFormControl, IOption } from "@/types/FormControl";
 import TextLink from "./TextLink";
 import {
   FormControl,
@@ -9,6 +9,7 @@ import {
   InputRightElement,
   Textarea,
   Select,
+  Button,
 } from "@chakra-ui/react";
 
 const CustomFormControl: FC<ICustomFormControl> = ({
@@ -119,14 +120,46 @@ const CustomFormControl: FC<ICustomFormControl> = ({
               : () => {}
           }
         >
-          {options?.map((opt) => (
-            <option value={opt} key={opt}>
-              {opt}
-            </option>
-          ))}
+          {/* Check If Options is of type IOption[] or string[] */}
+          {options &&
+            // @ts-ignore
+            (options[0] as IOption)?.label &&
+            (options as IOption[]).map((option: IOption) => (
+              // @ts-ignore
+              <option key={option?.value} value={option?.value}>
+                {/* @ts-ignore */}
+                {option?.label}
+              </option>
+            ))}
+          {options &&
+            // @ts-ignore
+            !(options[0] as IOption)?.label &&
+            // @ts-ignore
+            (options as string[]).map((option: string) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
         </Select>
       )}
     </FormControl>
+  );
+};
+
+const BtnRight = ({ text }: { text: string }) => {
+  return (
+    <Button
+      variant="solid"
+      colorScheme="teal"
+      size="sm"
+      borderRadius={25}
+      px={5}
+      py={2}
+      fontSize="sm"
+      fontWeight="500"
+    >
+      {text}
+    </Button>
   );
 };
 

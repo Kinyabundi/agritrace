@@ -41,7 +41,10 @@ const ViewRawMaterials: NextPageWithLayout = () => {
   const [rawMaterials, setRawMaterials] = useState<IRawMaterial[]>([]);
   const { contract } = useRegisteredContract(ContractID.Transactions);
   const [manufacturers, setManufacturers] = useState<IManufacturer[]>([]);
-  const [showModal, setShowModal] = useState<boolean>(false)
+  const [showModal, setShowModal] = useState<boolean>(false);
+
+  const [selectedRawMaterial, setSelectedRawMaterial] =
+    useState<IRawMaterial>(null);
 
   const customToast = ({
     title,
@@ -57,6 +60,11 @@ const ViewRawMaterials: NextPageWithLayout = () => {
       isClosable: true,
       position: position || "top",
     });
+  };
+
+  const triggerModal = (rawMaterial: IRawMaterial) => {
+    setSelectedRawMaterial(rawMaterial);
+    setShowModal(true);
   };
 
   const clickInitiateSale = async (
@@ -242,7 +250,7 @@ const ViewRawMaterials: NextPageWithLayout = () => {
                           variant="solid"
                           colorScheme="red"
                           size="sm"
-                           onClick={() => setShowModal(true)}
+                          onClick={() => triggerModal(item)}
                         >
                           sell
                         </Button>

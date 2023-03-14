@@ -41,8 +41,10 @@ const useSupplier = () => {
         `${BASE_URL}/email/supplier-invite`,
         {
           email: supplierInfo.email,
+          // @ts-ignore
           company: supplierInfo.manufacturer_name,
           name: supplierInfo.name,
+          // @ts-ignore
           link: supplierInfo.invitelink,
         } as IInviteBody,
         config
@@ -51,6 +53,7 @@ const useSupplier = () => {
       const supplierDocRef = doc(supplierCollections, docRef.id);
 
       await updateDoc(supplierDocRef, {
+          // @ts-ignore
         status: SupplierStatus.Invited,
         updated: new Date(),
       });
@@ -106,6 +109,7 @@ const useSupplier = () => {
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       allsuppliers.push({
+          // @ts-ignore
         id: doc.id,
         ...doc.data(),
       });

@@ -10,8 +10,14 @@ import {
   Button,
   Toast,
   useToast,
+  InputGroup,
+  Input,
+  InputLeftElement,
+  InputRightElement,
+  FormControl,
+  FormLabel,
 } from "@chakra-ui/react";
-import { ContractID } from "@/types/Contracts"
+import { ContractID } from "@/types/Contracts";
 import { useState, useEffect } from "react";
 import CustomFormControl from "./CustomFormControl";
 import useManufacturer from "@/hooks/useManufacturer";
@@ -24,6 +30,7 @@ import {
   useRegisteredContract,
 } from "@scio-labs/use-inkathon";
 import { IToastProps } from "@/types/Toast";
+import { concatManufacturers, generateNumbers } from "@/utils/utils";
 
 interface ModalProps {
   open: boolean;
@@ -31,16 +38,17 @@ interface ModalProps {
   rawMaterialDetails?: IRawMaterial;
 }
 
-
 export default function SaleModal({
   open,
   setOpen,
   rawMaterialDetails,
 }: ModalProps) {
+  const [batchNo, setBatchNo] = useState<number>();
   const toast = useToast();
   const { activeSigner, api, activeAccount } = useInkathon();
   const { contract } = useRegisteredContract(ContractID.Transactions);
-  const [manufacturers, setManufacturers] = useState<IManufacturer>();
+  const [manufacturers, setManufacturers] = useState<IManufacturer[]>();
+  const [selectedBuyer, setSelectedBuyer] = useState<string>("");
   const { getManufacturers } = useManufacturer();
   const customToast = ({
     title,
@@ -67,13 +75,7 @@ export default function SaleModal({
       setManufacturers(manufacturers);
     }
   };
-  const clickInitiateSale = async (
-    entityCode: string,
-    quantity: number,
-    quantityUnits: string,
-    batchNo: string,
-    buyer: string
-  ) => {
+  const clickInitiateSale = async () => {
     if (!activeAccount || !contract || !activeSigner || !api) {
       return customToast({
         title: "Wallet not connected",
@@ -82,7 +84,6 @@ export default function SaleModal({
       });
     }
     try {
-
       api.setSigner(activeSigner);
 
       await contractTx(
@@ -91,7 +92,13 @@ export default function SaleModal({
         contract,
         "initiateSale",
         undefined,
-        [entityCode, quantity, quantityUnits, batchNo, buyer],
+        [
+          rawMaterialDetails.entityCode,
+          rawMaterialDetails.quantity,
+          rawMaterialDetails.quantityUnits,
+          batchNo,
+          selectedBuyer,
+        ],
         (sth) => {
           if (sth?.status.isInBlock) {
             customToast({
@@ -111,18 +118,50 @@ export default function SaleModal({
       });
     }
   };
+
+  console.log(selectedBuyer);
   return (
+    // @ts-ignore
     <Modal closeOnOverlayClick={false} isOpen={open} onClose={setOpen}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Sell Entity</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
-          <CustomFormControl labelText="Batch No" placeholder="627782" />
+          <FormControl>
+            <FormLabel>Batch No</FormLabel>
+            <InputGroup>
+              <Input
+                placeholder="627782"
+                value={batchNo}
+                borderRadius={25}
+                borderColor={"gray.300"}
+                borderWidth={1}
+                _focus={{
+                  borderColor: "gray.100",
+                  borderWidth: 1,
+                }}
+                fontWeight="500"
+                size="md"
+                focusBorderColor="navyblue"
+              />
+              <InputRightElement>
+                <Button
+                  h="1.75rem"
+                  size="sm"
+                  onClick={() => setBatchNo(generateNumbers())}
+                >
+                  Generate
+                </Button>
+              </InputRightElement>
+            </InputGroup>
+          </FormControl>
+
           <CustomFormControl
             labelText="Select Buyer"
             variant="select"
-            options={["Manu1 - yw7278181", "Manu2 - y253627"]}
+            options={manufacturers ? concatManufacturers(manufacturers) : []}
+            onChange={(e) => setSelectedBuyer(e.target.value)}
           />
         </ModalBody>
 
