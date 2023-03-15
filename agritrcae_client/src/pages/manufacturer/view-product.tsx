@@ -4,10 +4,11 @@ import Head from "next/head";
 import useManufacturer from "@/hooks/useManufacturer";
 import { IToastProps } from "@/types/Toast";
 import {
+  contractTx,
   useInkathon,
   useRegisteredContract,
 } from "@scio-labs/use-inkathon";
-import { ContractID, IProduct } from "@/types/Contracts";
+import { ContractID, IProduct, IProductSold } from "@/types/Contracts";
 import ManufacturerLayout from "@/layouts/ManufacturerLayout";
 
 import {
@@ -21,15 +22,19 @@ import {
   Divider,
   useToast,
 } from "@chakra-ui/react";
-
+import { generateNumbers } from "@/utils/utils";
+interface SalesProps {
+  productsDetails?: IProductSold;
+}
 const ViewProducts: NextPageWithLayout = () => {
   const toast = useToast();
   const dataColor = useColorModeValue("white", "gray.800");
   const bg = useColorModeValue("white", "gray.800");
   const bg2 = useColorModeValue("gray.100", "gray.700");
-  const { activeAccount } = useInkathon();
+  const { activeAccount, activeSigner, api } = useInkathon();
+  const [loading, setLoading] = useState<boolean>(false);
   const [products, setProducts] = useState<IProduct[]>([]);
-  const {getProductsByAddedBy} = useManufacturer();
+  const { getProductsByAddedBy } = useManufacturer();
   const { contract } = useRegisteredContract(ContractID.Transactions);
 
   const customToast = ({
@@ -48,6 +53,58 @@ const ViewProducts: NextPageWithLayout = () => {
     });
   };
 
+
+
+  const InitiateSale = async (
+    { productsDetails }: SalesProps
+  ) => {
+    if (!activeAccount || !contract || !activeSigner || !api) {
+      return customToast({
+        title: "Wallet not connected",
+        description: "Please connect your wallet",
+        status: "error",
+      });
+    }
+    try {
+      setLoading(true);
+      api.setSigner(activeSigner);
+      const serialNo = generateNumbers();
+
+      await contractTx(
+        api,
+        activeAccount.address,
+        contract,
+        "sellProduct",
+        undefined,
+        [productsDetails.productCode,
+        productsDetails.quantity,
+        productsDetails.quantityUnits,
+        [productsDetails.batchNo],
+        "5Dy1SCkxhsGWGSzZoJpGjEvdopwxqZzK5Avn2c5jB2QmueF3",
+          serialNo,
+        ],
+        (sth) => {
+          if (sth?.status.isInBlock) {
+            customToast({
+              title: "Sale intialized",
+              description: "Sale intialized successfully",
+              status: "success",
+            });
+            setLoading(false);
+          }
+        }
+      );
+    } catch (err) {
+      console.log(err);
+      customToast({
+        title: "Error",
+        description: "Something went wrong",
+        status: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
   useEffect(() => {
     fetchProducts();
   }, [activeAccount]);
@@ -58,9 +115,9 @@ const ViewProducts: NextPageWithLayout = () => {
       setProducts(items);
     }
   };
- 
 
-console.log(products)
+
+  console.log(products);
 
   return (
     <>
@@ -80,7 +137,7 @@ console.log(products)
         alignItems="center"
         justifyContent="center"
       >
-        
+
         <Stack
           direction={{
             base: "column",
@@ -176,11 +233,11 @@ console.log(products)
                       >
                         <Button
                           variant="solid"
-                          // isLoading = {loading}
-                          // loadingText="Initiating sale"
+                          isLoading={loading}
+                          loadingText="Initiating sale"
                           colorScheme="red"
                           size="sm"
-                          // onClick={() => clickInitiateSale({ productsDetails: item })}
+                          onClick={() => InitiateSale({ productsDetails: item })}
                         >
                           sell
                         </Button>
@@ -192,8 +249,8 @@ console.log(products)
               ))
             )}
           </>
-        </Stack>
-      </Flex>
+          </Stack >
+      </Flex >
     </>
   );
 };

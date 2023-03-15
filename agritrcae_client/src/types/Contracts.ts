@@ -12,6 +12,14 @@ export interface IProduct {
   batchNo: number;
   raw_materials: number[];
 }
+export interface IProductSold {
+  productCode: string;
+  quantity: number;
+  quantityUnits: string;
+  batchNo: number;
+  buyer: string,
+  serialNo: number,
+}
 export interface IRawMaterial {
   name: string,
   entityCode: string,
