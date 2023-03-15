@@ -29,6 +29,7 @@ const ViewProducts: NextPageWithLayout = () => {
   const bg2 = useColorModeValue("gray.100", "gray.700");
   const { activeAccount } = useInkathon();
   const [products, setProducts] = useState<IProduct[]>([]);
+  const {getProductsByAddedBy} = useManufacturer();
   const { contract } = useRegisteredContract(ContractID.Transactions);
 
   const customToast = ({
@@ -48,11 +49,11 @@ const ViewProducts: NextPageWithLayout = () => {
   };
 
   useEffect(() => {
-    fetchItems();
+    fetchProducts();
   }, [activeAccount]);
 
-  const fetchItems = async () => {
-    const items = await setProducts();
+  const fetchProducts = async () => {
+    const items = await getProductsByAddedBy();
     if (items) {
       setProducts(items);
     }
@@ -94,7 +95,7 @@ console.log(products)
             spacingY={3}
             columns={{
               base: 1,
-              md: 3,
+              md: 5,
             }}
             w={{
               base: 120,
@@ -105,7 +106,7 @@ console.log(products)
             color={"gray.800"}
             py={{
               base: 1,
-              md: 3,
+              md: 5,
             }}
             px={{
               base: 2,
@@ -123,11 +124,11 @@ console.log(products)
             <chakra.span color="blue.800" fontWeight="600">
               Quantity
             </chakra.span>
-            {/* <chakra.span color="blue.800" fontWeight="600">
-              rawMaterials
-            </chakra.span> */}
             <chakra.span color="blue.800" fontWeight="600">
-              
+              RawMaterials
+            </chakra.span>
+            <chakra.span color="blue.800" fontWeight="600">
+              Action
             </chakra.span>
             {/* <chakra.span
               color="blue.800"
@@ -156,7 +157,7 @@ console.log(products)
                       spacingY={3}
                       columns={{
                         base: 1,
-                        md: 3,
+                        md: 5,
                       }}
                       w="full"
                       py={2}
@@ -166,8 +167,8 @@ console.log(products)
                       <chakra.span>{item?.name}</chakra.span>
                       <chakra.span>{item?.productCode}</chakra.span>
                       <chakra.span>{item?.quantity}</chakra.span>
-                      {/* <chakra.span>{item?.rawMaterials}</chakra.span>
-                      <chakra.span></chakra.span> */}
+                      <chakra.span>{item?.rawMaterials}</chakra.span>
+                      {/* <chakra.span></chakra.span> */}
                       <Flex
                         justify={{
                           md: "end",
