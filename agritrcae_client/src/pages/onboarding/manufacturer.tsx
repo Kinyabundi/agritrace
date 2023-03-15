@@ -17,13 +17,12 @@ import CustomFormControl from "@/components/CustomFormControl";
 import { CgTrash } from "react-icons/cg";
 import { IToastProps } from "@/types/Toast";
 import {
-  contractQuery,
   contractTx,
-  unwrapResultOrError,
   useInkathon,
   useRegisteredContract,
 } from "@scio-labs/use-inkathon";
 import { ContractID } from "@/types/Contracts";
+import { useRouter } from "next/router";
 
 const OnboardingManufacturer: NextPageWithLayout = () => {
   const toast = useToast();
@@ -35,6 +34,7 @@ const OnboardingManufacturer: NextPageWithLayout = () => {
   const [location, setLocation] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [corporateNo, setCorporateNo] = useState<string>("");
+  const router = useRouter();
 
   const handleAddNewPhoneNo = () => {
     setPhonenos([...phonenos, ""]);
@@ -66,6 +66,14 @@ const OnboardingManufacturer: NextPageWithLayout = () => {
     const newProducts = [...products];
     newProducts[index] = value;
     setProducts(newProducts);
+  };
+
+  const resetFields = () => {
+    setName("");
+    setLocation("");
+    setCorporateNo("");
+    setPhonenos([""]);
+    setProducts([""]);
   };
 
   const customToast = ({
@@ -151,7 +159,9 @@ const OnboardingManufacturer: NextPageWithLayout = () => {
             setLoading(false);
           }
         }
-      )
+      );
+      resetFields();
+      router.push("/manufacturer/dashboard");
     } catch (err) {
       console.log(err);
       customToast({

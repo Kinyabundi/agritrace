@@ -38,8 +38,11 @@ const useAuthStateListener = () => {
       const newResult = unwrapResultOrDefault(result, null);
 
       console.log(Object.entries(newResult), "37");
+
+      console.log(Object.entries(newResult)[0][0], "42");
       // @ts-ignore
-      if (Object.entries(newResult)[0] === "ok") {
+      if (Object.entries(newResult)[0][0] === "ok") {
+        console.log("Hi");
         // @ts-ignore
         setUser(Object.values(newResult)[0]);
         setHasAccount(true);
@@ -58,7 +61,7 @@ const useAuthStateListener = () => {
 
         const newSupplierResult = unwrapResultOrDefault(supplierResult, null);
 
-        if (newSupplierResult) {
+        if (Object.entries(newSupplierResult)[0][0] === "ok") {
           // @ts-ignore
           setUser(Object.values(newSupplierResult)[0]);
           setHasAccount(true);
