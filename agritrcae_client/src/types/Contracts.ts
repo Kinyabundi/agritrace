@@ -24,7 +24,7 @@ export interface IRawMaterial {
   name: string,
   entityCode: string,
   quantity: number,
-  quantityUnits: string,
+  quantityUnit: string,
   batchNo: number,
   buyer: string,
 }

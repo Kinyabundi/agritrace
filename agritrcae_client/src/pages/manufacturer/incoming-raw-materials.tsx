@@ -1,86 +1,54 @@
-import React, { useState, useEffect } from "react";
+import ManufacturerLayout from "@/layouts/ManufacturerLayout";
 import { NextPageWithLayout } from "@/types/Layout";
-import SupplierLayout from "@/layouts/SupplierLayout";
 import Head from "next/head";
-import Manufacturer from "@/components/SaleModal";
-import useRawMaterials from "@/hooks/useRawMaterials";
-import useManufacturer from "@/hooks/useManufacturer";
-import { IRawMaterial } from "@/types/Contracts";
-import { IManufacturer } from "@/types/Manufacturer";
-import { IToastProps } from "@/types/Toast";
 import {
-  contractQuery,
-  contractTx,
-  unwrapResultOrError,
-  useInkathon,
-  useRegisteredContract,
-} from "@scio-labs/use-inkathon";
-import { ContractID } from "@/types/Contracts";
-import {
-  useColorModeValue,
-  Flex,
-  Stack,
-  SimpleGrid,
-  chakra,
   Button,
-  Text,
+  chakra,
   Divider,
-  useToast,
-  VStack,
+  Flex,
   Select,
+  SimpleGrid,
+  Stack,
+  Text,
+  useColorModeValue,
+  VStack,
 } from "@chakra-ui/react";
-import { truncateHash } from "@/utils/truncateHash";
 import {
   IEntity,
   TransactionStatus,
   transactionStatusArray,
 } from "@/types/Transaction";
+import { useEffect, useState } from "react";
 import TimeAgo from "javascript-time-ago";
-import en from "javascript-time-ago/locale/en.json";
-import useTransaction from "@/hooks/useTransaction";
+import en from "javascript-time-ago/locale/en";
+import { truncateHash } from "@/utils/truncateHash";
+import useManufacturer from "@/hooks/useManufacturer";
+import { useInkathon } from "@scio-labs/use-inkathon";
 
 TimeAgo.addLocale(en);
 
 const timeAgo = new TimeAgo("en-US");
 
-const ViewSales: NextPageWithLayout = () => {
-  const toast = useToast();
+const IncomingRawMaterials: NextPageWithLayout = () => {
   const dataColor = useColorModeValue("white", "gray.800");
   const bg = useColorModeValue("white", "gray.800");
   const bg2 = useColorModeValue("gray.100", "gray.700");
-  const { getSuppliersTransactions } = useTransaction();
-  const { activeSigner, api, activeAccount } = useInkathon();
-  const [loading, setLoading] = useState<boolean>(false);
-  const [rawMaterials, setRawMaterials] = useState<IEntity[]>([]);
-  const { contract } = useRegisteredContract(ContractID.Transactions);
 
-  const customToast = ({
-    title,
-    description,
-    status,
-    position,
-  }: IToastProps) => {
-    return toast({
-      title,
-      description,
-      status,
-      duration: 5000,
-      isClosable: true,
-      position: position || "top",
-    });
-  };
+  const { getIncomingEntities } = useManufacturer();
+  const { activeAccount } = useInkathon();
 
-  const fetchItems = async () => {
-    const items = await getSuppliersTransactions();
-    if (items) {
-      setRawMaterials(items);
+  const [entities, setEntities] = useState<IEntity[]>([]);
+
+  const fetchEntities = async () => {
+    const incoming_entities = await getIncomingEntities();
+    if (incoming_entities) {
+      setEntities(incoming_entities);
     }
   };
-  useEffect(() => {
-    fetchItems();
-  }, [activeAccount]);
 
-  console.log(rawMaterials);
+  useEffect(() => {
+    fetchEntities();
+  }, [activeAccount]);
 
   return (
     <>
@@ -90,7 +58,7 @@ const ViewSales: NextPageWithLayout = () => {
 
       <Flex w="full" align={"center"} justify={"space-between"}>
         <Text px={50} fontSize={"2xl"} fontWeight={"semibold"}>
-          Outgoing Supplies
+          Incoming Supplies
         </Text>
         <Select
           size={"md"}
@@ -159,7 +127,7 @@ const ViewSales: NextPageWithLayout = () => {
             Updated
           </chakra.span>
           <chakra.span color="blue.800" fontWeight="600">
-            Buyer
+            Seller
           </chakra.span>
           <chakra.span
             color="blue.800"
@@ -171,8 +139,8 @@ const ViewSales: NextPageWithLayout = () => {
             Actions
           </chakra.span>
         </SimpleGrid>
-        {rawMaterials.length > 0 ? (
-          rawMaterials.map((entity) => (
+        {entities.length > 0 ? (
+          entities.map((entity) => (
             <>
               <Flex
                 direction={{
@@ -199,7 +167,7 @@ const ViewSales: NextPageWithLayout = () => {
                     {entity.entityCode}
                   </chakra.span>
                   <chakra.span color="blue.800" fontWeight="600">
-                    {entity.quantity} {entity.quantityUnit}
+                    {entity.quantity} {" "} {entity.quantityUnit}
                   </chakra.span>
                   <chakra.span color="blue.800" fontWeight="600">
                     {entity.status}
@@ -214,18 +182,19 @@ const ViewSales: NextPageWithLayout = () => {
                     {timeAgo.format(new Date(entity.updatedAt))}
                   </chakra.span>
                   <chakra.span color="blue.800" fontWeight="600">
-                    {truncateHash(entity.buyer)}
+                    {truncateHash(entity.seller)}
                   </chakra.span>
                   <VStack
                     justify={{
                       md: "end",
                     }}
+                    
                   >
                     <Button variant="solid" colorScheme="teal" size="sm">
-                      Complete
+                      Accept
                     </Button>
                     <Button variant="solid" colorScheme="red" size="sm">
-                      Revert
+                      Reject
                     </Button>
                   </VStack>
                 </SimpleGrid>
@@ -242,7 +211,7 @@ const ViewSales: NextPageWithLayout = () => {
             py={10}
           >
             <Text fontSize={"2xl"} fontWeight={"semibold"}>
-              No Outgoing Supplies
+              No Incoming Supplies
             </Text>
           </Flex>
         )}
@@ -251,6 +220,8 @@ const ViewSales: NextPageWithLayout = () => {
   );
 };
 
-ViewSales.getLayout = (page) => <SupplierLayout>{page} </SupplierLayout>;
+IncomingRawMaterials.getLayout = (page) => (
+  <ManufacturerLayout>{page}</ManufacturerLayout>
+);
 
-export default ViewSales;
+export default IncomingRawMaterials;

@@ -1,17 +1,14 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { NextPageWithLayout } from "@/types/Layout";
 import SupplierLayout from "@/layouts/SupplierLayout";
 import Head from "next/head";
-import Manufacturer from "@/components/SaleModal";
 import useRawMaterials from "@/hooks/useRawMaterials";
 import useManufacturer from "@/hooks/useManufacturer";
 import { IRawMaterial } from "@/types/Contracts";
 import { IManufacturer } from "@/types/Manufacturer";
 import { IToastProps } from "@/types/Toast";
 import {
-  contractQuery,
   contractTx,
-  unwrapResultOrError,
   useInkathon,
   useRegisteredContract,
 } from "@scio-labs/use-inkathon";
@@ -26,8 +23,12 @@ import {
   Text,
   Divider,
   useToast,
+  useInterval,
 } from "@chakra-ui/react";
 import { truncateHash } from "@/utils/truncateHash";
+import useTransaction from "@/hooks/useTransaction";
+import { IEntity } from "@/types/Transaction";
+import { checkRawMaterialInTransactions } from "@/utils/utils";
 interface SalesProps {
   rawMaterialDetails?: IRawMaterial;
 }
@@ -39,11 +40,13 @@ const ViewRawMaterials: NextPageWithLayout = () => {
   const { getRawMaterials } = useRawMaterials();
   const { getManufacturers } = useManufacturer();
   const { activeSigner, api, activeAccount } = useInkathon();
+  const { getAllEntities } = useTransaction();
   const [loading, setLoading] = useState<boolean>(false);
   const [rawMaterials, setRawMaterials] = useState<IRawMaterial[]>([]);
   const { contract } = useRegisteredContract(ContractID.Transactions);
   const [manufacturers, setManufacturers] = useState<IManufacturer[]>([]);
-
+  const [entities, setAllEntities] = useState<IEntity[]>([]);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   // const [selectedRawMaterial, setSelectedRawMaterial] =
   //   useState<IRawMaterial>(null);
@@ -69,9 +72,7 @@ const ViewRawMaterials: NextPageWithLayout = () => {
   //   setShowModal(true);
   // };
 
-  const clickInitiateSale = async (
-    { rawMaterialDetails }: SalesProps
-  ) => {
+  const clickInitiateSale = async ({ rawMaterialDetails }: SalesProps) => {
     if (!activeAccount || !contract || !activeSigner || !api) {
       return customToast({
         title: "Wallet not connected",
@@ -89,11 +90,13 @@ const ViewRawMaterials: NextPageWithLayout = () => {
         contract,
         "initiateSell",
         undefined,
-        [rawMaterialDetails.entityCode,
-        rawMaterialDetails.quantity,
-        rawMaterialDetails.quantityUnits,
-        rawMaterialDetails.batchNo,
-        rawMaterialDetails.buyer],
+        [
+          rawMaterialDetails.entityCode,
+          rawMaterialDetails.quantity,
+          rawMaterialDetails.quantityUnit,
+          rawMaterialDetails.batchNo,
+          rawMaterialDetails.buyer,
+        ],
         (sth) => {
           if (sth?.status.isInBlock) {
             customToast({
@@ -123,6 +126,9 @@ const ViewRawMaterials: NextPageWithLayout = () => {
       setRawMaterials(items);
     }
   };
+
+  useInterval(() => fetchAllEntities(), 3000);
+
   useEffect(() => {
     fetchItems();
     fetchManufacturers();
@@ -134,7 +140,13 @@ const ViewRawMaterials: NextPageWithLayout = () => {
       setManufacturers(manufacturers);
     }
   };
-  console.log(rawMaterials);
+
+  const fetchAllEntities = async () => {
+    const allEntities = await getAllEntities();
+    if (allEntities) {
+      setAllEntities(allEntities);
+    }
+  };
 
   return (
     <>
@@ -253,9 +265,20 @@ const ViewRawMaterials: NextPageWithLayout = () => {
                           loadingText="Initiating sale"
                           colorScheme="red"
                           size="sm"
-                          onClick={() => clickInitiateSale({ rawMaterialDetails: item })}
+                          onClick={() =>
+                            clickInitiateSale({ rawMaterialDetails: item })
+                          }
+                          isDisabled={checkRawMaterialInTransactions(
+                            entities,
+                            item.batchNo
+                          )}
                         >
-                          sell
+                          {checkRawMaterialInTransactions(
+                            entities,
+                            item.batchNo
+                          )
+                            ? "Sold"
+                            : "Sell"}
                         </Button>
                       </Flex>
                     </SimpleGrid>

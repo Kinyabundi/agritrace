@@ -1,7 +1,6 @@
-import { ContractID, IProduct } from "@/types/Contracts";
+import { ContractID } from "@/types/Contracts";
 import {
   contractQuery,
-  contractTx,
   unwrapResultOrError,
   useInkathon,
   useRegisteredContract,
@@ -14,7 +13,10 @@ const useManufacturer = () => {
   const { contract: stakeholderContract } = useRegisteredContract(
     ContractID.StakeholderRegistry
   );
- 
+
+  const { contract: transactionContract } = useRegisteredContract(
+    ContractID.Transactions
+  );
 
   const getManufacturerAcccount = async () => {
     if (stakeholderContract && api && activeAccount) {
@@ -29,45 +31,65 @@ const useManufacturer = () => {
       return unwrapResultOrError(result);
     }
   };
-const getProductsByAddedBy = useCallback(async() => {
-  if (contract && api && activeAccount) {
-    const results = await contractQuery(
-      api,
-      activeAccount?.address,
-      contract,
-      "getProductsByAddedBy",
-      {},
-      [activeAccount.address]
-    );
-    return unwrapResultOrError(results);
-  }
-}, [activeAccount])
- const getProducts = useCallback(async () => {
-  if (contract && api && activeAccount) {
-    const results = await contractQuery(
-      api,
-      activeAccount?.address,
-      contract,
-      "getProducts",
-      {},
-    );
-    return unwrapResultOrError(results);
-  }
- }, [activeAccount])
+  const getProductsByAddedBy = useCallback(async () => {
+    if (contract && api && activeAccount) {
+      const results = await contractQuery(
+        api,
+        activeAccount?.address,
+        contract,
+        "getProductsByAddedBy",
+        {},
+        [activeAccount.address]
+      );
+      return unwrapResultOrError(results);
+    }
+  }, [activeAccount]);
+  const getProducts = useCallback(async () => {
+    if (contract && api && activeAccount) {
+      const results = await contractQuery(
+        api,
+        activeAccount?.address,
+        contract,
+        "getProducts",
+        {}
+      );
+      return unwrapResultOrError(results);
+    }
+  }, [activeAccount]);
 
   const getManufacturers = useCallback(async () => {
-    if(stakeholderContract && api && activeAccount) {
+    if (stakeholderContract && api && activeAccount) {
       const results = await contractQuery(
         api,
         activeAccount?.address,
         stakeholderContract,
         "getManufacturers",
-        {},
+        {}
       );
       return unwrapResultOrError(results);
     }
-  },[activeAccount])
-  return { getManufacturerAcccount, getManufacturers, getProducts, getProductsByAddedBy};
+  }, [activeAccount]);
+
+  const getIncomingEntities = useCallback(async () => {
+    if (transactionContract && api && activeAccount) {
+      const results = await contractQuery(
+        api,
+        activeAccount?.address,
+        transactionContract,
+        "getTransactionsByBuyer",
+        {},
+        [activeAccount.address]
+      );
+      return unwrapResultOrError(results);
+    }
+  }, [activeAccount]);
+  return {
+    getManufacturerAcccount,
+    getManufacturers,
+    getProducts,
+    getProductsByAddedBy,
+    getIncomingEntities,
+  };
 };
 
 export default useManufacturer;

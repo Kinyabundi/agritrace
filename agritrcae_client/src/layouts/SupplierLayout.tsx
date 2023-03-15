@@ -56,11 +56,7 @@ const LinkItems: Array<LinkItemProps> = [
   },
 ];
 
-export default function ManufacturerLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function SupplierLayout({ children }: { children: ReactNode }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>

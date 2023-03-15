@@ -3,6 +3,7 @@ import { IOption } from "@/types/FormControl";
 import { customAlphabet } from "nanoid";
 import { truncateHash } from "./truncateHash";
 import { IRawMaterial } from "@/types/Contracts";
+import { IEntity } from "@/types/Transaction";
 
 export const concatManufacturers = (
   manufacturers: IManufacturer[]
@@ -12,14 +13,12 @@ export const concatManufacturers = (
     label: `${manufacturer.name} - ${truncateHash(manufacturer.address)}`,
   }));
 };
-export const concatRawMaterials = (
-  rawMaterials: IRawMaterial[]
-) : IOption[] => {
+export const concatRawMaterials = (rawMaterials: IRawMaterial[]): IOption[] => {
   return rawMaterials.map((rawMaterial) => ({
-    value: rawMaterial.entityCode,
-    label: `${rawMaterial.name} - ${rawMaterial.entityCode}`
-  }))
-}
+    value: rawMaterial.batchNo,
+    label: `${rawMaterial.name} - ${rawMaterial.batchNo}`,
+  }));
+};
 
 /**
  * Generates Unique numbers using nanoid
@@ -61,4 +60,19 @@ export function checkTypeArray(myArray: any[], type: any): boolean {
   return myArray.every((item) => {
     return is(item, type);
   });
+}
+
+// Checks whether a given raw material is in tranactions
+
+export function checkRawMaterialInTransactions(
+  entities: IEntity[],
+  batchNo: number
+) {
+  let isPresent = false;
+  entities.forEach((entity) => {
+    if (entity.batchNo === batchNo) {
+      isPresent = true;
+    }
+  });
+  return isPresent;
 }

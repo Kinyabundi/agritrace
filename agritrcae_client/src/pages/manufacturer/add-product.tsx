@@ -1,4 +1,6 @@
-import CustomFormControl from "@/components/CustomFormControl";
+import CustomFormControl, {
+  CustomFormMultiSelect,
+} from "@/components/CustomFormControl";
 import {
   Flex,
   useColorModeValue,
@@ -22,10 +24,9 @@ import {
   useInkathon,
   useRegisteredContract,
 } from "@scio-labs/use-inkathon";
-import { ContractID} from "@/types/Contracts";
+import { ContractID, IRawMaterial } from "@/types/Contracts";
 import useRawMaterials from "@/hooks/useRawMaterials";
 import { concatRawMaterials, generateNumbers } from "@/utils/utils";
-
 
 const AddProduct: NextPageWithLayout = () => {
   const { activeSigner, api, activeAccount } = useInkathon();
@@ -45,9 +46,9 @@ const AddProduct: NextPageWithLayout = () => {
   const [quantityUnits, setQuantityUnits] = useState<string>("");
   const [productCode, setProductCode] = useState<string>("");
   const [batchNo, setBatchNo] = useState<number>(0);
-  const { getRawMaterialsByBuyer} = useRawMaterials();
-  const [selectRawMaterials, setSelectRawMaterials] = useState<string>("")
- const [rawMaterials, setRawMaterials] = useState<string>("");
+  const { getRawMaterialsByBuyer } = useRawMaterials();
+  const [selectRawMaterials, setSelectRawMaterials] = useState<string[]>([]);
+  const [rawMaterials, setRawMaterials] = useState<IRawMaterial[]>([]);
   const [statusMsg, setStatusMsg] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -76,10 +77,8 @@ const AddProduct: NextPageWithLayout = () => {
       setRawMaterials(items);
     }
   };
- 
 
-console.log(rawMaterials)
-
+  console.log(rawMaterials);
 
   const handleSubmit = async () => {
     if (!name) {
@@ -227,12 +226,21 @@ console.log(rawMaterials)
               value={productCode}
               setValue={setProductCode}
             />
-              <CustomFormControl
-            labelText="Select RawMaterial Used"
-            variant="select"
-            options={rawMaterials ?  concatRawMaterials(rawMaterials) : []}
-            onChange={(e) => setSelectRawMaterials(e.target.value)}
-          />
+            {/* <CustomFormControl
+              labelText="Select RawMaterial Used"
+              variant="select"
+              options={rawMaterials ? concatRawMaterials(rawMaterials) : []}
+              onChange={(e) => setSelectRawMaterials(e.target.value)}
+            /> */}
+            <CustomFormMultiSelect
+              formLabel="Select RawMaterial Used"
+              options={rawMaterials ? concatRawMaterials(rawMaterials) : []}
+              onChange={(newVal, _) => {
+                setSelectRawMaterials(newVal);
+              }}
+              placeholder="Select RawMaterial"
+              label="items"
+            />
             <Stack spacing={10} pt={2}>
               <Button
                 loadingText="Submitting"

@@ -34,7 +34,7 @@ import {
 } from "react-icons/fi";
 import { RiSwapFill } from "react-icons/ri";
 import { GiSwapBag } from "react-icons/gi";
-import { BsCreditCard } from "react-icons/bs";
+import { BsArrowDownCircle, BsCreditCard } from "react-icons/bs";
 import { FaPeopleCarry } from "react-icons/fa";
 import { MdAccountBalanceWallet, MdPeople } from "react-icons/md";
 import { IconType } from "react-icons";
@@ -55,9 +55,9 @@ const LinkItems: Array<LinkItemProps> = [
     href: `/manufacturer/dashboard`,
   },
   {
-    name: "Invite Supplier",
-    icon: AiOutlineMessage,
-    href: `/manufacturer/invite-supplier`,
+    name: "Incoming Supplies",
+    icon: BsArrowDownCircle,
+    href: `/manufacturer/incoming-raw-materials`,
   },
   { name: "Suppliers", icon: MdPeople, href: "/manufacturer/suppliers" },
   {

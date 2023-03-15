@@ -1,5 +1,9 @@
 import { FC } from "react";
-import { ICustomFormControl, IOption } from "@/types/FormControl";
+import {
+  CustomFormMultiSelectProps,
+  ICustomFormControl,
+  IOption,
+} from "@/types/FormControl";
 import TextLink from "./TextLink";
 import {
   FormControl,
@@ -8,9 +12,15 @@ import {
   Input,
   InputRightElement,
   Textarea,
-  Select,
+  Select as ChakraSelect,
   Button,
 } from "@chakra-ui/react";
+
+import Select from "react-select";
+
+import makeAnimated from "react-select/animated";
+
+const animatedComponent = makeAnimated();
 
 const CustomFormControl: FC<ICustomFormControl> = ({
   as,
@@ -103,7 +113,7 @@ const CustomFormControl: FC<ICustomFormControl> = ({
       )}
 
       {variant === "select" && (
-        <Select
+        <ChakraSelect
           size="md"
           placeholder="Choose ..."
           borderRadius={25}
@@ -140,26 +150,41 @@ const CustomFormControl: FC<ICustomFormControl> = ({
                 {option}
               </option>
             ))}
-        </Select>
+        </ChakraSelect>
       )}
     </FormControl>
   );
 };
 
-const BtnRight = ({ text }: { text: string }) => {
+export const CustomFormMultiSelect = ({
+  as,
+  colSpan,
+  options,
+  label,
+  placeholder,
+  onChange,
+  formLabel,
+  value,
+  defaultValue,
+}: CustomFormMultiSelectProps) => {
   return (
-    <Button
-      variant="solid"
-      colorScheme="teal"
-      size="sm"
-      borderRadius={25}
-      px={5}
-      py={2}
-      fontSize="sm"
-      fontWeight="500"
-    >
-      {text}
-    </Button>
+    <FormControl as={as} colSpan={colSpan} py={3} w="full">
+      <FormLabel display="flex" ms="4px" fontSize="md" fontWeight="semibold">
+        {formLabel}
+      </FormLabel>
+      <Select
+        // defaultValue={value}
+        value={value}
+        isMulti
+        name={label}
+        options={options}
+        className="basic-multi-select"
+        classNamePrefix="select"
+        components={animatedComponent}
+        placeholder={placeholder}
+        onChange={onChange}
+      />
+    </FormControl>
   );
 };
 

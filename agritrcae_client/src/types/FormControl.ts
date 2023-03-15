@@ -1,7 +1,8 @@
 import React, { ReactNode } from "react";
+import { ActionMeta } from "react-select";
 
-export interface IOption = {
-  value: string;
+export interface IOption {
+  value: string | number;
   label: string;
 }
 
@@ -26,4 +27,16 @@ export interface ICustomFormControl {
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
   ) => void;
+}
+
+export interface CustomFormMultiSelectProps {
+  as?: any;
+  colSpan?: any;
+  label: string;
+  placeholder: string;
+  options: IOption[];
+  onChange?: (value: string[], action: ActionMeta<any>) => void;
+  formLabel: string;
+  value?: any;
+  defaultValue?: any;
 }
