@@ -10,7 +10,7 @@ import {
 } from "@scio-labs/use-inkathon";
 import { ContractID, IProduct, IProductSold } from "@/types/Contracts";
 import ManufacturerLayout from "@/layouts/ManufacturerLayout";
-
+import { IProductSale } from "@/types/Transaction";
 import {
   useColorModeValue,
   Flex,
@@ -21,8 +21,11 @@ import {
   Text,
   Divider,
   useToast,
+  useInterval,
 } from "@chakra-ui/react";
 import { generateNumbers } from "@/utils/utils";
+import useTransaction from "@/hooks/useTransaction";
+import { checkProductInTransactions } from "@/utils/utils";
 interface SalesProps {
   productsDetails?: IProductSold;
 }
@@ -31,9 +34,11 @@ const ViewProducts: NextPageWithLayout = () => {
   const dataColor = useColorModeValue("white", "gray.800");
   const bg = useColorModeValue("white", "gray.800");
   const bg2 = useColorModeValue("gray.100", "gray.700");
+  const { getAllProducts } = useTransaction();
   const { activeAccount, activeSigner, api } = useInkathon();
   const [loading, setLoading] = useState<boolean>(false);
   const [products, setProducts] = useState<IProduct[]>([]);
+  const [productSale, setProductSale] = useState<IProductSale[]>([]);
   const { getProductsByAddedBy } = useManufacturer();
   const { contract } = useRegisteredContract(ContractID.Transactions);
 
@@ -79,8 +84,8 @@ const ViewProducts: NextPageWithLayout = () => {
         [productsDetails.productCode,
         productsDetails.quantity,
         productsDetails.quantityUnits,
-        [productsDetails.batchNo],
-        "5Dy1SCkxhsGWGSzZoJpGjEvdopwxqZzK5Avn2c5jB2QmueF3",
+        [productsDetails.rawMaterials],
+          "5Dy1SCkxhsGWGSzZoJpGjEvdopwxqZzK5Avn2c5jB2QmueF3",
           serialNo,
         ],
         (sth) => {
@@ -105,6 +110,9 @@ const ViewProducts: NextPageWithLayout = () => {
       setLoading(false);
     }
   }
+
+  useInterval(() => fetchAllProducts(), 3000);
+
   useEffect(() => {
     fetchProducts();
   }, [activeAccount]);
@@ -115,9 +123,15 @@ const ViewProducts: NextPageWithLayout = () => {
       setProducts(items);
     }
   };
+  const fetchAllProducts = async () => {
+    const allProducts = await getAllProducts();
+    if (allProducts) {
+      setProductSale(allProducts);
+    }
+  };
 
 
-  console.log(products);
+  console.log(productSale);
 
   return (
     <>
@@ -224,7 +238,7 @@ const ViewProducts: NextPageWithLayout = () => {
                       <chakra.span>{item?.name}</chakra.span>
                       <chakra.span>{item?.productCode}</chakra.span>
                       <chakra.span>{item?.quantity}</chakra.span>
-                      <chakra.span>{item?.rawMaterials}</chakra.span>
+                      <chakra.span>{item?.rawMaterials.join(", ")}</chakra.span>
                       <chakra.span> {item?.batchNo} </chakra.span>
                       <Flex
                         justify={{
@@ -238,8 +252,16 @@ const ViewProducts: NextPageWithLayout = () => {
                           colorScheme="red"
                           size="sm"
                           onClick={() => InitiateSale({ productsDetails: item })}
+                          isDisabled={checkProductInTransactions(productSale,
+                            item.productCode
+                          )}
                         >
-                          sell
+                          {checkProductInTransactions(
+                            productSale,
+                            item.productCode
+                          )
+                            ? "Sold"
+                            : "Sell"}
                         </Button>
                       </Flex>
                     </SimpleGrid>
@@ -249,7 +271,7 @@ const ViewProducts: NextPageWithLayout = () => {
               ))
             )}
           </>
-          </Stack >
+        </Stack >
       </Flex >
     </>
   );

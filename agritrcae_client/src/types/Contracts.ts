@@ -16,7 +16,7 @@ export interface IProductSold {
   productCode: string;
   quantity: number;
   quantityUnits: string;
-  batchNo: number;
+  rawMaterials: number;
   buyer: string,
   serialNo: number,
 }

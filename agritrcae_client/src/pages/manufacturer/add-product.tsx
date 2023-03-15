@@ -13,7 +13,7 @@ import {
 import Head from "next/head";
 import { FiEdit3 } from "react-icons/fi";
 import { NextPageWithLayout } from "@/types/Layout";
-import {  Role } from "@/types/Manufacturer";
+import { Role } from "@/types/Manufacturer";
 import ManufacturerLayout from "@/layouts/ManufacturerLayout";
 import { useState, useEffect } from "react";
 import { IToastProps } from "@/types/Toast";
@@ -116,7 +116,7 @@ const AddProduct: NextPageWithLayout = () => {
       });
       return;
     }
-  //check wallet connection
+    //check wallet connection
     if (!activeAccount || !contract || !activeSigner || !api) {
       return customToast({
         title: "Wallet not connected",
@@ -126,7 +126,7 @@ const AddProduct: NextPageWithLayout = () => {
     }
     //check if connected wallet is for manufacturer
     if (user) {
-      if (whichAccount() !== Role.MANUFACTURER ) {
+      if (whichAccount() !== Role.MANUFACTURER) {
         return customToast({
           title: "Connect a supplier wallet",
           description: "Please connect a supplier wallet",
@@ -137,7 +137,7 @@ const AddProduct: NextPageWithLayout = () => {
     try {
       setLoading(true);
       api.setSigner(activeSigner);
-      
+
       const batchNo = generateNumbers();
 
       await contractTx(
@@ -176,6 +176,8 @@ const AddProduct: NextPageWithLayout = () => {
       setLoading(false);
     }
   };
+
+  // console.log(selectRawMaterials)
 
   return (
     <Flex
@@ -236,7 +238,8 @@ const AddProduct: NextPageWithLayout = () => {
               formLabel="Select RawMaterial Used"
               options={rawMaterials ? concatRawMaterials(rawMaterials) : []}
               onChange={(newVal, _) => {
-                setSelectRawMaterials(newVal);
+                let newArr = Array.from(newVal).map((item) => item?.value);
+                setSelectRawMaterials(newArr);
               }}
               placeholder="Select RawMaterial"
               label="items"

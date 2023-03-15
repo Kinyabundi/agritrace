@@ -46,7 +46,7 @@ const ViewRawMaterials: NextPageWithLayout = () => {
   const { contract } = useRegisteredContract(ContractID.Transactions);
   const [manufacturers, setManufacturers] = useState<IManufacturer[]>([]);
   const [entities, setAllEntities] = useState<IEntity[]>([]);
-  const [showModal, setShowModal] = useState<boolean>(false);
+ 
 
   // const [selectedRawMaterial, setSelectedRawMaterial] =
   //   useState<IRawMaterial>(null);

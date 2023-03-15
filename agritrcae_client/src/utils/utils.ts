@@ -3,7 +3,7 @@ import { IOption } from "@/types/FormControl";
 import { customAlphabet } from "nanoid";
 import { truncateHash } from "./truncateHash";
 import { IRawMaterial } from "@/types/Contracts";
-import { IEntity } from "@/types/Transaction";
+import { IEntity, IProductSale } from "@/types/Transaction";
 
 export const concatManufacturers = (
   manufacturers: IManufacturer[]
@@ -71,6 +71,20 @@ export function checkRawMaterialInTransactions(
   let isPresent = false;
   entities.forEach((entity) => {
     if (entity.batchNo === batchNo) {
+      isPresent = true;
+    }
+  });
+  return isPresent;
+}
+// Checks whether a given Product is in tranactions
+
+export function checkProductInTransactions(
+  productSale: IProductSale[],
+  productCode: string
+) {
+  let isPresent = false;
+  productSale.forEach((product) => {
+    if (product.productCode === productCode) {
       isPresent = true;
     }
   });
