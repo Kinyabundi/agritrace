@@ -2,16 +2,9 @@ import React, { useState, useEffect } from "react";
 import { NextPageWithLayout } from "@/types/Layout";
 import SupplierLayout from "@/layouts/SupplierLayout";
 import Head from "next/head";
-import Manufacturer from "@/components/SaleModal";
-import useRawMaterials from "@/hooks/useRawMaterials";
-import useManufacturer from "@/hooks/useManufacturer";
-import { IRawMaterial } from "@/types/Contracts";
-import { IManufacturer } from "@/types/Manufacturer";
 import { IToastProps } from "@/types/Toast";
 import {
-  contractQuery,
   contractTx,
-  unwrapResultOrError,
   useInkathon,
   useRegisteredContract,
 } from "@scio-labs/use-inkathon";
@@ -25,7 +18,6 @@ import {
   Button,
   Text,
   Divider,
-  useToast,
   VStack,
   Select,
 } from "@chakra-ui/react";
@@ -38,13 +30,13 @@ import {
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en.json";
 import useTransaction from "@/hooks/useTransaction";
+import { toast } from "react-hot-toast";
 
 TimeAgo.addLocale(en);
 
 const timeAgo = new TimeAgo("en-US");
 
 const ViewSales: NextPageWithLayout = () => {
-  const toast = useToast();
   const dataColor = useColorModeValue("white", "gray.800");
   const bg = useColorModeValue("white", "gray.800");
   const bg2 = useColorModeValue("gray.100", "gray.700");
@@ -54,28 +46,44 @@ const ViewSales: NextPageWithLayout = () => {
   const [rawMaterials, setRawMaterials] = useState<IEntity[]>([]);
   const { contract } = useRegisteredContract(ContractID.Transactions);
 
-  const customToast = ({
-    title,
-    description,
-    status,
-    position,
-  }: IToastProps) => {
-    return toast({
-      title,
-      description,
-      status,
-      duration: 5000,
-      isClosable: true,
-      position: position || "top",
-    });
-  };
-
   const fetchItems = async () => {
     const items = await getSuppliersTransactions();
     if (items) {
       setRawMaterials(items);
     }
   };
+
+  const completeEntityTransaction = async (entityCode: string) => {
+    if (!activeAccount || !contract || !activeSigner || !api) {
+      toast.error("Please connect your wallet first");
+      return;
+    }
+
+    const toastId = toast.loading("Completing transaction...");
+
+    try {
+      api.setSigner(activeSigner);
+      await contractTx(
+        api,
+        activeAccount.address,
+        contract,
+        "complete",
+        {},
+        [entityCode],
+        ({ status }) => {
+          if (status.isInBlock) {
+            toast.dismiss(toastId);
+            toast.success("Transaction completed");
+            fetchItems();
+          }
+        }
+      );
+    } catch (err) {
+      toast.dismiss(toastId);
+      toast.error("Transaction failed");
+    }
+  };
+
   useEffect(() => {
     fetchItems();
   }, [activeAccount]);
@@ -85,7 +93,7 @@ const ViewSales: NextPageWithLayout = () => {
   return (
     <>
       <Head>
-        <title>AgriTrace | Suppliers</title>
+        <title>AgriTrace | Suppliers | Sales</title>
       </Head>
 
       <Flex w="full" align={"center"} justify={"space-between"}>
@@ -221,12 +229,28 @@ const ViewSales: NextPageWithLayout = () => {
                       md: "end",
                     }}
                   >
-                    <Button variant="solid" colorScheme="teal" size="sm">
-                      Complete
-                    </Button>
-                    <Button variant="solid" colorScheme="red" size="sm">
-                      Revert
-                    </Button>
+                    {entity.status === TransactionStatus.Completed && (
+                      <Button variant="solid" colorScheme="teal" size="sm">
+                        Accepted and Completed
+                      </Button>
+                    )}
+                    {entity.status === TransactionStatus.Initiated && (
+                      <Button variant="solid" colorScheme="red" size="sm">
+                        Revert
+                      </Button>
+                    )}
+                    {entity.status === TransactionStatus.InProgress && (
+                      <Button
+                        variant="solid"
+                        colorScheme="teal"
+                        size="sm"
+                        onClick={() =>
+                          completeEntityTransaction(entity.entityCode)
+                        }
+                      >
+                        Mark as Complete
+                      </Button>
+                    )}
                   </VStack>
                 </SimpleGrid>
               </Flex>

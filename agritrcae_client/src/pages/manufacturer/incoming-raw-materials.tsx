@@ -11,6 +11,7 @@ import {
   Stack,
   Text,
   useColorModeValue,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
 import {
@@ -23,7 +24,14 @@ import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
 import { truncateHash } from "@/utils/truncateHash";
 import useManufacturer from "@/hooks/useManufacturer";
-import { useInkathon } from "@scio-labs/use-inkathon";
+import {
+  useInkathon,
+  useRegisteredContract,
+  contractTx,
+} from "@scio-labs/use-inkathon";
+import { ContractID } from "@/types/Contracts";
+import { IToastProps } from "@/types/Toast";
+import { toast as loadingToast } from "react-hot-toast";
 
 TimeAgo.addLocale(en);
 
@@ -33,9 +41,11 @@ const IncomingRawMaterials: NextPageWithLayout = () => {
   const dataColor = useColorModeValue("white", "gray.800");
   const bg = useColorModeValue("white", "gray.800");
   const bg2 = useColorModeValue("gray.100", "gray.700");
+  const toast = useToast();
 
   const { getIncomingEntities } = useManufacturer();
-  const { activeAccount } = useInkathon();
+  const { activeAccount, activeSigner, api } = useInkathon();
+  const { contract } = useRegisteredContract(ContractID.Transactions);
 
   const [entities, setEntities] = useState<IEntity[]>([]);
 
@@ -43,6 +53,55 @@ const IncomingRawMaterials: NextPageWithLayout = () => {
     const incoming_entities = await getIncomingEntities();
     if (incoming_entities) {
       setEntities(incoming_entities);
+    }
+  };
+
+  const customToast = ({
+    title,
+    description,
+    status,
+    position,
+  }: IToastProps) => {
+    return toast({
+      title,
+      description,
+      status,
+      duration: 5000,
+      isClosable: true,
+      position: position || "top",
+    });
+  };
+
+  const acceptEntity = async (entityCode: string) => {
+    if (!activeAccount || !contract || !activeSigner || !api) {
+      return customToast({
+        title: "Wallet not connected",
+        description: "Please connect your wallet",
+        status: "error",
+      });
+    }
+
+    const toastId = loadingToast.loading("Accepting incoming raw material...");
+
+    try {
+      api.setSigner(activeSigner);
+      await contractTx(
+        api,
+        activeAccount.address,
+        contract,
+        "purchase",
+        {},
+        [entityCode],
+        ({ status }) => {
+          if (status.isInBlock) {
+            loadingToast.success("Raw material accepted", { id: toastId });
+            fetchEntities();
+          }
+        }
+      );
+    } catch (err) {
+      console.log(err);
+      loadingToast.error("Error accepting raw material", { id: toastId });
     }
   };
 
@@ -167,7 +226,7 @@ const IncomingRawMaterials: NextPageWithLayout = () => {
                     {entity.entityCode}
                   </chakra.span>
                   <chakra.span color="blue.800" fontWeight="600">
-                    {entity.quantity} {" "} {entity.quantityUnit}
+                    {entity.quantity} {entity.quantityUnit}
                   </chakra.span>
                   <chakra.span color="blue.800" fontWeight="600">
                     {entity.status}
@@ -188,14 +247,46 @@ const IncomingRawMaterials: NextPageWithLayout = () => {
                     justify={{
                       md: "end",
                     }}
-                    
+                    align={{
+                      md: "end",
+                    }}
                   >
-                    <Button variant="solid" colorScheme="teal" size="sm">
-                      Accept
-                    </Button>
-                    <Button variant="solid" colorScheme="red" size="sm">
-                      Reject
-                    </Button>
+                    <div>
+                      {entity.status === TransactionStatus.Completed && (
+                        <Button variant="solid" colorScheme="teal" size="sm">
+                          Completed
+                        </Button>
+                      )}
+                      {entity.status === TransactionStatus.Initiated && (
+                        <Button
+                          variant="solid"
+                          colorScheme="teal"
+                          size="sm"
+                          onClick={() => acceptEntity(entity.entityCode)}
+                        >
+                          Accept
+                        </Button>
+                      )}
+
+                      {entity.status === TransactionStatus.InProgress && (
+                        <Button variant="solid" colorScheme="teal" size="sm">
+                          In Progress
+                        </Button>
+                      )}
+                    </div>
+
+                    <div>
+                      {entity.status === TransactionStatus.Initiated && (
+                        <Button
+                          variant="solid"
+                          colorScheme="red"
+                          size="sm"
+                          isDisabled={entity.status !== "Initiated"}
+                        >
+                          Reject
+                        </Button>
+                      )}
+                    </div>
                   </VStack>
                 </SimpleGrid>
               </Flex>
