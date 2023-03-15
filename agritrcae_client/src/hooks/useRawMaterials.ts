@@ -7,6 +7,7 @@ import {
   useRegisteredContract,
 } from "@scio-labs/use-inkathon";
 import { useCallback } from "react";
+import useAuth from "./store/useAuth";
 
 const useRawMaterials = () => {
   const { api, activeAccount, activeSigner } = useInkathon();
