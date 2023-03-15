@@ -21,6 +21,8 @@ import {
 } from "@scio-labs/use-inkathon";
 import { ContractID} from "@/types/Contracts";
 import useRawMaterials from "@/hooks/useRawMaterials";
+import { concatRawMaterials, generateNumbers } from "@/utils/utils";
+
 
 const AddProduct: NextPageWithLayout = () => {
   const { activeSigner, api, activeAccount } = useInkathon();
@@ -34,6 +36,7 @@ const AddProduct: NextPageWithLayout = () => {
   const [productCode, setProductCode] = useState<string>("");
   const [batchNo, setBatchNo] = useState<number>(0);
   const { getRawMaterialsByBuyer} = useRawMaterials();
+  const [selectRawMaterials, setSelectRawMaterials] = useState<string>("")
  const [rawMaterials, setRawMaterials] = useState<string>("");
   const [statusMsg, setStatusMsg] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -120,7 +123,7 @@ console.log(rawMaterials)
         api,
         activeAccount.address,
         contract,
-        "addEntity",
+        "addProduct",
         undefined,
         [
           name,
@@ -128,7 +131,7 @@ console.log(rawMaterials)
           quantity,
           quantityUnits,
           batchNo,
-          rawMaterials,
+          selectRawMaterials,
         ],
         (sth) => {
           if (sth?.status.isInBlock) {
@@ -205,7 +208,8 @@ console.log(rawMaterials)
               <CustomFormControl
             labelText="Select RawMaterial Used"
             variant="select"
-            options={["Manu1 - yw7278181", "Manu2 - y253627"]}
+            options={rawMaterials ?  concatRawMaterials(rawMaterials) : []}
+            onChange={(e) => setSelectRawMaterials(e.target.value)}
           />
             <Stack spacing={10} pt={2}>
               <Button

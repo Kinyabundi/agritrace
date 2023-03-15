@@ -2,6 +2,7 @@ import { IManufacturer } from "@/types/Manufacturer";
 import { IOption } from "@/types/FormControl";
 import { customAlphabet } from "nanoid";
 import { truncateHash } from "./truncateHash";
+import { IRawMaterial } from "@/types/Contracts";
 
 export const concatManufacturers = (
   manufacturers: IManufacturer[]
@@ -11,6 +12,14 @@ export const concatManufacturers = (
     label: `${manufacturer.name} - ${truncateHash(manufacturer.address)}`,
   }));
 };
+export const concatRawMaterials = (
+  rawMaterials: IRawMaterial[]
+) : IOption[] => {
+  return rawMaterials.map((rawMaterial) => ({
+    value: rawMaterial.entityCode,
+    label: `${rawMaterial.name} - ${rawMaterial.entityCode}`
+  }))
+}
 
 /**
  * Generates Unique numbers using nanoid
