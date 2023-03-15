@@ -27,7 +27,6 @@ import {
   Divider,
   useToast,
 } from "@chakra-ui/react";
-import SaleModal from "@/components/SaleModal";
 import { truncateHash } from "@/utils/truncateHash";
 interface SalesProps {
   rawMaterialDetails?: IRawMaterial;
@@ -44,10 +43,10 @@ const ViewRawMaterials: NextPageWithLayout = () => {
   const [rawMaterials, setRawMaterials] = useState<IRawMaterial[]>([]);
   const { contract } = useRegisteredContract(ContractID.Transactions);
   const [manufacturers, setManufacturers] = useState<IManufacturer[]>([]);
-  const [showModal, setShowModal] = useState<boolean>(false);
 
-  const [selectedRawMaterial, setSelectedRawMaterial] =
-    useState<IRawMaterial>(null);
+
+  // const [selectedRawMaterial, setSelectedRawMaterial] =
+  //   useState<IRawMaterial>(null);
 
   const customToast = ({
     title,
@@ -142,7 +141,6 @@ const ViewRawMaterials: NextPageWithLayout = () => {
       <Head>
         <title>AgriTrace | Raw Materials</title>
       </Head>
-      <SaleModal open={showModal} setOpen={setShowModal} />
       <Text px={50} fontSize={"2xl"} fontWeight={"semibold"}>
         Raw Materials
       </Text>
@@ -251,7 +249,7 @@ const ViewRawMaterials: NextPageWithLayout = () => {
                       >
                         <Button
                           variant="solid"
-                          isLoading = {loading}
+                          isLoading={loading}
                           loadingText="Initiating sale"
                           colorScheme="red"
                           size="sm"

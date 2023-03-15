@@ -11,9 +11,12 @@ import {
 import Head from "next/head";
 import { FiEdit3 } from "react-icons/fi";
 import { NextPageWithLayout } from "@/types/Layout";
+import {  Role } from "@/types/Manufacturer";
 import ManufacturerLayout from "@/layouts/ManufacturerLayout";
 import { useState, useEffect } from "react";
 import { IToastProps } from "@/types/Toast";
+import useAuth from "@/hooks/store/useAuth";
+import { shallow } from "zustand/shallow";
 import {
   contractTx,
   useInkathon,
@@ -28,6 +31,13 @@ const AddProduct: NextPageWithLayout = () => {
   const { activeSigner, api, activeAccount } = useInkathon();
   const { contract } = useRegisteredContract(
     ContractID.EntityRegistry
+  );
+  const { user, whichAccount } = useAuth(
+    (state) => ({
+      user: state.user,
+      whichAccount: state.whichAccount,
+    }),
+    shallow
   );
   const toast = useToast();
   const [name, setName] = useState<string>("");
@@ -107,7 +117,7 @@ console.log(rawMaterials)
       });
       return;
     }
-
+  //check wallet connection
     if (!activeAccount || !contract || !activeSigner || !api) {
       return customToast({
         title: "Wallet not connected",
@@ -115,9 +125,21 @@ console.log(rawMaterials)
         status: "error",
       });
     }
+    //check if connected wallet is for manufacturer
+    if (user) {
+      if (whichAccount() !== Role.MANUFACTURER ) {
+        return customToast({
+          title: "Connect a supplier wallet",
+          description: "Please connect a supplier wallet",
+          status: "error",
+        });
+      }
+    }
     try {
       setLoading(true);
       api.setSigner(activeSigner);
+      
+      const batchNo = generateNumbers();
 
       await contractTx(
         api,

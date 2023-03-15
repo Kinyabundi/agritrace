@@ -95,7 +95,7 @@ console.log(products)
             spacingY={3}
             columns={{
               base: 1,
-              md: 5,
+              md: 6,
             }}
             w={{
               base: 120,
@@ -106,7 +106,7 @@ console.log(products)
             color={"gray.800"}
             py={{
               base: 1,
-              md: 5,
+              md: 6,
             }}
             px={{
               base: 2,
@@ -128,9 +128,9 @@ console.log(products)
               RawMaterials
             </chakra.span>
             <chakra.span color="blue.800" fontWeight="600">
-              Action
+              BatchNo
             </chakra.span>
-            {/* <chakra.span
+            <chakra.span
               color="blue.800"
               fontWeight="600"
               textAlign={{
@@ -138,7 +138,7 @@ console.log(products)
               }}
             >
               Actions
-            </chakra.span> */}
+            </chakra.span>
           </SimpleGrid>
           <>
             {products.length === 0 ? (
@@ -157,7 +157,7 @@ console.log(products)
                       spacingY={3}
                       columns={{
                         base: 1,
-                        md: 5,
+                        md: 6,
                       }}
                       w="full"
                       py={2}
@@ -168,7 +168,7 @@ console.log(products)
                       <chakra.span>{item?.productCode}</chakra.span>
                       <chakra.span>{item?.quantity}</chakra.span>
                       <chakra.span>{item?.rawMaterials}</chakra.span>
-                      {/* <chakra.span></chakra.span> */}
+                      <chakra.span> {item?.batchNo} </chakra.span>
                       <Flex
                         justify={{
                           md: "end",
@@ -176,9 +176,11 @@ console.log(products)
                       >
                         <Button
                           variant="solid"
+                          // isLoading = {loading}
+                          // loadingText="Initiating sale"
                           colorScheme="red"
                           size="sm"
-                          //  onClick={fetchManufacturers}
+                          // onClick={() => clickInitiateSale({ productsDetails: item })}
                         >
                           sell
                         </Button>
