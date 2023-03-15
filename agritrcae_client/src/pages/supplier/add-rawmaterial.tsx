@@ -15,18 +15,23 @@ import {
 } from "@scio-labs/use-inkathon";
 import Head from "next/head";
 import { FiEdit3 } from "react-icons/fi";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IToastProps } from "@/types/Toast";
 import { NextPageWithLayout } from "@/types/Layout";
 import SupplierLayout from "@/layouts/SupplierLayout";
 import { ContractID } from "@/types/Contracts";
 import useAuth from "@/hooks/store/useAuth";
 import { shallow } from "zustand/shallow";
-import { Role } from "@/types/Manufacturer";
+import { IManufacturer, Role } from "@/types/Manufacturer";
+import { concatManufacturers, generateNumbers } from "@/utils/utils";
+import { useRouter } from "next/router";
+import useManufacturer from "@/hooks/useManufacturer";
 
 const AddRawMaterial: NextPageWithLayout = () => {
   const { contract } = useRegisteredContract(ContractID.EntityRegistry);
   const { activeSigner, api, activeAccount } = useInkathon();
+  const router = useRouter();
+  const { getManufacturers } = useManufacturer();
 
   const { user, whichAccount } = useAuth(
     (state) => ({
@@ -39,9 +44,10 @@ const AddRawMaterial: NextPageWithLayout = () => {
   const [name, setName] = useState<string>("");
   const [quantity, setQuantity] = useState<number>(0);
   const [quantityUnits, setQuantityUnits] = useState<string>("");
-  const [batchNo, setBatchNo] = useState<number>(0);
   const [entityCode, setEntityCode] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [manufacturers, setManufacturers] = useState<IManufacturer[]>([]);
+  const [selectedBuyer, setSelectedBuyer] = useState<string>("");
   const toast = useToast();
 
   const customToast = ({
@@ -59,6 +65,24 @@ const AddRawMaterial: NextPageWithLayout = () => {
       position: position || "top",
     });
   };
+
+  const resetFields = () => {
+    setName("");
+    setQuantity(0);
+    setQuantityUnits("");
+    setEntityCode("");
+  };
+
+  const fetchManufacturers = async () => {
+    const manufacturers = await getManufacturers();
+    if (manufacturers) {
+      setManufacturers(manufacturers);
+    }
+  };
+
+  useEffect(() => {
+    fetchManufacturers();
+  }, [activeAccount]);
 
   const handleSubmit = async () => {
     if (!name) {
@@ -126,20 +150,15 @@ const AddRawMaterial: NextPageWithLayout = () => {
       setLoading(true);
       api.setSigner(activeSigner);
 
+      const batchNo = generateNumbers();
+
       await contractTx(
         api,
         activeAccount.address,
         contract,
         "addEntity",
         undefined,
-        [
-          name,
-          quantity,
-          quantityUnits,
-          entityCode,
-          batchNo,
-          "162k1QTpB74XsEAECaw21NUgqXmLVRq4VdCEseayrx9ztaQe",
-        ],
+        [name, quantity, quantityUnits, entityCode, batchNo, selectedBuyer],
         (sth) => {
           if (sth?.status.isInBlock) {
             customToast({
@@ -151,6 +170,8 @@ const AddRawMaterial: NextPageWithLayout = () => {
           }
         }
       );
+      resetFields();
+      router.push("/supplier/view-rawmaterials");
     } catch (err) {
       console.log(err);
       customToast({
@@ -163,7 +184,7 @@ const AddRawMaterial: NextPageWithLayout = () => {
     }
   };
 
-  console.log(user)
+  console.log(user);
 
   return (
     <Flex
@@ -213,6 +234,12 @@ const AddRawMaterial: NextPageWithLayout = () => {
               placeholder="233232"
               value={entityCode}
               setValue={setEntityCode}
+            />
+            <CustomFormControl
+              labelText="Select Buyer"
+              variant="select"
+              options={manufacturers ? concatManufacturers(manufacturers) : []}
+              onChange={(e) => setSelectedBuyer(e.target.value)}
             />
             <Stack spacing={10} pt={2}>
               <Button

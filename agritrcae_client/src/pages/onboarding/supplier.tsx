@@ -18,13 +18,13 @@ import {
   useInkathon,
   useRegisteredContract,
 } from "@scio-labs/use-inkathon";
-import useInvite from "@/hooks/useInvite";
 import { ContractID } from "@/types/Contracts";
+import { useRouter } from "next/router";
 
 const OnboardingSupplier: NextPageWithLayout = () => {
   const { activeAccount, activeSigner, api } = useInkathon();
+  const router = useRouter();
   const { contract } = useRegisteredContract(ContractID.StakeholderRegistry);
-  const { getInviteInfo } = useInvite();
   const toast = useToast();
   const [name, setName] = useState<string>("");
   const [phoneNo, setPhoneNo] = useState<string>("");
@@ -65,7 +65,42 @@ const OnboardingSupplier: NextPageWithLayout = () => {
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     // validate fields
-    
+
+    if (!name) {
+      customToast({
+        title: "Name Required",
+        description: "Please fill in your name",
+        status: "error",
+      });
+      return;
+    }
+
+    if (!phoneNo) {
+      customToast({
+        title: "Phone No Required",
+        description: "Please fill in your phone number",
+        status: "error",
+      });
+      return;
+    }
+
+    if (!email) {
+      customToast({
+        title: "Email Required",
+        description: "Please fill in your email address",
+        status: "error",
+      });
+      return;
+    }
+
+    if (!location) {
+      customToast({
+        title: "Location Required",
+        description: "Please fill in your location",
+        status: "error",
+      });
+      return;
+    }
 
     if (phoneNo && !phoneNoRegex.test(phoneNo)) {
       customToast({
@@ -97,14 +132,14 @@ const OnboardingSupplier: NextPageWithLayout = () => {
     try {
       setLoading(true);
       api.setSigner(activeSigner);
-      
+
       await contractTx(
         api,
         activeAccount.address,
         contract,
         "saveSupplier",
         {},
-        [name, phoneNo, email]
+        [name, phoneNo, email, location]
       );
 
       customToast({
@@ -112,7 +147,9 @@ const OnboardingSupplier: NextPageWithLayout = () => {
         title: "Onboard success",
         description: "We've successfully onboarded your wallet as supplier",
       });
-      
+
+      resetFields();
+      router.push("/supplier/dashboard");
     } catch (err) {
       console.log(err);
       customToast({
@@ -151,6 +188,8 @@ const OnboardingSupplier: NextPageWithLayout = () => {
             <CustomFormControl
               labelText="Supplier Name"
               placeholder={"Muthaiti Dairy Cooperative"}
+              value={name}
+              setValue={setName}
             />
             <CustomFormControl
               labelText="Phone No"
