@@ -96,6 +96,7 @@ mod stakeholder_registry {
         address: AccountId,
         timestamp: Timestamp,
         role: Role,
+        location: String,
     }
 
     impl Default for Supplier {
@@ -108,6 +109,7 @@ mod stakeholder_registry {
                 address: AccountId::from([0x0; 32]),
                 timestamp: Timestamp::default(),
                 role: Role::Supplier,
+                location: String::from(""),
             }
         }
     }
@@ -198,6 +200,7 @@ mod stakeholder_registry {
             name: String,
             phone_no: String,
             email: String,
+            location: String,
         ) -> Result<()> {
             let address = self.env().caller();
             let supplier = Supplier {
@@ -208,6 +211,7 @@ mod stakeholder_registry {
                 address: self.env().caller(),
                 timestamp: self.env().block_timestamp(),
                 role: Role::Supplier,
+                location,
             };
             if self.suppliers.contains(&address) {
                 return Err(Error::SupplierAlreadyExists);
@@ -218,11 +222,8 @@ mod stakeholder_registry {
                 }
                 self.suppliers_accounts.push(address);
                 self.suppliers.insert(address, &supplier);
-                self.env().emit_event(SupplierAdded {
-                    supplier: address,
-                });
+                self.env().emit_event(SupplierAdded { supplier: address });
             }
-
             Ok(())
         }
         /// Join as Supplier when they accept the join link when they connect their wallet
@@ -243,9 +244,7 @@ mod stakeholder_registry {
                 }
                 suppliers.push(caller);
                 self.manufacturers.insert(address, &manufacturer);
-                self.env().emit_event(SupplierAdded {
-                    supplier: caller,
-                });
+                self.env().emit_event(SupplierAdded { supplier: caller });
                 Ok(())
             } else {
                 Err(Error::ManufacturerDoesNotExist)

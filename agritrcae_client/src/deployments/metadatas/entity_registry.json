@@ -1,8 +1,8 @@
 {
   "source": {
-    "hash": "0xea1ae1da067c2ab9bc25fda0e21ce472b71097633fd9542435d9dfc7ef6354be",
+    "hash": "0x690731448d98344cddc796191dca38c803a0dd99a6b2f48942bd6a3d4ba2512a",
     "language": "ink! 4.0.1",
-    "compiler": "rustc 1.69.0-nightly",
+    "compiler": "rustc 1.70.0-nightly",
     "build_info": {
       "build_mode": "Debug",
       "cargo_contract_version": "2.0.1",
@@ -331,6 +331,31 @@
           "type": 22
         },
         "selector": "0xdec160ac"
+      },
+      {
+        "args": [
+          {
+            "label": "added_by",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 3
+            }
+          }
+        ],
+        "docs": [],
+        "label": "get_products_by_added_by",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 22
+        },
+        "selector": "0x9641f09f"
       },
       {
         "args": [

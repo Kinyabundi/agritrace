@@ -221,6 +221,18 @@ mod entity_registry {
             }
             products
         }
+        //Get all products by added_by
+        #[ink(message)]
+        pub fn get_products_by_added_by(&self, added_by: AccountId) -> Vec<Product> {
+            let mut products = Vec::new();
+            for product_code in self.products_items.iter() {
+                let product = self.products.get(product_code).unwrap();
+                if product.addedby == added_by {
+                    products.push(product);
+                }
+            }
+            products
+        }
 
         /// Get all entities by added_by
         #[ink(message)]

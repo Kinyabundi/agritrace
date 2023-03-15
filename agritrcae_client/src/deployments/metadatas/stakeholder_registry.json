@@ -1,10 +1,10 @@
 {
   "source": {
-    "hash": "0xb0b677df39bb8dfb3354370a5dd8573c9a5a0188b0015e9fe70ae5a238bf42d4",
+    "hash": "0xe7d9d4c61391909ba94dd6d9b093f063311431b3e194f7e5a594f4f70a1d3912",
     "language": "ink! 4.0.1",
-    "compiler": "rustc 1.69.0-nightly",
+    "compiler": "rustc 1.70.0-nightly",
     "build_info": {
-      "build_mode": "Release",
+      "build_mode": "Debug",
       "cargo_contract_version": "2.0.1",
       "rust_toolchain": "nightly-aarch64-apple-darwin",
       "wasm_opt_settings": {
@@ -211,6 +211,15 @@
           },
           {
             "label": "email",
+            "type": {
+              "displayName": [
+                "String"
+              ],
+              "type": 0
+            }
+          },
+          {
+            "label": "location",
             "type": {
               "displayName": [
                 "String"
@@ -560,6 +569,15 @@
                             }
                           },
                           "name": "role"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x789a7e6c",
+                              "ty": 0
+                            }
+                          },
+                          "name": "location"
                         }
                       ],
                       "name": "Supplier"
@@ -1241,6 +1259,11 @@
                 "name": "role",
                 "type": 16,
                 "typeName": "Role"
+              },
+              {
+                "name": "location",
+                "type": 0,
+                "typeName": "String"
               }
             ]
           }
