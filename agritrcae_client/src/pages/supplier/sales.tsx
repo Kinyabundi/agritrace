@@ -27,22 +27,19 @@ import {
   Divider,
   useToast,
 } from "@chakra-ui/react";
-import SaleModal from "@/components/SaleModal";
-import AdminLayout from "@/layouts/AdminLayout";
+import { truncateHash } from "@/utils/truncateHash";
 
-const ViewRawMaterials: NextPageWithLayout = () => {
+
+const ViewSales: NextPageWithLayout = () => {
   const toast = useToast();
   const dataColor = useColorModeValue("white", "gray.800");
   const bg = useColorModeValue("white", "gray.800");
   const bg2 = useColorModeValue("gray.100", "gray.700");
-  const { getRawMaterials } = useRawMaterials();
-  const { getManufacturers } = useManufacturer();
+  const {  getSuppliersTransactions } = useRawMaterials();
   const { activeSigner, api, activeAccount } = useInkathon();
   const [loading, setLoading] = useState<boolean>(false);
   const [rawMaterials, setRawMaterials] = useState<IRawMaterial[]>([]);
   const { contract } = useRegisteredContract(ContractID.Transactions);
-  const [manufacturers, setManufacturers] = useState<IManufacturer[]>([]);
-  const [showModal, setShowModal] = useState<boolean>(false)
 
   const customToast = ({
     title,
@@ -60,56 +57,9 @@ const ViewRawMaterials: NextPageWithLayout = () => {
     });
   };
 
-  const clickInitiateSale = async (
-    entityCode: string,
-    quantity: number,
-    quantityUnits: string,
-    batchNo: string,
-    buyer: string
-  ) => {
-    if (!activeAccount || !contract || !activeSigner || !api) {
-      return customToast({
-        title: "Wallet not connected",
-        description: "Please connect your wallet",
-        status: "error",
-      });
-    }
-    try {
-      setLoading(true);
-      api.setSigner(activeSigner);
-
-      await contractTx(
-        api,
-        activeAccount.address,
-        contract,
-        "initiateSale",
-        undefined,
-        [entityCode, quantity, quantityUnits, batchNo, buyer],
-        (sth) => {
-          if (sth?.status.isInBlock) {
-            customToast({
-              title: "Sale intialized",
-              description: "Sale intialized successfully",
-              status: "success",
-            });
-            setLoading(false);
-          }
-        }
-      );
-    } catch (err) {
-      console.log(err);
-      customToast({
-        title: "Error",
-        description: "Something went wrong",
-        status: "error",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
+ 
   const fetchItems = async () => {
-    const items = await getRawMaterials();
+    const items = await  getSuppliersTransactions();
     if (items) {
       setRawMaterials(items);
     }
@@ -125,7 +75,6 @@ const ViewRawMaterials: NextPageWithLayout = () => {
       <Head>
         <title>AgriTrace | Raw Materials</title>
       </Head>
-      <SaleModal open={showModal} setOpen={setShowModal} />
       <Text px={50} fontSize={"2xl"} fontWeight={"semibold"}>
         Raw Materials
       </Text>
@@ -153,7 +102,7 @@ const ViewRawMaterials: NextPageWithLayout = () => {
             spacingY={3}
             columns={{
               base: 1,
-              md: 5,
+              md: 4,
             }}
             w={{
               base: 120,
@@ -164,7 +113,7 @@ const ViewRawMaterials: NextPageWithLayout = () => {
             color={"gray.800"}
             py={{
               base: 1,
-              md: 5,
+              md: 4,
             }}
             px={{
               base: 2,
@@ -173,9 +122,6 @@ const ViewRawMaterials: NextPageWithLayout = () => {
             fontSize="md"
             fontWeight="hairline"
           >
-            <chakra.span color="blue.800" fontWeight="600">
-              Name
-            </chakra.span>
             <chakra.span color="blue.800" fontWeight="600">
               EntityCode
             </chakra.span>
@@ -186,13 +132,18 @@ const ViewRawMaterials: NextPageWithLayout = () => {
               BatchNo
             </chakra.span>
             <chakra.span color="blue.800" fontWeight="600">
-              Status
+              Buyer
             </chakra.span>
-           
+            {/* <chakra.span
+              color="blue.800"
+              fontWeight="600"
+            >
+              Status
+            </chakra.span> */}
           </SimpleGrid>
           <>
             {rawMaterials.length === 0 ? (
-              <Text px={50}>No Raw Materials Added Yet</Text>
+              <Text px={50}>No Sales Made Yet</Text>
             ) : (
               rawMaterials?.map((item, pid) => (
                 <div key={pid}>
@@ -207,19 +158,17 @@ const ViewRawMaterials: NextPageWithLayout = () => {
                       spacingY={3}
                       columns={{
                         base: 1,
-                        md: 5,
+                        md: 4,
                       }}
                       w="full"
                       py={2}
                       px={10}
                       fontWeight="400"
                     >
-                      <chakra.span>{item?.name}</chakra.span>
                       <chakra.span>{item?.entityCode}</chakra.span>
                       <chakra.span>{item?.quantity}</chakra.span>
                       <chakra.span>{item?.batchNo}</chakra.span>
-                      <chakra.span></chakra.span>
-                     
+                      <chakra.span>{truncateHash(item?.buyer)}</chakra.span>
                     </SimpleGrid>
                   </Flex>
                   <Divider />
@@ -233,6 +182,8 @@ const ViewRawMaterials: NextPageWithLayout = () => {
   );
 };
 
-ViewRawMaterials.getLayout = (page) => <AdminLayout>{page} </AdminLayout>;
+ViewSales.getLayout = (page) => <SupplierLayout>{page} </SupplierLayout>;
 
-export default ViewRawMaterials;
+
+export default ViewSales;
+

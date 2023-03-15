@@ -43,7 +43,7 @@ const LinkItems: Array<LinkItemProps> = [
     icon: GiSwapBag,
     href: "/supplier/add-rawmaterial",
   },
-  { name: "Sale", icon: BsCreditCard, href: "/supplier/manufacturers" },
+  { name: "Sale", icon: BsCreditCard, href: "/supplier/sales" },
   { name: "Faucet", icon: FaPeopleCarry, href: "#" },
   { name: "Account", icon: MdAccountBalanceWallet, href: "#" },
   {

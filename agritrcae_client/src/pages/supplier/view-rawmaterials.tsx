@@ -28,7 +28,10 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import SaleModal from "@/components/SaleModal";
-
+import { truncateHash } from "@/utils/truncateHash";
+interface SalesProps {
+  rawMaterialDetails?: IRawMaterial;
+}
 const ViewRawMaterials: NextPageWithLayout = () => {
   const toast = useToast();
   const dataColor = useColorModeValue("white", "gray.800");
@@ -62,17 +65,13 @@ const ViewRawMaterials: NextPageWithLayout = () => {
     });
   };
 
-  const triggerModal = (rawMaterial: IRawMaterial) => {
-    setSelectedRawMaterial(rawMaterial);
-    setShowModal(true);
-  };
+  // const triggerModal = (rawMaterial: IRawMaterial) => {
+  //   setSelectedRawMaterial(rawMaterial);
+  //   setShowModal(true);
+  // };
 
   const clickInitiateSale = async (
-    entityCode: string,
-    quantity: number,
-    quantityUnits: string,
-    batchNo: string,
-    buyer: string
+    { rawMaterialDetails }: SalesProps
   ) => {
     if (!activeAccount || !contract || !activeSigner || !api) {
       return customToast({
@@ -89,9 +88,13 @@ const ViewRawMaterials: NextPageWithLayout = () => {
         api,
         activeAccount.address,
         contract,
-        "initiateSale",
+        "initiateSell",
         undefined,
-        [entityCode, quantity, quantityUnits, batchNo, buyer],
+        [rawMaterialDetails.entityCode,
+        rawMaterialDetails.quantity,
+        rawMaterialDetails.quantityUnits,
+        rawMaterialDetails.batchNo,
+        rawMaterialDetails.buyer],
         (sth) => {
           if (sth?.status.isInBlock) {
             customToast({
@@ -200,7 +203,7 @@ const ViewRawMaterials: NextPageWithLayout = () => {
               BatchNo
             </chakra.span>
             <chakra.span color="blue.800" fontWeight="600">
-              Status
+              Buyer
             </chakra.span>
             <chakra.span
               color="blue.800"
@@ -240,7 +243,7 @@ const ViewRawMaterials: NextPageWithLayout = () => {
                       <chakra.span>{item?.entityCode}</chakra.span>
                       <chakra.span>{item?.quantity}</chakra.span>
                       <chakra.span>{item?.batchNo}</chakra.span>
-                      <chakra.span></chakra.span>
+                      <chakra.span>{truncateHash(item?.buyer)}</chakra.span>
                       <Flex
                         justify={{
                           md: "end",
@@ -248,9 +251,11 @@ const ViewRawMaterials: NextPageWithLayout = () => {
                       >
                         <Button
                           variant="solid"
+                          isLoading = {loading}
+                          loadingText="Initiating sale"
                           colorScheme="red"
                           size="sm"
-                          onClick={() => triggerModal(item)}
+                          onClick={() => clickInitiateSale({ rawMaterialDetails: item })}
                         >
                           sell
                         </Button>
