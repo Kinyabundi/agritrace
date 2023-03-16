@@ -18,10 +18,16 @@ mod stakeholder_registry {
         SupplierAlreadyExists,
         ///supplier does not exists
         SupplierDoesNotExist,
+        /// Distributor already exists
+        DistributorAlreadyExists,
+        /// Distributor does not exist
+        DistributorDoesNotExist,
         /// error thrown whenever account id used already exists as Supplier
         AccountIdAlreadyExistsAsSupplier,
         /// error thrown whenever account id used already exists as Manufacturer
         AccountIdAlreadyExistsAsManufacturer,
+        /// error thrown whenever account id used already exists as Distributor
+        AccountIdAlreadyExistsAsDistributor,
     }
 
     pub type Result<T> = core::result::Result<T, Error>;
@@ -49,6 +55,12 @@ mod stakeholder_registry {
     pub struct SupplierAdded {
         #[ink(topic)]
         supplier: AccountId,
+    }
+
+    #[ink(event)]
+    pub struct DistributorAdded {
+        #[ink(topic)]
+        distributor: AccountId,
     }
 
     #[derive(scale::Decode, scale::Encode, Debug, PartialEq, Eq, Clone)]
@@ -114,12 +126,43 @@ mod stakeholder_registry {
         }
     }
 
+    #[derive(scale::Decode, scale::Encode, Debug, PartialEq, Eq, Clone)]
+    #[cfg_attr(
+        feature = "std",
+        derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)
+    )]
+    pub struct Distributor {
+        name: String,
+        phone_no: String,
+        email: String,
+        address: AccountId,
+        timestamp: Timestamp,
+        role: Role,
+        location: String,
+    }
+
+    impl Default for Distributor {
+        fn default() -> Self {
+            Self {
+                name: String::from(""),
+                phone_no: String::from(""),
+                email: String::from(""),
+                address: AccountId::from([0x0; 32]),
+                timestamp: Timestamp::default(),
+                role: Role::Distributor,
+                location: String::from(""),
+            }
+        }
+    }
+
     #[ink(storage)]
     pub struct StakeholderRegistry {
         manufacturers: Mapping<AccountId, Manufacturer>,
         manufacturers_accounts: Vec<AccountId>,
         suppliers: Mapping<AccountId, Supplier>,
         suppliers_accounts: Vec<AccountId>,
+        distributors: Mapping<AccountId, Distributor>,
+        distributors_accounts: Vec<AccountId>,
     }
 
     impl StakeholderRegistry {
@@ -130,6 +173,8 @@ mod stakeholder_registry {
                 manufacturers_accounts: Vec::new(),
                 suppliers: Mapping::new(),
                 suppliers_accounts: Vec::new(),
+                distributors: Mapping::new(),
+                distributors_accounts: Vec::new(),
             }
         }
 
@@ -269,6 +314,57 @@ mod stakeholder_registry {
                 suppliers.push(self.suppliers.get(address).unwrap());
             }
             suppliers
+        }
+
+        /// Adds new distributor
+        #[ink(message)]
+        pub fn add_distributor(
+            &mut self,
+            name: String,
+            phone_no: String,
+            email: String,
+            location: String,
+        ) -> Result<()> {
+            let address = self.env().caller();
+            let distributor = Distributor {
+                name,
+                phone_no,
+                email,
+                address: self.env().caller(),
+                timestamp: self.env().block_timestamp(),
+                role: Role::Distributor,
+                location,
+            };
+            if self.distributors.contains(&address) {
+                return Err(Error::DistributorAlreadyExists);
+            } else {
+                self.distributors_accounts.push(address);
+                self.distributors.insert(address, &distributor);
+                self.env().emit_event(DistributorAdded {
+                    distributor: address,
+                });
+            }
+            Ok(())
+        }
+
+        /// Returns distributor
+        #[ink(message)]
+        pub fn get_distributor(&self, address: AccountId) -> Result<Distributor> {
+            if self.distributors.contains(&address) {
+                Ok(self.distributors.get(&address).unwrap())
+            } else {
+                Err(Error::DistributorDoesNotExist)
+            }
+        }
+
+        /// Returns all distributors
+        #[ink(message)]
+        pub fn get_distributors(&self) -> Vec<Distributor> {
+            let mut distributors = Vec::new();
+            for address in self.distributors_accounts.iter() {
+                distributors.push(self.distributors.get(address).unwrap());
+            }
+            distributors
         }
     }
 }
