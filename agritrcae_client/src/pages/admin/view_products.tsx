@@ -95,7 +95,7 @@ console.log(products)
             spacingY={3}
             columns={{
               base: 1,
-              md: 4,
+              md: 5,
             }}
             w={{
               base: 120,
@@ -106,7 +106,7 @@ console.log(products)
             color={"gray.800"}
             py={{
               base: 1,
-              md: 4,
+              md: 5,
             }}
             px={{
               base: 2,
@@ -124,9 +124,9 @@ console.log(products)
             <chakra.span color="blue.800" fontWeight="600">
               Quantity
             </chakra.span>
-            {/* <chakra.span color="blue.800" fontWeight="600">
+            <chakra.span color="blue.800" fontWeight="600">
               rawMaterials
-            </chakra.span> */}
+            </chakra.span>
             <chakra.span color="blue.800" fontWeight="600">
               Status
             </chakra.span>
@@ -149,7 +149,7 @@ console.log(products)
                       spacingY={3}
                       columns={{
                         base: 1,
-                        md: 4,
+                        md: 5,
                       }}
                       w="full"
                       py={2}
@@ -159,8 +159,8 @@ console.log(products)
                       <chakra.span>{item?.name}</chakra.span>
                       <chakra.span>{item?.productCode}</chakra.span>
                       <chakra.span>{item?.quantity}</chakra.span>
-                      {/* <chakra.span>{item?.rawMaterials}</chakra.span>
-                      <chakra.span></chakra.span> */}
+                      <chakra.span>{item?.rawMaterials.join(", ")}</chakra.span>
+                      {/* <chakra.span></chakra.span> */}
                        <chakra.span>Pending</chakra.span>
                     </SimpleGrid>
                   </Flex>
