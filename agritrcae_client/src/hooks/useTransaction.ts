@@ -1,4 +1,4 @@
-import { ContractID } from "@/types/Contracts";
+import { ContractID, IProductSold } from "@/types/Contracts";
 import { IEntity, IProductSale } from "@/types/Transaction";
 import {
   contractQuery,
@@ -56,7 +56,24 @@ const useTransaction = () => {
       return unwrapResultOrDefault(results, [] as IEntity[]);
     }
   }, [activeAccount]);
-  return { getAllEntities, getSuppliersTransactions, getAllProducts };
+
+  const getManufacturersTransactions = useCallback(async () => {
+    if (contract && api && activeAccount) {
+      const results = await contractQuery(
+        api,
+        activeAccount?.address,
+        contract,
+        "getProductTransactionsBySeller",
+        {},
+        [activeAccount?.address]
+      );
+      return unwrapResultOrDefault(results, [] as IProductSale[]);
+    }
+  }, [activeAccount]);
+
+
+
+  return { getAllEntities, getSuppliersTransactions, getAllProducts, getManufacturersTransactions };
 };
 
 export default useTransaction;

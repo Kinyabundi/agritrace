@@ -66,6 +66,7 @@ const LinkItems: Array<LinkItemProps> = [
     href: "/manufacturer/add-product",
   },
   { name: "My Products", icon: FaPeopleCarry, href: "/manufacturer/view-products" },
+  { name: "OutGoing Sales", icon: FaPeopleCarry, href: "/manufacturer/sales" },
   { name: "Account", icon: MdAccountBalanceWallet, href: "#" },
 ];
 

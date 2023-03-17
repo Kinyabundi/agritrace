@@ -48,7 +48,7 @@ const useAuthStateListener = () => {
         setHasAccount(true);
 
         return;
-      } else {
+      } else  {
         // if not found, confirm if the account is created as supplier
         const supplierResult = await contractQuery(
           api,
@@ -67,11 +67,31 @@ const useAuthStateListener = () => {
           setHasAccount(true);
           return;
         } else {
-          setUser(null);
-          setHasAccount(false);
-          return;
+
+          const distributorResult = await contractQuery(
+            api,
+            activeAccount?.address,
+            contract,
+            "getDistributor",
+            {},
+            [activeAccount.address]
+          );
+
+          const newDistributorResult = unwrapResultOrDefault(distributorResult, null);
+
+          if (Object.entries(newDistributorResult)[0][0] === "ok") {
+            // @ts-ignore
+            setUser(Object.values(newDistributorResult)[0]);
+            setHasAccount(true);
+            return;
+          } else {
+            // @ts-ignore
+            setUser(null);
+            setHasAccount(false);
+            return;
+          }
         }
-      }
+      } 
     }
   };
 
