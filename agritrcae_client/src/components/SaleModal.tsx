@@ -1,4 +1,4 @@
-import { IProduct, IProductSold, IRawMaterial } from "@/types/Contracts";
+import { IProduct, IProductSold } from "@/types/Contracts";
 import {
   Modal,
   ModalOverlay,
@@ -8,22 +8,13 @@ import {
   ModalBody,
   ModalCloseButton,
   Button,
-  Toast,
   useToast,
-  InputGroup,
-  Input,
-  InputLeftElement,
-  InputRightElement,
-  FormControl,
-  FormLabel,
 } from "@chakra-ui/react";
 import { ContractID } from "@/types/Contracts";
 import { useState, useEffect } from "react";
 import CustomFormControl from "./CustomFormControl";
 import {
-  contractQuery,
   contractTx,
-  unwrapResultOrError,
   useInkathon,
   useRegisteredContract,
 } from "@scio-labs/use-inkathon";
@@ -37,7 +28,6 @@ interface ModalProps {
   setOpen: (open: boolean) => void;
   productsDetails?: IProductSold | IProduct;
 }
-
 
 export default function SaleModal({
   open,
@@ -77,9 +67,7 @@ export default function SaleModal({
     }
   };
 
-  const InitiateSale = async (
-
-  ) => {
+  const InitiateSale = async () => {
     if (!activeAccount || !contract || !activeSigner || !api) {
       return customToast({
         title: "Wallet not connected",
@@ -98,10 +86,11 @@ export default function SaleModal({
         contract,
         "sellProduct",
         undefined,
-        [productsDetails.productCode,
-        productsDetails.quantity,
-        productsDetails.quantityUnits,
-        productsDetails.rawMaterials,
+        [
+          productsDetails.productCode,
+          productsDetails.quantity,
+          productsDetails.quantityUnits,
+          productsDetails.rawMaterials,
           selectedBuyer,
           serialNo,
         ],
@@ -126,7 +115,7 @@ export default function SaleModal({
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   console.log(productsDetails);
   return (
@@ -137,21 +126,22 @@ export default function SaleModal({
         <ModalHeader>Sell Product</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
-
           <CustomFormControl
             labelText="Select Buyer"
             variant="select"
             options={distributor ? concatDistributors(distributor) : []}
             onChange={(e) => setSelectedBuyer(e.target.value)}
-           
           />
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="blue" mr={3}
+          <Button
+            colorScheme="blue"
+            mr={3}
             onClick={() => InitiateSale()}
             isLoading={loading}
-            loadingText="Initiating sale">
+            loadingText="Initiating sale"
+          >
             Initiate Sell
           </Button>
           <Button onClick={() => setOpen(false)}>Cancel</Button>

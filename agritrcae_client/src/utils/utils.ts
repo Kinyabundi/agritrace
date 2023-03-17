@@ -14,9 +14,7 @@ export const concatManufacturers = (
     label: `${manufacturer.name} - ${truncateHash(manufacturer.address)}`,
   }));
 };
-export const concatDistributors = (
-  distributors: IDistributor[]
-): IOption[] => {
+export const concatDistributors = (distributors: IDistributor[]): IOption[] => {
   return distributors.map((distributor) => ({
     value: distributor.address,
     label: `${distributor.name} - ${truncateHash(distributor.address)}`,
@@ -99,3 +97,20 @@ export function checkProductInTransactions(
   });
   return isPresent;
 }
+
+// Validate the if the product status is Initiated or InProgress for a given productCode
+export const validateProductStatus = (
+  productSale: IProductSale[],
+  productCode: string
+): boolean => {
+  let isValid = false;
+  productSale.forEach((product) => {
+    if (
+      product.productCode === productCode &&
+      (product.status === "Initiated" || product.status === "InProgress")
+    ) {
+      isValid = true;
+    }
+  });
+  return isValid;
+};

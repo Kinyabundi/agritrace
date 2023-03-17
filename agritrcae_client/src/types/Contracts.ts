@@ -10,7 +10,7 @@ export interface IProduct {
   quantity: number;
   quantityUnits: string;
   batchNo: number;
-  raw_materials: number[];
+  rawMaterials: number[];
 }
 export interface IProductSold {
   productCode: string;

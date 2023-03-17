@@ -1,14 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { NextPageWithLayout } from "@/types/Layout";
 import Head from "next/head";
 import useManufacturer from "@/hooks/useManufacturer";
-import { IToastProps } from "@/types/Toast";
-import {
-  contractTx,
-  useInkathon,
-  useRegisteredContract,
-} from "@scio-labs/use-inkathon";
-import { ContractID, IProduct, IProductSold } from "@/types/Contracts";
+import { useInkathon } from "@scio-labs/use-inkathon";
+import { IProduct, IProductSold } from "@/types/Contracts";
 import ManufacturerLayout from "@/layouts/ManufacturerLayout";
 import { IProductSale } from "@/types/Transaction";
 import {
@@ -20,53 +15,30 @@ import {
   Button,
   Text,
   Divider,
-  useToast,
   useInterval,
 } from "@chakra-ui/react";
-import { generateNumbers } from "@/utils/utils";
+import { validateProductStatus } from "@/utils/utils";
 import useTransaction from "@/hooks/useTransaction";
-import { checkProductInTransactions } from "@/utils/utils";
 import SaleModal from "@/components/SaleModal";
 
 const ViewProducts: NextPageWithLayout = () => {
-  const toast = useToast();
   const dataColor = useColorModeValue("white", "gray.800");
   const bg = useColorModeValue("white", "gray.800");
   const bg2 = useColorModeValue("gray.100", "gray.700");
   const { getAllProducts } = useTransaction();
-  const { activeAccount, activeSigner, api } = useInkathon();
-  const [loading, setLoading] = useState<boolean>(false);
+  const { activeAccount } = useInkathon();
   const [products, setProducts] = useState<IProduct[]>([]);
   const [productSale, setProductSale] = useState<IProductSale[]>([]);
   const { getProductsByAddedBy } = useManufacturer();
-  const { contract } = useRegisteredContract(ContractID.Transactions);
-  const [showModal, setShowModal] = useState<boolean>(false)
-  const [productSold, setProductSold] = useState<IProductSold | IProduct>()
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [productSold, setProductSold] = useState<IProductSold | IProduct>();
 
-  const customToast = ({
-    title,
-    description,
-    status,
-    position,
-  }: IToastProps) => {
-    return toast({
-      title,
-      description,
-      status,
-      duration: 5000,
-      isClosable: true,
-      position: position || "top",
-    });
+  const triggerModal = (item: IProductSold | IProduct) => {
+    setProductSold(item);
+    setShowModal(true);
   };
 
-  const triggerModal = (item: IProductSold| IProduct) => {
-    setProductSold(item)
-    setShowModal(true)
-  }
-
-  
-
-  // useInterval(() => fetchAllProducts(), 3000);
+  useInterval(() => fetchAllProducts(), 3000);
 
   useEffect(() => {
     fetchProducts();
@@ -85,7 +57,6 @@ const ViewProducts: NextPageWithLayout = () => {
     }
   };
 
-
   console.log(productSale);
 
   return (
@@ -93,7 +64,11 @@ const ViewProducts: NextPageWithLayout = () => {
       <Head>
         <title>AgriTrace | Products </title>
       </Head>
-      <SaleModal open={showModal} setOpen={setShowModal} productsDetails={productSold} />
+      <SaleModal
+        open={showModal}
+        setOpen={setShowModal}
+        productsDetails={productSold}
+      />
       <Text px={50} fontSize={"2xl"} fontWeight={"semibold"}>
         Products
       </Text>
@@ -107,7 +82,6 @@ const ViewProducts: NextPageWithLayout = () => {
         alignItems="center"
         justifyContent="center"
       >
-
         <Stack
           direction={{
             base: "column",
@@ -203,21 +177,22 @@ const ViewProducts: NextPageWithLayout = () => {
                       >
                         <Button
                           variant="solid"
-                          isLoading={loading}
-                          loadingText="Initiating sale"
-                          colorScheme="red"
+                          colorScheme="teal"
                           size="sm"
                           onClick={() => triggerModal(item)}
-                          isDisabled={checkProductInTransactions(productSale,
+                          isDisabled={validateProductStatus(
+                            productSale,
                             item.productCode
                           )}
                         >
-                          {checkProductInTransactions(
+                          {validateProductStatus(
                             productSale,
                             item.productCode
-                          )
-                            ? "Sold"
-                            : "Sell"}
+                          ) ? (
+                            "Sold"
+                          ) : (
+                            "Sell"
+                          )}
                         </Button>
                       </Flex>
                     </SimpleGrid>
@@ -227,12 +202,14 @@ const ViewProducts: NextPageWithLayout = () => {
               ))
             )}
           </>
-        </Stack >
-      </Flex >
+        </Stack>
+      </Flex>
     </>
   );
 };
 
-ViewProducts.getLayout = (page) => <ManufacturerLayout>{page} </ManufacturerLayout>;
+ViewProducts.getLayout = (page) => (
+  <ManufacturerLayout>{page} </ManufacturerLayout>
+);
 
 export default ViewProducts;

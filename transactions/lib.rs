@@ -20,6 +20,12 @@ mod transactions {
         InvalidSeller,
         /// Backtrace doesnt exist
         BacktraceDoesNotExist,
+        /// Product Transaction already exists
+        ProductTransactionAlreadyExists,
+        /// Product Transaction does not exist
+        ProductTransactionDoesNotExist,
+        /// Invalid Product
+        InvalidProduct,
     }
 
     pub type Result<T> = core::result::Result<T, Error>;
@@ -103,6 +109,23 @@ mod transactions {
         serial_no: String,
     }
 
+    impl Default for ProductPurchase {
+        fn default() -> Self {
+            Self {
+                product_code: String::new(),
+                quantity: 0,
+                quantity_unit: String::new(),
+                batch_no: Vec::new(),
+                created_at: Timestamp::default(),
+                buyer: AccountId::from([0x0; 32]),
+                seller: AccountId::from([0x0; 32]),
+                status: TransactionStatus::Initiated,
+                updated_at: Timestamp::default(),
+                serial_no: String::new(),
+            }
+        }
+    }
+
     #[derive(scale::Decode, scale::Encode, Debug, PartialEq, Eq, Clone)]
     #[cfg_attr(
         feature = "std",
@@ -111,6 +134,15 @@ mod transactions {
     pub struct Backtrace {
         product_transaction: ProductPurchase,
         entity_transactions: Vec<EntityPurchase>,
+    }
+
+    impl Default for Backtrace {
+        fn default() -> Self {
+            Self {
+                product_transaction: ProductPurchase::default(),
+                entity_transactions: Vec::new(),
+            }
+        }
     }
 
     #[ink(storage)]
@@ -491,20 +523,19 @@ mod transactions {
         /// This by using serial_no and after retriving the product check the batch nos to determine the entities used for production
         #[ink(message)]
         pub fn get_product_backtrace(&self, serial_no: String) -> Result<Backtrace> {
-            let mut transactions = Vec::new();
-            // get production by serial no
-            for transaction in self.product_items.iter() {
-                let transaction = self.product_transactions.get(transaction).unwrap();
-                if transaction.serial_no == serial_no {
-                    transactions.push(transaction);
-                }
+            // get product transaction
+            let product_transaction = self.get_product_by_serial_no(serial_no.clone());
+
+            // valid if the product transaction is empty
+            let resp = self.validate_product(product_transaction.clone());
+
+            // if the product is not valid return error
+            if resp.is_err() {
+                return Err(Error::InvalidProduct);
             }
 
-            // just get one item transaction
-            let transaction = transactions.get(0).unwrap();
-
             // get all the production batches in the transaction
-            let batch_nos = transaction.batch_no.to_vec();
+            let batch_nos = product_transaction.batch_no.to_vec();
 
             // entity transactions
             let mut entity_transactions = Vec::new();
@@ -512,8 +543,8 @@ mod transactions {
             // get all entities with the batch no
             for batch_no in batch_nos.iter() {
                 // get production by batch no
-                for transaction in self.product_items.iter() {
-                    let transaction = self.transactions.get(transaction).unwrap();
+                for transaction_item in self.product_items.iter() {
+                    let transaction = self.transactions.get(transaction_item).unwrap();
                     if transaction.batch_no == *batch_no {
                         entity_transactions.push(transaction);
                     }
@@ -522,14 +553,38 @@ mod transactions {
 
             // encapsulate all that info
             let backtrace = Backtrace {
-                product_transaction: transaction.clone(),
+                product_transaction: product_transaction.clone(),
                 entity_transactions,
             };
+
+
             // check if the backtrace is empty
             if backtrace.entity_transactions.is_empty() {
                 return Err(Error::BacktraceDoesNotExist);
             } else {
                 Ok(backtrace)
+            }
+        }
+
+        /// get product by serial no
+        fn get_product_by_serial_no(&self, serial_no: String) -> ProductPurchase {
+            let mut product_transaction = ProductPurchase::default();
+
+            for transaction in self.product_items.iter() {
+                let transaction = self.product_transactions.get(transaction).unwrap();
+                if transaction.serial_no == serial_no {
+                    product_transaction = transaction.clone();
+                }
+            }
+            product_transaction
+        }
+
+        /// Validates if the product returned is empty
+        fn validate_product(&self, product: ProductPurchase) -> Result<()> {
+            if product.product_code.is_empty() {
+                return Err(Error::ProductTransactionDoesNotExist);
+            } else {
+                Ok(())
             }
         }
     }
