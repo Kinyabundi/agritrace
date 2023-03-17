@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0x1b852dbd7a9201d08a7803e2ab72427ba2a694c5f757c415cf9aaa6087a1c924",
+    "hash": "0xff6a32e3f779eeea148b429e508a856f76c59ab3af64406076a85477bec99ca1",
     "language": "ink! 4.0.1",
     "compiler": "rustc 1.70.0-nightly",
     "build_info": {
@@ -427,6 +427,51 @@
           "type": 29
         },
         "selector": "0x2a89f443"
+      },
+      {
+        "args": [
+          {
+            "label": "distributor_address",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 2
+            }
+          },
+          {
+            "label": "manufacturer_address",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 2
+            }
+          },
+          {
+            "label": "supplier_address",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 2
+            }
+          }
+        ],
+        "docs": [
+          " Returns backtrace info for manufacturer, distributor and supplier"
+        ],
+        "label": "get_stakeholders_backtrace_info",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 31
+        },
+        "selector": "0x95f1a695"
       }
     ]
   },
@@ -1777,6 +1822,79 @@
             "type": 28
           }
         }
+      }
+    },
+    {
+      "id": 31,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 32
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 9
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 32
+          },
+          {
+            "name": "E",
+            "type": 9
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 32,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "manufacturer",
+                "type": 15,
+                "typeName": "Manufacturer"
+              },
+              {
+                "name": "supplier",
+                "type": 22,
+                "typeName": "Supplier"
+              },
+              {
+                "name": "distributor",
+                "type": 28,
+                "typeName": "Distributor"
+              }
+            ]
+          }
+        },
+        "path": [
+          "stakeholder_registry",
+          "stakeholder_registry",
+          "StakeholdersInfoBacktrace"
+        ]
       }
     }
   ],

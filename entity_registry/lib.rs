@@ -18,6 +18,8 @@ mod entity_registry {
         ProductAlreadyExists,
         /// The product does not exist
         ProductDoesNotExist,
+        /// Entity code is empty
+        EntityCodeEmpty,
     }
 
     pub type Result<T> = core::result::Result<T, Error>;
@@ -59,7 +61,7 @@ mod entity_registry {
                 name: String::from(""),
                 quantity: 0,
                 quantity_unit: String::from(""),
-                entity_code: String::from(""),
+                entity_code: String::new(),
                 timestamp: Timestamp::default(),
                 batch_no: 0,
                 addedby: AccountId::from([0x0; 32]),
@@ -255,6 +257,26 @@ mod entity_registry {
                 let entity = self.entities.get(entity_code).unwrap();
                 if entity.buyer == buyer {
                     entities.push(entity);
+                }
+            }
+            entities
+        }
+
+        /// Get all entities by batch nos
+        #[ink(message)]
+        pub fn get_entities_by_batch_nos(&self, batch_nos: Vec<u64>) -> Vec<Entity> {
+            let mut init_entities = Vec::new();
+            for entity_code in self.entities_items.iter() {
+                let entity = self.entities.get(entity_code).unwrap();
+                init_entities.push(entity);
+            }
+
+            let mut entities: Vec<Entity> = Vec::new();
+            for batch_no in batch_nos.iter() {
+                for entity in init_entities.iter() {
+                    if entity.batch_no == *batch_no {
+                        entities.push(entity.clone());
+                    }
                 }
             }
             entities

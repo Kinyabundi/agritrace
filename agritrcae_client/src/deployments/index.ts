@@ -7,13 +7,13 @@ export const getDeployments = async (): Promise<SubstrateDeployment[]> => {
       contractId: ContractID.EntityRegistry,
       networkId: alephzeroTestnet.network,
       abi: await import("./metadatas/entity_registry.json"),
-      address: "5CdD9w7Fpd9P3ehzT7y458fujw1y4sjqYEpeUVbPznHAnsE1",
+      address: "5FzuZ1DiFjNkZfbbAtadbrvL1odWxKonfj3REvoYfJDcLhsk",
     },
     {
       contractId: ContractID.StakeholderRegistry,
       networkId: alephzeroTestnet.network,
       abi: await import("./metadatas/stakeholder_registry.json"),
-      address: "5FKfvzGBsmJdPcZMD1NemLs23Wb9k5eHmrwr4ECyi7JjE2PU",
+      address: "5ChNmSJBnqTLk53m58UPBSWnZsNfuxUuK9iVL7jYzEui1E1T",
     },
     {
       contractId: ContractID.Transactions,

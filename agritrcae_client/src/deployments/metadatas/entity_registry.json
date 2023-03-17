@@ -1,10 +1,10 @@
 {
   "source": {
-    "hash": "0x690731448d98344cddc796191dca38c803a0dd99a6b2f48942bd6a3d4ba2512a",
+    "hash": "0x4f00fa6d99e6268fbfb3351de8bb554982f1fbea2b25e18cffdcbd3afc7acfb5",
     "language": "ink! 4.0.1",
     "compiler": "rustc 1.70.0-nightly",
     "build_info": {
-      "build_mode": "Debug",
+      "build_mode": "Release",
       "cargo_contract_version": "2.0.1",
       "rust_toolchain": "nightly-aarch64-apple-darwin",
       "wasm_opt_settings": {
@@ -410,6 +410,33 @@
           "type": 20
         },
         "selector": "0x3487b357"
+      },
+      {
+        "args": [
+          {
+            "label": "batch_nos",
+            "type": {
+              "displayName": [
+                "Vec"
+              ],
+              "type": 7
+            }
+          }
+        ],
+        "docs": [
+          " Get all entities by batch nos"
+        ],
+        "label": "get_entities_by_batch_nos",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 20
+        },
+        "selector": "0xdf25d68a"
       }
     ]
   },
@@ -875,6 +902,10 @@
               {
                 "index": 3,
                 "name": "ProductDoesNotExist"
+              },
+              {
+                "index": 4,
+                "name": "EntityCodeEmpty"
               }
             ]
           }

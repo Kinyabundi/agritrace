@@ -96,7 +96,7 @@ const TraceInfo: NextPageWithLayout = () => {
       );
 
       if (!serial_no_exists) {
-        toast.error("Serial No does not exist");
+        toast.error("Serial No does not exist", { id });
         return;
       }
 
@@ -109,7 +109,7 @@ const TraceInfo: NextPageWithLayout = () => {
         {}
       );
 
-      toast.loading("Getting entities ...");
+      toast.loading("Getting entities ...", { id });
 
       const entity_transactions = unwrapResultOrDefault(
         entity_results,
@@ -124,7 +124,10 @@ const TraceInfo: NextPageWithLayout = () => {
         serialNo
       );
 
-      toast.success("Backtrace info fetched successfully");
+      toast.success("Backtrace info fetched successfully", { id });
+
+
+      
     }
   };
 
@@ -221,6 +224,7 @@ const TraceInfo: NextPageWithLayout = () => {
               type="submit"
               colorScheme="teal"
               cursor="pointer"
+              onClick={fetchTraceBack}
             >
               Trace
             </Button>

@@ -95,7 +95,7 @@ mod stakeholder_registry {
             }
         }
     }
-    #[derive(scale::Decode, scale::Encode, Debug, PartialEq, Eq)]
+    #[derive(scale::Decode, scale::Encode, Debug, PartialEq, Eq, Clone)]
     #[cfg_attr(
         feature = "std",
         derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)
@@ -153,6 +153,18 @@ mod stakeholder_registry {
                 location: String::from(""),
             }
         }
+    }
+
+    #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
+    #[cfg_attr(
+        feature = "std",
+        derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)
+    )]
+    #[derive(Clone)]
+    pub struct StakeholdersInfoBacktrace {
+        manufacturer: Manufacturer,
+        supplier: Supplier,
+        distributor: Distributor,
     }
 
     #[ink(storage)]
@@ -365,6 +377,25 @@ mod stakeholder_registry {
                 distributors.push(self.distributors.get(address).unwrap());
             }
             distributors
+        }
+
+        /// Returns backtrace info for manufacturer, distributor and supplier
+        #[ink(message)]
+        pub fn get_stakeholders_backtrace_info(
+            &self,
+            distributor_address: AccountId,
+            manufacturer_address: AccountId,
+            supplier_address: AccountId,
+        ) -> StakeholdersInfoBacktrace {
+            let dist_info = self.distributors.get(&distributor_address).unwrap();
+            let manu_info = self.manufacturers.get(&manufacturer_address).unwrap();
+            let supp_info = self.suppliers.get(&supplier_address).unwrap();
+
+            StakeholdersInfoBacktrace {
+                distributor: dist_info,
+                manufacturer: manu_info,
+                supplier: supp_info,
+            }
         }
     }
 }

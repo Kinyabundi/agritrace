@@ -1,4 +1,5 @@
 import { ContractID, IProductSold, TransactionStatus } from "@/types/Contracts";
+import { IManufacturer } from "@/types/Manufacturer";
 import { IBacktrace, IEntity, IProductSale } from "@/types/Transaction";
 import { testFetchBackTrace } from "@/utils/utils";
 import {
@@ -14,6 +15,9 @@ import { useCallback } from "react";
 const useTransaction = () => {
   const { api, activeAccount } = useInkathon();
   const { contract } = useRegisteredContract(ContractID.Transactions);
+  const { contract: stakeholderContract } = useRegisteredContract(
+    ContractID.StakeholderRegistry
+  );
   const getAllEntities = useCallback(async () => {
     if (contract && api && activeAccount) {
       const result = await contractQuery(
@@ -144,6 +148,8 @@ const useTransaction = () => {
       console.log(tests);
     }
   }, []);
+
+  
 
   return {
     getAllEntities,
