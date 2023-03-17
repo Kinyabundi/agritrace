@@ -112,7 +112,7 @@ const IncomingRawMaterials: NextPageWithLayout = () => {
   return (
     <>
       <Head>
-        <title>AgriTrace | Suppliers</title>
+        <title>AgriTrace |Manufacturer| Suppliers</title>
       </Head>
 
       <Flex w="full" align={"center"} justify={"space-between"}>

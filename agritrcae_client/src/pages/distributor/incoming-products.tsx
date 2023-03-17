@@ -82,7 +82,7 @@ const IncomingProducts: NextPageWithLayout = () => {
       });
     }
 
-    const toastId = loadingToast.loading("Accepting incoming raw material...");
+    const toastId = loadingToast.loading("Accepting incoming product...");
 
     try {
       api.setSigner(activeSigner);
@@ -90,31 +90,31 @@ const IncomingProducts: NextPageWithLayout = () => {
         api,
         activeAccount.address,
         contract,
-        "purchase",
+        "completeProduct",
         {},
         [productCode],
         ({ status }) => {
           if (status.isInBlock) {
-            loadingToast.success("Raw material accepted", { id: toastId });
+            loadingToast.success("Product accepted", { id: toastId });
             fetchProducts();
           }
         }
       );
     } catch (err) {
       console.log(err);
-      loadingToast.error("Error accepting raw material", { id: toastId });
+      loadingToast.error("Error accepting Product", { id: toastId });
     }
   };
 
   useEffect(() => {
     fetchProducts();
   }, [activeAccount]);
-  console.log(products)
+  
 
   return (
     <>
       <Head>
-        <title>AgriTrace | Products</title>
+        <title>AgriTrace | Distributor | Products</title>
       </Head>
 
       <Flex w="full" align={"center"} justify={"space-between"}>
@@ -234,7 +234,7 @@ const IncomingProducts: NextPageWithLayout = () => {
                     {product.status}
                   </chakra.span>
                   <chakra.span color="blue.800" fontWeight="600">
-                    {product.batchNo}
+                    {product.serialNo}
                   </chakra.span>
                   <chakra.span color="blue.800" fontWeight="600">
                     {timeAgo.format(new Date(product.createdAt))}
@@ -270,11 +270,7 @@ const IncomingProducts: NextPageWithLayout = () => {
                         </Button>
                       )}
 
-                      {product.status === TransactionStatus.InProgress && (
-                        <Button variant="solid" colorScheme="teal" size="sm">
-                          In Progress
-                        </Button>
-                      )}
+                     
                     </div>
 
                     <div>

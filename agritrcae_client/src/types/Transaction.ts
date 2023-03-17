@@ -5,6 +5,7 @@ export enum TransactionStatus {
   Reverted = "Reverted",
 }
 
+
 // Create Array of Transaction Status
 export const transactionStatusArray = Object.keys(TransactionStatus).map(
   (key) => TransactionStatus[key] as string

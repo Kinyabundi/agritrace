@@ -31,6 +31,7 @@ import en from "javascript-time-ago/locale/en.json";
 import useTransaction from "@/hooks/useTransaction";
 import { toast } from "react-hot-toast";
 import ManufacturerLayout from "@/layouts/ManufacturerLayout";
+import useInterval from "@/hooks/useInterval";
 
 TimeAgo.addLocale(en);
 
@@ -53,36 +54,8 @@ const ViewSales: NextPageWithLayout = () => {
     }
   };
 
-  const completeEntityTransaction = async (productCode: string) => {
-    if (!activeAccount || !contract || !activeSigner || !api) {
-      toast.error("Please connect your wallet first");
-      return;
-    }
-
-    const toastId = toast.loading("Completing transaction...");
-
-    try {
-      api.setSigner(activeSigner);
-      await contractTx(
-        api,
-        activeAccount.address,
-        contract,
-        "complete",
-        {},
-        [productCode],
-        ({ status }) => {
-          if (status.isInBlock) {
-            toast.dismiss(toastId);
-            toast.success("Transaction completed");
-            fetchProducts();
-          }
-        }
-      );
-    } catch (err) {
-      toast.dismiss(toastId);
-      toast.error("Transaction failed");
-    }
-  };
+  useInterval(() => fetchProducts(), 3000);
+ 
 
   useEffect(() => {
     fetchProducts();
@@ -239,18 +212,7 @@ const ViewSales: NextPageWithLayout = () => {
                         Revert
                       </Button>
                     )}
-                    {product.status === TransactionStatus.InProgress && (
-                      <Button
-                        variant="solid"
-                        colorScheme="teal"
-                        size="sm"
-                        onClick={() =>
-                          completeproductTransaction(product.productCode)
-                        }
-                      >
-                        Mark as Complete
-                      </Button>
-                    )}
+                   
                   </VStack>
                 </SimpleGrid>
               </Flex>
