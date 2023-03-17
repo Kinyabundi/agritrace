@@ -31,6 +31,7 @@ import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en.json";
 import useTransaction from "@/hooks/useTransaction";
 import { toast } from "react-hot-toast";
+import useInterval from "@/hooks/useInterval";
 
 TimeAgo.addLocale(en);
 
@@ -40,11 +41,13 @@ const ViewSales: NextPageWithLayout = () => {
   const dataColor = useColorModeValue("white", "gray.800");
   const bg = useColorModeValue("white", "gray.800");
   const bg2 = useColorModeValue("gray.100", "gray.700");
-  const { getSuppliersTransactions } = useTransaction();
+  const { getSuppliersTransactions, getTransactionsByStatus } = useTransaction();
   const { activeSigner, api, activeAccount } = useInkathon();
   const [loading, setLoading] = useState<boolean>(false);
   const [rawMaterials, setRawMaterials] = useState<IEntity[]>([]);
   const { contract } = useRegisteredContract(ContractID.Transactions);
+  const [status, setStatus] = useState<TransactionStatus>(TransactionStatus.Initiated);
+
 
   const fetchItems = async () => {
     const items = await getSuppliersTransactions();
@@ -52,6 +55,16 @@ const ViewSales: NextPageWithLayout = () => {
       setRawMaterials(items);
     }
   };
+
+  const fetchItemsByStatus = async (status: TransactionStatus) => {
+    const rawMaterialsStatus = await getTransactionsByStatus(status);
+    if (rawMaterialsStatus) {
+      setStatus(rawMaterialsStatus);
+    }
+  };
+
+
+  useInterval(() => { fetchItems() }, 3000);
 
   const completeEntityTransaction = async (entityCode: string) => {
     if (!activeAccount || !contract || !activeSigner || !api) {
@@ -85,7 +98,9 @@ const ViewSales: NextPageWithLayout = () => {
   };
 
   useEffect(() => {
-    fetchItems();
+    fetchItemsByStatus(
+      status
+    );
   }, [activeAccount]);
 
   console.log(rawMaterials);
@@ -105,6 +120,7 @@ const ViewSales: NextPageWithLayout = () => {
           w={"52"}
           placeholder={"Transaction Status"}
           defaultValue={TransactionStatus.Initiated}
+          onChange={(e) => { fetchItemsByStatus(e.target.value as TransactionStatus) }}
         >
           {transactionStatusArray.map((item, i) => (
             <option key={i} value={item}>

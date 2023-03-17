@@ -57,6 +57,8 @@ const useRawMaterials = () => {
       return unwrapResultOrError(results);
     }
   }, [activeAccount]);
+
+ 
   
 
   return { getRawMaterials, getRawMaterialsByBuyer, getSuppliersTransactions };

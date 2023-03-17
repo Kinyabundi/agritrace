@@ -7,6 +7,11 @@ import {
   Button,
   Box,
   useToast,
+  FormControl,
+  FormLabel,
+  Input,
+  InputGroup,
+  InputRightElement,
 } from "@chakra-ui/react";
 import {
   contractTx,
@@ -229,12 +234,31 @@ const AddRawMaterial: NextPageWithLayout = () => {
               value={quantityUnits}
               setValue={setQuantityUnits}
             />
-            <CustomFormControl
+            {/* <CustomFormControl
               labelText="EntityCode"
               placeholder="233232"
+              
               value={entityCode}
               setValue={setEntityCode}
-            />
+            /> */}
+            <FormControl>
+              <FormLabel>Entity Code</FormLabel>
+              <InputGroup>
+
+                <Input placeholder='EntityCode'
+                  value={entityCode}
+                  onChange={(e) => setEntityCode(e.target.value)}
+                />
+                <InputRightElement
+                >
+                  <Button onClick={() => setEntityCode(generateNumbers(8))}
+                  >
+                    Generate
+                  </Button>
+
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
             <CustomFormControl
               labelText="Select Buyer"
               variant="select"

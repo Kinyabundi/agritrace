@@ -61,6 +61,8 @@ const ViewSales: NextPageWithLayout = () => {
     fetchProducts();
   }, [activeAccount]);
 
+
+
   console.log(products);
 
   return (

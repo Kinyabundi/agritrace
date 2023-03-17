@@ -9,6 +9,11 @@ import {
   Button,
   Box,
   useToast,
+  FormLabel,
+  Input,
+  InputRightElement,
+  InputGroup,
+  FormControl,
 } from "@chakra-ui/react";
 import Head from "next/head";
 import { FiEdit3 } from "react-icons/fi";
@@ -51,6 +56,16 @@ const AddProduct: NextPageWithLayout = () => {
   const [rawMaterials, setRawMaterials] = useState<IRawMaterial[]>([]);
   const [statusMsg, setStatusMsg] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+
+  //reset fields
+  const resetFields = () => {
+    setName("");
+    setQuantity(0);
+    setQuantityUnits("");
+    setProductCode("");
+    setBatchNo(0);
+    setSelectRawMaterials([]);
+  };
 
   const customToast = ({
     title,
@@ -162,6 +177,7 @@ const AddProduct: NextPageWithLayout = () => {
               status: "success",
             });
             setLoading(false);
+            resetFields();
           }
         }
       );
@@ -222,12 +238,30 @@ const AddProduct: NextPageWithLayout = () => {
               value={quantityUnits}
               setValue={setQuantityUnits}
             />
-            <CustomFormControl
+            {/* <CustomFormControl
               labelText="ProductCode"
               placeholder="233232"
               value={productCode}
               setValue={setProductCode}
-            />
+            /> */}
+              <FormControl>
+              <FormLabel>Product Code</FormLabel>
+              <InputGroup>
+
+                <Input placeholder='Product Code'
+                  value={productCode}
+                  onChange={(e) => setProductCode(e.target.value)}
+                />
+                <InputRightElement
+                >
+                  <Button onClick={() => setProductCode(generateNumbers(8))}
+                  >
+                    Generate
+                  </Button>
+
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
             {/* <CustomFormControl
               labelText="Select RawMaterial Used"
               variant="select"

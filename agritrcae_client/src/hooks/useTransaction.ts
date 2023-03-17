@@ -1,4 +1,4 @@
-import { ContractID, IProductSold } from "@/types/Contracts";
+import { ContractID, IProductSold, TransactionStatus } from "@/types/Contracts";
 import { IBacktrace, IEntity, IProductSale } from "@/types/Transaction";
 import { testFetchBackTrace } from "@/utils/utils";
 import {
@@ -8,6 +8,7 @@ import {
   useInkathon,
   useRegisteredContract,
 } from "@scio-labs/use-inkathon";
+import { Transaction } from "firebase/firestore";
 import { useCallback } from "react";
 
 const useTransaction = () => {
@@ -57,6 +58,36 @@ const useTransaction = () => {
       return unwrapResultOrDefault(results, [] as IEntity[]);
     }
   }, [activeAccount]);
+
+  const getManufacturersTransactions = useCallback(async () => {
+    if (contract && api && activeAccount) {
+      const results = await contractQuery(
+        api,
+        activeAccount?.address,
+        contract,
+        "getProductTransactionsBySeller",
+        {},
+        [activeAccount?.address]
+      );
+      return unwrapResultOrDefault(results, [] as IProductSale[]);
+    }
+  }, [activeAccount]);
+
+  const getTransactionsByStatus = useCallback(async (status
+    : TransactionStatus) => {
+    if (contract && api && activeAccount) {
+      const results = await contractQuery(
+        api,
+        activeAccount?.address,
+        contract,
+        "getTransactionsByStatus",
+        {},
+         [status, activeAccount?.address]
+      );
+      return unwrapResultOrError(results);
+    }
+  }, [activeAccount]);
+
 
   const getBackTraceInfo = useCallback(async () => {
     if (contract && api && activeAccount) {
@@ -120,6 +151,8 @@ const useTransaction = () => {
     getAllProducts,
     getBackTraceInfo,
     testBackTrace,
+    getManufacturersTransactions,
+    getTransactionsByStatus
   };
 };
 

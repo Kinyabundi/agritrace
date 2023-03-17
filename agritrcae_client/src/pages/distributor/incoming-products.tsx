@@ -33,6 +33,7 @@ import { IToastProps } from "@/types/Toast";
 import { toast as loadingToast } from "react-hot-toast";
 import DistributorLayout from "@/layouts/DistributorLayout";
 import useDistributor from "@/hooks/useDistributor";
+import useInterval from "@/hooks/useInterval";
 
 TimeAgo.addLocale(en);
 
@@ -56,6 +57,8 @@ const IncomingProducts: NextPageWithLayout = () => {
         setProducts(incoming_products);
     }
   };
+
+  useInterval (() => { fetchProducts() }, 3000);
 
   const customToast = ({
     title,

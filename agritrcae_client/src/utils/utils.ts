@@ -107,7 +107,7 @@ export const validateProductStatus = (
   productSale.forEach((product) => {
     if (
       product.productCode === productCode &&
-      (product.status === "Initiated" || product.status === "InProgress")
+      (product.status === "Initiated" || product.status === "InProgress" || product.status === "Completed")
     ) {
       isValid = true;
     }

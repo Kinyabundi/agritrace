@@ -32,6 +32,7 @@ import {
 import { ContractID } from "@/types/Contracts";
 import { IToastProps } from "@/types/Toast";
 import { toast as loadingToast } from "react-hot-toast";
+import useInterval from "@/hooks/useInterval";
 
 TimeAgo.addLocale(en);
 
@@ -55,6 +56,9 @@ const IncomingRawMaterials: NextPageWithLayout = () => {
       setEntities(incoming_entities);
     }
   };
+
+  useInterval (() => { fetchEntities() }, 5000);
+
 
   const customToast = ({
     title,
