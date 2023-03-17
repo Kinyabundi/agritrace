@@ -1,115 +1,269 @@
-import React from "react";
-import {
-  VerticalTimeline,
-  VerticalTimelineElement,
-} from "react-vertical-timeline-component";
-import "react-vertical-timeline-component/style.min.css";
+import React, { ReactNode, useEffect, useState } from "react";
 import { IoIosSchool } from "react-icons/io";
 import { NextPageWithLayout } from "@/types/Layout";
 import AuthLayout from "@/layouts/AuthLayout";
+import useTransaction from "@/hooks/useTransaction";
+import TraceResults from "@/components/TraceResults";
+import {
+  Box,
+  Button,
+  chakra,
+  Flex,
+  GridItem,
+  Heading,
+  Icon,
+  Input,
+  SimpleGrid,
+  Stack,
+  VisuallyHidden,
+} from "@chakra-ui/react";
+import {
+  contractQuery,
+  unwrapResultOrDefault,
+  useInkathon,
+  useRegisteredContract,
+} from "@scio-labs/use-inkathon";
+import { ContractID } from "@/types/Contracts";
+import { toast } from "react-hot-toast";
+import { IEntity, IProductSale } from "@/types/Transaction";
+import { testFetchBackTrace } from "@/utils/utils";
+
+interface FeatureProps {
+  children: ReactNode;
+}
+
+const Feature = ({ children }: FeatureProps) => (
+  <Flex
+    alignItems="center"
+    color={null}
+    _dark={{
+      color: "white",
+    }}
+  >
+    <Icon
+      boxSize={4}
+      mr={1}
+      color="green.600"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+    >
+      <path
+        fillRule="evenodd"
+        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+        clipRule="evenodd"
+      ></path>
+    </Icon>
+    {children}
+  </Flex>
+);
 
 const TraceInfo: NextPageWithLayout = () => {
+  const { testBackTrace } = useTransaction();
+  const [traceInfo, setTraceInfo] = useState("th");
+  const [serialNo, setSerialNo] = useState<string>();
+  const { activeSigner, api, activeAccount } = useInkathon();
+  const { contract: transactionContract } = useRegisteredContract(
+    ContractID.Transactions
+  );
+
+  const fetchTraceBack = async () => {
+    if (!activeAccount || !activeSigner || !api || !transactionContract) {
+      toast.error("Please connect to your wallet");
+      return;
+    }
+
+    const id = toast.loading("Fetching Trace Back Info...");
+
+    if (transactionContract && api && activeAccount) {
+      // toast for querying products
+      toast.loading("Validating Serial No 🕵🏽...", { id });
+      const product_results = await contractQuery(
+        api,
+        activeAccount.address,
+        transactionContract,
+        "getAllProductTransactions",
+        {}
+      );
+
+      const product_transactions = unwrapResultOrDefault(
+        product_results,
+        [] as IProductSale[]
+      );
+
+      // checking if serial no exists
+      const serial_no_exists = product_transactions.some(
+        (product) => product.serialNo === serialNo
+      );
+
+      if (!serial_no_exists) {
+        toast.error("Serial No does not exist");
+        return;
+      }
+
+      // get entities
+      const entity_results = await contractQuery(
+        api,
+        activeAccount.address,
+        transactionContract,
+        "getAllTransactions",
+        {}
+      );
+
+      toast.loading("Getting entities ...");
+
+      const entity_transactions = unwrapResultOrDefault(
+        entity_results,
+        [] as IEntity[]
+      );
+
+      // get backtrace info
+
+      const backtrace_results = testFetchBackTrace(
+        product_transactions,
+        entity_transactions,
+        serialNo
+      );
+
+      toast.success("Backtrace info fetched successfully");
+    }
+  };
+
+  useEffect(() => {
+    testBackTrace();
+  }, []);
+
   return (
-    <div>
-      <VerticalTimeline>
-        <VerticalTimelineElement
-          className="vertical-timeline-element--work"
-          contentStyle={{ background: "rgb(33, 150, 243)", color: "#fff" }}
-          contentArrowStyle={{ borderRight: "7px solid  rgb(33, 150, 243)" }}
-          date="2011 - present"
-          iconStyle={{ background: "rgb(33, 150, 243)", color: "#fff" }}
-          icon={<IoIosSchool />}
+    <>
+      <Box px={4} py={32} mx="auto">
+        <Box
+          w={{
+            base: "full",
+            md: 11 / 12,
+            xl: 8 / 12,
+          }}
+          textAlign={{
+            base: "left",
+            md: "center",
+          }}
+          mx="auto"
         >
-          <h3 className="vertical-timeline-element-title">Creative Director</h3>
-          <h4 className="vertical-timeline-element-subtitle">Miami, FL</h4>
-          <p>
-            Creative Direction, User Experience, Visual Design, Project
-            Management, Team Leading
-          </p>
-        </VerticalTimelineElement>
-        <VerticalTimelineElement
-          className="vertical-timeline-element--work"
-          date="2010 - 2011"
-          iconStyle={{ background: "rgb(33, 150, 243)", color: "#fff" }}
-          icon={<IoIosSchool />}
-        >
-          <h3 className="vertical-timeline-element-title">Art Director</h3>
-          <h4 className="vertical-timeline-element-subtitle">
-            San Francisco, CA
-          </h4>
-          <p>
-            Creative Direction, User Experience, Visual Design, SEO, Online
-            Marketing
-          </p>
-        </VerticalTimelineElement>
-        <VerticalTimelineElement
-          className="vertical-timeline-element--work"
-          date="2008 - 2010"
-          iconStyle={{ background: "rgb(33, 150, 243)", color: "#fff" }}
-          icon={<IoIosSchool />}
-        >
-          <h3 className="vertical-timeline-element-title">Web Designer</h3>
-          <h4 className="vertical-timeline-element-subtitle">
-            Los Angeles, CA
-          </h4>
-          <p>User Experience, Visual Design</p>
-        </VerticalTimelineElement>
-        <VerticalTimelineElement
-          className="vertical-timeline-element--work"
-          date="2006 - 2008"
-          iconStyle={{ background: "rgb(33, 150, 243)", color: "#fff" }}
-          icon={<IoIosSchool />}
-        >
-          <h3 className="vertical-timeline-element-title">Web Designer</h3>
-          <h4 className="vertical-timeline-element-subtitle">
-            San Francisco, CA
-          </h4>
-          <p>User Experience, Visual Design</p>
-        </VerticalTimelineElement>
-        <VerticalTimelineElement
-          className="vertical-timeline-element--education"
-          date="April 2013"
-          iconStyle={{ background: "rgb(233, 30, 99)", color: "#fff" }}
-          icon={<IoIosSchool />}
-        >
-          <h3 className="vertical-timeline-element-title">
-            Content Marketing for Web, Mobile and Social Media
-          </h3>
-          <h4 className="vertical-timeline-element-subtitle">Online Course</h4>
-          <p>Strategy, Social Media</p>
-        </VerticalTimelineElement>
-        <VerticalTimelineElement
-          className="vertical-timeline-element--education"
-          date="November 2012"
-          iconStyle={{ background: "rgb(233, 30, 99)", color: "#fff" }}
-          icon={<IoIosSchool />}
-        >
-          <h3 className="vertical-timeline-element-title">
-            Agile Development Scrum Master
-          </h3>
-          <h4 className="vertical-timeline-element-subtitle">Certification</h4>
-          <p>Creative Direction, User Experience, Visual Design</p>
-        </VerticalTimelineElement>
-        <VerticalTimelineElement
-          className="vertical-timeline-element--education"
-          date="2002 - 2006"
-          iconStyle={{ background: "rgb(233, 30, 99)", color: "#fff" }}
-          icon={<IoIosSchool />}
-        >
-          <h3 className="vertical-timeline-element-title">
-            Bachelor of Science in Interactive Digital Media Visual Imaging
-          </h3>
-          <h4 className="vertical-timeline-element-subtitle">
-            Bachelor Degree
-          </h4>
-          <p>Creative Direction, Visual Design</p>
-        </VerticalTimelineElement>
-        <VerticalTimelineElement
-          iconStyle={{ background: "rgb(16, 204, 82)", color: "#fff" }}
-          icon={<IoIosSchool />}
-        />
-      </VerticalTimeline>
-    </div>
+          <chakra.h1
+            mb={3}
+            fontSize={{
+              base: "4xl",
+              md: "5xl",
+            }}
+            fontWeight={{
+              base: "bold",
+              md: "extrabold",
+            }}
+            color="gray.900"
+            _dark={{
+              color: "gray.100",
+            }}
+            lineHeight="shorter"
+          >
+            AgriTrace Serial No Back Trace
+          </chakra.h1>
+          {/* Text explaining AgriTrace Serial No Back Trace for Products in supply chain using blockchain technology */}
+          <chakra.p
+            mb={6}
+            fontSize={{
+              base: "lg",
+              md: "xl",
+            }}
+            color="gray.500"
+            lineHeight="base"
+          >
+            AgriTrace Serial No Back Trace for Products in supply chain using
+            blockchain technology
+          </chakra.p>
+          <SimpleGrid
+            as="form"
+            w={{
+              base: "full",
+              md: 7 / 12,
+            }}
+            columns={{
+              base: 1,
+              lg: 6,
+            }}
+            spacing={3}
+            pt={1}
+            mx="auto"
+            mb={8}
+          >
+            <GridItem
+              as="label"
+              colSpan={{
+                base: "auto",
+                lg: 4,
+              }}
+            >
+              <VisuallyHidden>Enter Serial to Do Trace back</VisuallyHidden>
+              <Input
+                mt={0}
+                size="lg"
+                placeholder="Enter Serial No to Do Trace back"
+                onChange={(e) => setSerialNo(e.target.value)}
+                value={serialNo}
+              />
+            </GridItem>
+            <Button
+              as={GridItem}
+              w="full"
+              variant="solid"
+              colSpan={{
+                base: "auto",
+                lg: 2,
+              }}
+              size="lg"
+              type="submit"
+              colorScheme="teal"
+              cursor="pointer"
+            >
+              Trace
+            </Button>
+          </SimpleGrid>
+          <Stack
+            display="flex"
+            direction={{
+              base: "column",
+              md: "row",
+            }}
+            justifyContent={{
+              base: "start",
+              md: "center",
+            }}
+            mb={3}
+            spacing={{
+              base: 2,
+              md: 8,
+            }}
+            fontSize="xs"
+            color="gray.600"
+          >
+            <Feature>
+              <chakra.span fontWeight="bold">100%</chakra.span> Secure
+            </Feature>
+            <Feature>
+              <chakra.span fontWeight="bold">100%</chakra.span> Traceable
+            </Feature>
+            <Feature>
+              <chakra.span fontWeight="bold">100%</chakra.span> Transparent
+            </Feature>
+          </Stack>
+        </Box>
+      </Box>
+      {traceInfo && (
+        <Box>
+          <Heading textAlign={"center"} py={5}>
+            Trace results for serial no: 627728383883
+          </Heading>
+          <TraceResults />
+        </Box>
+      )}
+    </>
   );
 };
 

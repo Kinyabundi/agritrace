@@ -1,5 +1,6 @@
 import { ContractID, IProductSold } from "@/types/Contracts";
-import { IEntity, IProductSale } from "@/types/Transaction";
+import { IBacktrace, IEntity, IProductSale } from "@/types/Transaction";
+import { testFetchBackTrace } from "@/utils/utils";
 import {
   contractQuery,
   unwrapResultOrDefault,
@@ -57,23 +58,69 @@ const useTransaction = () => {
     }
   }, [activeAccount]);
 
-  const getManufacturersTransactions = useCallback(async () => {
+  const getBackTraceInfo = useCallback(async () => {
     if (contract && api && activeAccount) {
       const results = await contractQuery(
         api,
         activeAccount?.address,
         contract,
-        "getProductTransactionsBySeller",
+        "getProductBacktrace",
         {},
-        [activeAccount?.address]
+        ["84383381993003"]
       );
-      return unwrapResultOrDefault(results, [] as IProductSale[]);
+      const res = unwrapResultOrError(results);
+      console.log(res);
+      return unwrapResultOrDefault(results, {} as IBacktrace);
     }
   }, [activeAccount]);
 
+  const testBackTrace = useCallback(async () => {
+    if (contract && api && activeAccount) {
+      const results = await contractQuery(
+        api,
+        activeAccount?.address,
+        contract,
+        "getAllProductTransactions",
+        {}
+      );
 
+      const products_transactions = unwrapResultOrDefault(
+        results,
+        [] as IProductSale[]
+      );
 
-  return { getAllEntities, getSuppliersTransactions, getAllProducts, getManufacturersTransactions };
+      const entity_results = await contractQuery(
+        api,
+        activeAccount.address,
+        contract,
+        "getAllTransactions",
+        {}
+      );
+
+      const entity_transactions = unwrapResultOrDefault(
+        entity_results,
+        [] as IEntity[]
+      );
+
+      const product_serial_no = "84383381993003";
+
+      const tests = testFetchBackTrace(
+        products_transactions,
+        entity_transactions,
+        product_serial_no
+      );
+
+      console.log(tests);
+    }
+  }, []);
+
+  return {
+    getAllEntities,
+    getSuppliersTransactions,
+    getAllProducts,
+    getBackTraceInfo,
+    testBackTrace,
+  };
 };
 
 export default useTransaction;

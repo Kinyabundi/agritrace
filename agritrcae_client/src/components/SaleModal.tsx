@@ -1,4 +1,4 @@
-import { IProduct, IProductSold } from "@/types/Contracts";
+import { IProduct } from "@/types/Contracts";
 import {
   Modal,
   ModalOverlay,
@@ -26,7 +26,7 @@ import { IDistributor } from "@/types/Distributor";
 interface ModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
-  productsDetails?: IProductSold | IProduct;
+  productsDetails?:  IProduct;
 }
 
 export default function SaleModal({
@@ -102,6 +102,7 @@ export default function SaleModal({
               status: "success",
             });
             setLoading(false);
+            setOpen(false);
           }
         }
       );

@@ -61,6 +61,7 @@ mod transactions {
         InProgress,
         Completed,
         Reverted,
+        Reject,
     }
 
     #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
@@ -288,6 +289,36 @@ mod transactions {
             Ok(())
         }
 
+        /// This function is for marking the transaction as cancelled or rejected by buyer
+        #[ink(message)]
+        pub fn reject(&mut self, entity_code: String) -> Result<()> {
+            let timestamp = self.env().block_timestamp();
+            let buyer = self.env().caller();
+            let transaction = self.transactions.get(&entity_code).unwrap();
+            if transaction.buyer != buyer {
+                return Err(Error::InvalidBuyer);
+            }
+            let status = TransactionStatus::Reject;
+            let transaction = EntityPurchase {
+                entity_code: entity_code.clone(),
+                quantity: transaction.quantity,
+                quantity_unit: transaction.quantity_unit.clone(),
+                batch_no: transaction.batch_no,
+                created_at: transaction.created_at.clone(),
+                buyer: transaction.buyer.clone(),
+                seller: transaction.seller.clone(),
+                status: status.clone(),
+                updated_at: timestamp.clone(),
+            };
+            self.transactions.insert(entity_code.clone(), &transaction);
+            self.env().emit_event(TransactionEvent {
+                entity: transaction.clone(),
+                buyer,
+                seller: transaction.seller,
+            });
+            Ok(())
+        }
+
         /// This function returns the transaction details for a given entity code
         #[ink(message)]
         pub fn get_transaction(&self, entity_code: String) -> Result<EntityPurchase> {
@@ -393,10 +424,10 @@ mod transactions {
         #[ink(message)]
         pub fn complete_product(&mut self, product_code: String) -> Result<()> {
             let timestamp = self.env().block_timestamp();
-            let seller = self.env().caller();
+            let buyer = self.env().caller();
             let product_transaction = self.product_transactions.get(&product_code).unwrap();
-            if product_transaction.seller != seller {
-                return Err(Error::InvalidSeller);
+            if product_transaction.buyer != buyer {
+                return Err(Error::InvalidBuyer);
             }
             let status = TransactionStatus::Completed;
             let product_transaction = ProductPurchase {
@@ -416,7 +447,7 @@ mod transactions {
             self.env().emit_event(ProductTransactionEvent {
                 product: product_transaction.clone(),
                 buyer: product_transaction.buyer,
-                seller,
+                seller: product_transaction.seller,
             });
             Ok(())
         }
@@ -452,6 +483,40 @@ mod transactions {
             });
             Ok(())
         }
+
+        /// This function is for marking the transaction as cancelled or rejected by the buyer
+        #[ink(message)]
+        pub fn reject_product(&mut self, product_code: String) -> Result<()> {
+            let timestamp = self.env().block_timestamp();
+            let buyer = self.env().caller();
+            let product_transaction = self.product_transactions.get(&product_code).unwrap();
+            if product_transaction.buyer != buyer {
+                return Err(Error::InvalidBuyer);
+            }
+            let status = TransactionStatus::Reject;
+            let product_transaction = ProductPurchase {
+                product_code: product_code.clone(),
+                quantity: product_transaction.quantity,
+                quantity_unit: product_transaction.quantity_unit.clone(),
+                batch_no: product_transaction.batch_no,
+                created_at: product_transaction.created_at.clone(),
+                buyer: product_transaction.buyer.clone(),
+                seller: product_transaction.seller.clone(),
+                status: status.clone(),
+                updated_at: timestamp.clone(),
+                serial_no: product_transaction.serial_no.clone(),
+            };
+            self.product_transactions
+                .insert(product_code.clone(), &product_transaction);
+            self.env().emit_event(ProductTransactionEvent {
+                product: product_transaction.clone(),
+                buyer,
+                seller: product_transaction.seller,
+            });
+            Ok(())
+        }
+
+
 
         /// This function returns the transaction details for a given product code
         #[ink(message)]
@@ -556,7 +621,6 @@ mod transactions {
                 product_transaction: product_transaction.clone(),
                 entity_transactions,
             };
-
 
             // check if the backtrace is empty
             if backtrace.entity_transactions.is_empty() {

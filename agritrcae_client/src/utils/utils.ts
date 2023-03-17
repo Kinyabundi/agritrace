@@ -3,7 +3,7 @@ import { IOption } from "@/types/FormControl";
 import { customAlphabet } from "nanoid";
 import { truncateHash } from "./truncateHash";
 import { IRawMaterial } from "@/types/Contracts";
-import { IEntity, IProductSale } from "@/types/Transaction";
+import { IBacktrace, IEntity, IProductSale } from "@/types/Transaction";
 import { IDistributor } from "@/types/Distributor";
 
 export const concatManufacturers = (
@@ -113,4 +113,30 @@ export const validateProductStatus = (
     }
   });
   return isValid;
+};
+
+export const testFetchBackTrace = (
+  products_transactions: IProductSale[],
+  entity_transactions: IEntity[],
+  product_serial_no: string
+) => {
+  // fetch product sale item using its serial no
+  const productSaleItem = products_transactions.find(
+    (product) => product.serialNo === product_serial_no
+  );
+
+  // get all the batch nos from the product sale
+  const productProductionBatchNos = productSaleItem.batchNo;
+
+  // get all the entities that have the same batch no as the product sale
+  const entities = entity_transactions.filter((entity) =>
+    productProductionBatchNos.includes(entity.batchNo)
+  );
+
+  const backtrace: IBacktrace = {
+    productTransaction: productSaleItem,
+    entityTransactions: entities,
+  };
+
+  return backtrace;
 };

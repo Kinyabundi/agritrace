@@ -26,11 +26,16 @@ export interface IProductSale {
   productCode: string;
   quantity: number;
   quantityUnit: string;
-  batchNo: number;
+  batchNo: number[];
   createdAt: number;
   buyer: string;
   seller: string;
   status: TransactionStatus;
   updatedAt: number;
   serialNo: string;
+}
+
+export interface IBacktrace {
+  productTransaction: IProductSale;
+  entityTransactions: IEntity[];
 }

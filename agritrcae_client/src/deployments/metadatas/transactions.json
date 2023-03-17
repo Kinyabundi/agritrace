@@ -1,10 +1,10 @@
 {
   "source": {
-    "hash": "0xd28650166947412ab4cdf28c431eb86f89fec3250ea395acd4115a626cec60fe",
+    "hash": "0x4e1c86467801ad8eb0a6aede49781b2c20769e88a138fd898104e85f696627c6",
     "language": "ink! 4.0.1",
     "compiler": "rustc 1.70.0-nightly",
     "build_info": {
-      "build_mode": "Debug",
+      "build_mode": "Release",
       "cargo_contract_version": "2.0.1",
       "rust_toolchain": "nightly-aarch64-apple-darwin",
       "wasm_opt_settings": {
@@ -16,9 +16,7 @@
   "contract": {
     "name": "transactions",
     "version": "0.1.0",
-    "authors": [
-      "[your_name] <[your_email]>"
-    ]
+    "authors": ["[your_name] <[your_email]>"]
   },
   "spec": {
     "constructors": [
@@ -28,10 +26,7 @@
         "label": "new",
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink_primitives",
-            "ConstructorResult"
-          ],
+          "displayName": ["ink_primitives", "ConstructorResult"],
           "type": 8
         },
         "selector": "0x9bae9d5e"
@@ -46,9 +41,7 @@
             "indexed": true,
             "label": "entity",
             "type": {
-              "displayName": [
-                "EntityPurchase"
-              ],
+              "displayName": ["EntityPurchase"],
               "type": 16
             }
           },
@@ -57,9 +50,7 @@
             "indexed": true,
             "label": "buyer",
             "type": {
-              "displayName": [
-                "AccountId"
-              ],
+              "displayName": ["AccountId"],
               "type": 3
             }
           },
@@ -68,9 +59,7 @@
             "indexed": true,
             "label": "seller",
             "type": {
-              "displayName": [
-                "AccountId"
-              ],
+              "displayName": ["AccountId"],
               "type": 3
             }
           }
@@ -85,9 +74,7 @@
             "indexed": true,
             "label": "product",
             "type": {
-              "displayName": [
-                "ProductPurchase"
-              ],
+              "displayName": ["ProductPurchase"],
               "type": 22
             }
           },
@@ -96,9 +83,7 @@
             "indexed": true,
             "label": "buyer",
             "type": {
-              "displayName": [
-                "AccountId"
-              ],
+              "displayName": ["AccountId"],
               "type": 3
             }
           },
@@ -107,9 +92,7 @@
             "indexed": true,
             "label": "seller",
             "type": {
-              "displayName": [
-                "AccountId"
-              ],
+              "displayName": ["AccountId"],
               "type": 3
             }
           }
@@ -119,10 +102,7 @@
       }
     ],
     "lang_error": {
-      "displayName": [
-        "ink",
-        "LangError"
-      ],
+      "displayName": ["ink", "LangError"],
       "type": 10
     },
     "messages": [
@@ -131,45 +111,35 @@
           {
             "label": "entity_code",
             "type": {
-              "displayName": [
-                "String"
-              ],
+              "displayName": ["String"],
               "type": 0
             }
           },
           {
             "label": "quantity",
             "type": {
-              "displayName": [
-                "u32"
-              ],
+              "displayName": ["u32"],
               "type": 1
             }
           },
           {
             "label": "quantity_unit",
             "type": {
-              "displayName": [
-                "String"
-              ],
+              "displayName": ["String"],
               "type": 0
             }
           },
           {
             "label": "batch_no",
             "type": {
-              "displayName": [
-                "u64"
-              ],
+              "displayName": ["u64"],
               "type": 2
             }
           },
           {
             "label": "buyer",
             "type": {
-              "displayName": [
-                "AccountId"
-              ],
+              "displayName": ["AccountId"],
               "type": 3
             }
           }
@@ -181,10 +151,7 @@
         "mutates": true,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 11
         },
         "selector": "0x03aef6e8"
@@ -194,24 +161,17 @@
           {
             "label": "entity_code",
             "type": {
-              "displayName": [
-                "String"
-              ],
+              "displayName": ["String"],
               "type": 0
             }
           }
         ],
-        "docs": [
-          " This function is for buyer actually purchasing the item"
-        ],
+        "docs": [" This function is for buyer actually purchasing the item"],
         "label": "purchase",
         "mutates": true,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 11
         },
         "selector": "0x44b97dba"
@@ -221,24 +181,17 @@
           {
             "label": "entity_code",
             "type": {
-              "displayName": [
-                "String"
-              ],
+              "displayName": ["String"],
               "type": 0
             }
           }
         ],
-        "docs": [
-          " This function is for marking the transaction as complete"
-        ],
+        "docs": [" This function is for marking the transaction as complete"],
         "label": "complete",
         "mutates": true,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 11
         },
         "selector": "0x0740d2e1"
@@ -248,24 +201,17 @@
           {
             "label": "entity_code",
             "type": {
-              "displayName": [
-                "String"
-              ],
+              "displayName": ["String"],
               "type": 0
             }
           }
         ],
-        "docs": [
-          " This function is for marking the transaction as reverted"
-        ],
+        "docs": [" This function is for marking the transaction as reverted"],
         "label": "revert",
         "mutates": true,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 11
         },
         "selector": "0x069a343d"
@@ -275,9 +221,29 @@
           {
             "label": "entity_code",
             "type": {
-              "displayName": [
-                "String"
-              ],
+              "displayName": ["String"],
+              "type": 0
+            }
+          }
+        ],
+        "docs": [
+          " This function is for marking the transaction as cancelled or rejected by buyer"
+        ],
+        "label": "reject",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": ["ink", "MessageResult"],
+          "type": 11
+        },
+        "selector": "0x3d67f481"
+      },
+      {
+        "args": [
+          {
+            "label": "entity_code",
+            "type": {
+              "displayName": ["String"],
               "type": 0
             }
           }
@@ -289,10 +255,7 @@
         "mutates": false,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 14
         },
         "selector": "0xfeeb858e"
@@ -302,24 +265,17 @@
           {
             "label": "seller",
             "type": {
-              "displayName": [
-                "AccountId"
-              ],
+              "displayName": ["AccountId"],
               "type": 3
             }
           }
         ],
-        "docs": [
-          "  This function returns all transactions for a given seller"
-        ],
+        "docs": ["  This function returns all transactions for a given seller"],
         "label": "get_transactions_by_seller",
         "mutates": false,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 18
         },
         "selector": "0xe7764acc"
@@ -329,41 +285,29 @@
           {
             "label": "buyer",
             "type": {
-              "displayName": [
-                "AccountId"
-              ],
+              "displayName": ["AccountId"],
               "type": 3
             }
           }
         ],
-        "docs": [
-          "  This function returns all transactions for a given buyer"
-        ],
+        "docs": ["  This function returns all transactions for a given buyer"],
         "label": "get_transactions_by_buyer",
         "mutates": false,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 18
         },
         "selector": "0x5d944a59"
       },
       {
         "args": [],
-        "docs": [
-          " This function returns all transactions"
-        ],
+        "docs": [" This function returns all transactions"],
         "label": "get_all_transactions",
         "mutates": false,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 18
         },
         "selector": "0xcf6c9f8d"
@@ -373,18 +317,14 @@
           {
             "label": "status",
             "type": {
-              "displayName": [
-                "TransactionStatus"
-              ],
+              "displayName": ["TransactionStatus"],
               "type": 17
             }
           },
           {
             "label": "account_id",
             "type": {
-              "displayName": [
-                "AccountId"
-              ],
+              "displayName": ["AccountId"],
               "type": 3
             }
           }
@@ -396,10 +336,7 @@
         "mutates": false,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 18
         },
         "selector": "0xb15e35ac"
@@ -409,69 +346,52 @@
           {
             "label": "product_code",
             "type": {
-              "displayName": [
-                "String"
-              ],
+              "displayName": ["String"],
               "type": 0
             }
           },
           {
             "label": "quantity",
             "type": {
-              "displayName": [
-                "u32"
-              ],
+              "displayName": ["u32"],
               "type": 1
             }
           },
           {
             "label": "quantity_unit",
             "type": {
-              "displayName": [
-                "String"
-              ],
+              "displayName": ["String"],
               "type": 0
             }
           },
           {
             "label": "batch_no",
             "type": {
-              "displayName": [
-                "Vec"
-              ],
+              "displayName": ["Vec"],
               "type": 7
             }
           },
           {
             "label": "buyer",
             "type": {
-              "displayName": [
-                "AccountId"
-              ],
+              "displayName": ["AccountId"],
               "type": 3
             }
           },
           {
             "label": "serial_no",
             "type": {
-              "displayName": [
-                "String"
-              ],
+              "displayName": ["String"],
               "type": 0
             }
           }
         ],
-        "docs": [
-          " Initiate sell of a product item"
-        ],
+        "docs": [" Initiate sell of a product item"],
         "label": "sell_product",
         "mutates": true,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 11
         },
         "selector": "0x6a67086f"
@@ -481,24 +401,17 @@
           {
             "label": "product_code",
             "type": {
-              "displayName": [
-                "String"
-              ],
+              "displayName": ["String"],
               "type": 0
             }
           }
         ],
-        "docs": [
-          " This function is for marking the transaction as complete"
-        ],
+        "docs": [" This function is for marking the transaction as complete"],
         "label": "complete_product",
         "mutates": true,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 11
         },
         "selector": "0xb5848b7f"
@@ -508,24 +421,17 @@
           {
             "label": "product_code",
             "type": {
-              "displayName": [
-                "String"
-              ],
+              "displayName": ["String"],
               "type": 0
             }
           }
         ],
-        "docs": [
-          " This function is for marking the transaction as reverted"
-        ],
+        "docs": [" This function is for marking the transaction as reverted"],
         "label": "revert_product",
         "mutates": true,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 11
         },
         "selector": "0x94b2240e"
@@ -535,9 +441,29 @@
           {
             "label": "product_code",
             "type": {
-              "displayName": [
-                "String"
-              ],
+              "displayName": ["String"],
+              "type": 0
+            }
+          }
+        ],
+        "docs": [
+          " This function is for marking the transaction as cancelled or rejected by the buyer"
+        ],
+        "label": "reject_product",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": ["ink", "MessageResult"],
+          "type": 11
+        },
+        "selector": "0x4e08698e"
+      },
+      {
+        "args": [
+          {
+            "label": "product_code",
+            "type": {
+              "displayName": ["String"],
               "type": 0
             }
           }
@@ -549,10 +475,7 @@
         "mutates": false,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 20
         },
         "selector": "0x38e4850f"
@@ -562,24 +485,17 @@
           {
             "label": "seller",
             "type": {
-              "displayName": [
-                "AccountId"
-              ],
+              "displayName": ["AccountId"],
               "type": 3
             }
           }
         ],
-        "docs": [
-          " This function returns all transactions for a given seller"
-        ],
+        "docs": [" This function returns all transactions for a given seller"],
         "label": "get_product_transactions_by_seller",
         "mutates": false,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 23
         },
         "selector": "0xc1fa188f"
@@ -589,41 +505,29 @@
           {
             "label": "buyer",
             "type": {
-              "displayName": [
-                "AccountId"
-              ],
+              "displayName": ["AccountId"],
               "type": 3
             }
           }
         ],
-        "docs": [
-          "  This function returns all transactions for a given buyer"
-        ],
+        "docs": ["  This function returns all transactions for a given buyer"],
         "label": "get_product_transactions_by_buyer",
         "mutates": false,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 23
         },
         "selector": "0xd0712cbc"
       },
       {
         "args": [],
-        "docs": [
-          " This function returns all transactions"
-        ],
+        "docs": [" This function returns all transactions"],
         "label": "get_all_product_transactions",
         "mutates": false,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 23
         },
         "selector": "0x6e7c61f8"
@@ -633,18 +537,14 @@
           {
             "label": "status",
             "type": {
-              "displayName": [
-                "TransactionStatus"
-              ],
+              "displayName": ["TransactionStatus"],
               "type": 17
             }
           },
           {
             "label": "account_id",
             "type": {
-              "displayName": [
-                "AccountId"
-              ],
+              "displayName": ["AccountId"],
               "type": 3
             }
           }
@@ -656,10 +556,7 @@
         "mutates": false,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 23
         },
         "selector": "0x7ac4574f"
@@ -669,9 +566,7 @@
           {
             "label": "serial_no",
             "type": {
-              "displayName": [
-                "String"
-              ],
+              "displayName": ["String"],
               "type": 0
             }
           }
@@ -684,10 +579,7 @@
         "mutates": false,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 25
         },
         "selector": "0xed31fda5"
@@ -789,6 +681,10 @@
                                 "3": {
                                   "fields": [],
                                   "name": "Reverted"
+                                },
+                                "4": {
+                                  "fields": [],
+                                  "name": "Reject"
                                 }
                               }
                             }
@@ -912,6 +808,10 @@
                                 "3": {
                                   "fields": [],
                                   "name": "Reverted"
+                                },
+                                "4": {
+                                  "fields": [],
+                                  "name": "Reject"
                                 }
                               }
                             }
@@ -999,11 +899,7 @@
             ]
           }
         },
-        "path": [
-          "ink_primitives",
-          "types",
-          "AccountId"
-        ]
+        "path": ["ink_primitives", "types", "AccountId"]
       }
     },
     {
@@ -1082,9 +978,7 @@
             "type": 10
           }
         ],
-        "path": [
-          "Result"
-        ]
+        "path": ["Result"]
       }
     },
     {
@@ -1108,10 +1002,7 @@
             ]
           }
         },
-        "path": [
-          "ink_primitives",
-          "LangError"
-        ]
+        "path": ["ink_primitives", "LangError"]
       }
     },
     {
@@ -1151,9 +1042,7 @@
             "type": 10
           }
         ],
-        "path": [
-          "Result"
-        ]
+        "path": ["Result"]
       }
     },
     {
@@ -1193,9 +1082,7 @@
             "type": 13
           }
         ],
-        "path": [
-          "Result"
-        ]
+        "path": ["Result"]
       }
     },
     {
@@ -1239,11 +1126,7 @@
             ]
           }
         },
-        "path": [
-          "transactions",
-          "transactions",
-          "Error"
-        ]
+        "path": ["transactions", "transactions", "Error"]
       }
     },
     {
@@ -1283,9 +1166,7 @@
             "type": 10
           }
         ],
-        "path": [
-          "Result"
-        ]
+        "path": ["Result"]
       }
     },
     {
@@ -1325,9 +1206,7 @@
             "type": 13
           }
         ],
-        "path": [
-          "Result"
-        ]
+        "path": ["Result"]
       }
     },
     {
@@ -1384,11 +1263,7 @@
             ]
           }
         },
-        "path": [
-          "transactions",
-          "transactions",
-          "EntityPurchase"
-        ]
+        "path": ["transactions", "transactions", "EntityPurchase"]
       }
     },
     {
@@ -1412,15 +1287,15 @@
               {
                 "index": 3,
                 "name": "Reverted"
+              },
+              {
+                "index": 4,
+                "name": "Reject"
               }
             ]
           }
         },
-        "path": [
-          "transactions",
-          "transactions",
-          "TransactionStatus"
-        ]
+        "path": ["transactions", "transactions", "TransactionStatus"]
       }
     },
     {
@@ -1460,9 +1335,7 @@
             "type": 10
           }
         ],
-        "path": [
-          "Result"
-        ]
+        "path": ["Result"]
       }
     },
     {
@@ -1512,9 +1385,7 @@
             "type": 10
           }
         ],
-        "path": [
-          "Result"
-        ]
+        "path": ["Result"]
       }
     },
     {
@@ -1554,9 +1425,7 @@
             "type": 13
           }
         ],
-        "path": [
-          "Result"
-        ]
+        "path": ["Result"]
       }
     },
     {
@@ -1618,11 +1487,7 @@
             ]
           }
         },
-        "path": [
-          "transactions",
-          "transactions",
-          "ProductPurchase"
-        ]
+        "path": ["transactions", "transactions", "ProductPurchase"]
       }
     },
     {
@@ -1662,9 +1527,7 @@
             "type": 10
           }
         ],
-        "path": [
-          "Result"
-        ]
+        "path": ["Result"]
       }
     },
     {
@@ -1714,9 +1577,7 @@
             "type": 10
           }
         ],
-        "path": [
-          "Result"
-        ]
+        "path": ["Result"]
       }
     },
     {
@@ -1756,9 +1617,7 @@
             "type": 13
           }
         ],
-        "path": [
-          "Result"
-        ]
+        "path": ["Result"]
       }
     },
     {
@@ -1780,11 +1639,7 @@
             ]
           }
         },
-        "path": [
-          "transactions",
-          "transactions",
-          "Backtrace"
-        ]
+        "path": ["transactions", "transactions", "Backtrace"]
       }
     }
   ],
