@@ -1,4 +1,4 @@
-import { IRawMaterial } from "@/types/Contracts";
+import { IProduct, IProductSold, IRawMaterial } from "@/types/Contracts";
 import {
   Modal,
   ModalOverlay,
@@ -20,8 +20,6 @@ import {
 import { ContractID } from "@/types/Contracts";
 import { useState, useEffect } from "react";
 import CustomFormControl from "./CustomFormControl";
-import useManufacturer from "@/hooks/useManufacturer";
-import { IManufacturer } from "@/types/Manufacturer";
 import {
   contractQuery,
   contractTx,
@@ -30,26 +28,29 @@ import {
   useRegisteredContract,
 } from "@scio-labs/use-inkathon";
 import { IToastProps } from "@/types/Toast";
-import { concatManufacturers, generateNumbers } from "@/utils/utils";
+import { concatDistributors, generateNumbers } from "@/utils/utils";
+import useDistributor from "@/hooks/useDistributor";
+import { IDistributor } from "@/types/Distributor";
 
 interface ModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
-  rawMaterialDetails?: IRawMaterial;
+  productsDetails?: IProductSold | IProduct;
 }
+
 
 export default function SaleModal({
   open,
   setOpen,
-  rawMaterialDetails,
+  productsDetails,
 }: ModalProps) {
-  const [batchNo, setBatchNo] = useState<number>();
   const toast = useToast();
   const { activeSigner, api, activeAccount } = useInkathon();
   const { contract } = useRegisteredContract(ContractID.Transactions);
-  const [manufacturers, setManufacturers] = useState<IManufacturer[]>();
   const [selectedBuyer, setSelectedBuyer] = useState<string>("");
-  const { getManufacturers } = useManufacturer();
+  const [distributor, setDistributor] = useState<IDistributor[]>([]);
+  const { getDistributors } = useDistributor();
+  const [loading, setLoading] = useState<boolean>(false);
   const customToast = ({
     title,
     description,
@@ -66,16 +67,19 @@ export default function SaleModal({
     });
   };
   useEffect(() => {
-    fetchManufacturers();
+    fetchDistributor();
   }, [activeAccount]);
 
-  const fetchManufacturers = async () => {
-    const manufacturers = await getManufacturers();
-    if (manufacturers) {
-      setManufacturers(manufacturers);
+  const fetchDistributor = async () => {
+    const distributors = await getDistributors();
+    if (distributors) {
+      setDistributor(distributors);
     }
   };
-  const clickInitiateSale = async () => {
+
+  const InitiateSale = async (
+
+  ) => {
     if (!activeAccount || !contract || !activeSigner || !api) {
       return customToast({
         title: "Wallet not connected",
@@ -84,20 +88,22 @@ export default function SaleModal({
       });
     }
     try {
+      setLoading(true);
       api.setSigner(activeSigner);
+      const serialNo = generateNumbers();
 
       await contractTx(
         api,
         activeAccount.address,
         contract,
-        "initiateSale",
+        "sellProduct",
         undefined,
-        [
-          rawMaterialDetails.entityCode,
-          rawMaterialDetails.quantity,
-          rawMaterialDetails.quantityUnits,
-          batchNo,
+        [productsDetails.productCode,
+        productsDetails.quantity,
+        productsDetails.quantityUnits,
+        productsDetails.rawMaterials,
           selectedBuyer,
+          serialNo,
         ],
         (sth) => {
           if (sth?.status.isInBlock) {
@@ -106,6 +112,7 @@ export default function SaleModal({
               description: "Sale intialized successfully",
               status: "success",
             });
+            setLoading(false);
           }
         }
       );
@@ -116,57 +123,35 @@ export default function SaleModal({
         description: "Something went wrong",
         status: "error",
       });
+    } finally {
+      setLoading(false);
     }
-  };
+  }
 
-  console.log(selectedBuyer);
+  console.log(productsDetails);
   return (
     // @ts-ignore
     <Modal closeOnOverlayClick={false} isOpen={open} onClose={setOpen}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Sell Entity</ModalHeader>
+        <ModalHeader>Sell Product</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
-          <FormControl>
-            <FormLabel>Batch No</FormLabel>
-            <InputGroup>
-              <Input
-                placeholder="627782"
-                value={batchNo}
-                borderRadius={25}
-                borderColor={"gray.300"}
-                borderWidth={1}
-                _focus={{
-                  borderColor: "gray.100",
-                  borderWidth: 1,
-                }}
-                fontWeight="500"
-                size="md"
-                focusBorderColor="navyblue"
-              />
-              <InputRightElement>
-                <Button
-                  h="1.75rem"
-                  size="sm"
-                  onClick={() => setBatchNo(generateNumbers())}
-                >
-                  Generate
-                </Button>
-              </InputRightElement>
-            </InputGroup>
-          </FormControl>
 
           <CustomFormControl
             labelText="Select Buyer"
             variant="select"
-            options={manufacturers ? concatManufacturers(manufacturers) : []}
+            options={distributor ? concatDistributors(distributor) : []}
             onChange={(e) => setSelectedBuyer(e.target.value)}
+           
           />
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="blue" mr={3}>
+          <Button colorScheme="blue" mr={3}
+            onClick={() => InitiateSale()}
+            isLoading={loading}
+            loadingText="Initiating sale">
             Initiate Sell
           </Button>
           <Button onClick={() => setOpen(false)}>Cancel</Button>

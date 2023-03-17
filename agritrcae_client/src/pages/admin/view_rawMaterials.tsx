@@ -42,7 +42,7 @@ const ViewRawMaterials: NextPageWithLayout = () => {
   const [rawMaterials, setRawMaterials] = useState<IRawMaterial[]>([]);
   const { contract } = useRegisteredContract(ContractID.Transactions);
   const [manufacturers, setManufacturers] = useState<IManufacturer[]>([]);
-  const [showModal, setShowModal] = useState<boolean>(false)
+ 
 
   const customToast = ({
     title,
@@ -125,7 +125,7 @@ const ViewRawMaterials: NextPageWithLayout = () => {
       <Head>
         <title>AgriTrace | Raw Materials</title>
       </Head>
-      <SaleModal open={showModal} setOpen={setShowModal} />
+
       <Text px={50} fontSize={"2xl"} fontWeight={"semibold"}>
         Raw Materials
       </Text>

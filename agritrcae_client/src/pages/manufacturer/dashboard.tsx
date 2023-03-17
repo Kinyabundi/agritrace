@@ -8,7 +8,7 @@ const Dashboard: NextPageWithLayout = () => {
     <Head>
       <title>AgriTrace | Manufacturer | Dashboard</title>
     </Head>
-    <div>Dashboard</div>;
+    <div>Dashboard</div>
     </>
   )
 };

@@ -4,6 +4,7 @@ import { customAlphabet } from "nanoid";
 import { truncateHash } from "./truncateHash";
 import { IRawMaterial } from "@/types/Contracts";
 import { IEntity, IProductSale } from "@/types/Transaction";
+import { IDistributor } from "@/types/Distributor";
 
 export const concatManufacturers = (
   manufacturers: IManufacturer[]
@@ -11,6 +12,14 @@ export const concatManufacturers = (
   return manufacturers.map((manufacturer) => ({
     value: manufacturer.address,
     label: `${manufacturer.name} - ${truncateHash(manufacturer.address)}`,
+  }));
+};
+export const concatDistributors = (
+  distributors: IDistributor[]
+): IOption[] => {
+  return distributors.map((distributor) => ({
+    value: distributor.address,
+    label: `${distributor.name} - ${truncateHash(distributor.address)}`,
   }));
 };
 export const concatRawMaterials = (rawMaterials: IRawMaterial[]): IOption[] => {

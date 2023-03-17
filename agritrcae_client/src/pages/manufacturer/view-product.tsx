@@ -26,9 +26,8 @@ import {
 import { generateNumbers } from "@/utils/utils";
 import useTransaction from "@/hooks/useTransaction";
 import { checkProductInTransactions } from "@/utils/utils";
-interface SalesProps {
-  productsDetails?: IProductSold;
-}
+import SaleModal from "@/components/SaleModal";
+
 const ViewProducts: NextPageWithLayout = () => {
   const toast = useToast();
   const dataColor = useColorModeValue("white", "gray.800");
@@ -41,6 +40,8 @@ const ViewProducts: NextPageWithLayout = () => {
   const [productSale, setProductSale] = useState<IProductSale[]>([]);
   const { getProductsByAddedBy } = useManufacturer();
   const { contract } = useRegisteredContract(ContractID.Transactions);
+  const [showModal, setShowModal] = useState<boolean>(false)
+  const [productSold, setProductSold] = useState<IProductSold | IProduct>()
 
   const customToast = ({
     title,
@@ -58,60 +59,14 @@ const ViewProducts: NextPageWithLayout = () => {
     });
   };
 
-
-
-  const InitiateSale = async (
-    { productsDetails }: SalesProps
-  ) => {
-    if (!activeAccount || !contract || !activeSigner || !api) {
-      return customToast({
-        title: "Wallet not connected",
-        description: "Please connect your wallet",
-        status: "error",
-      });
-    }
-    try {
-      setLoading(true);
-      api.setSigner(activeSigner);
-      const serialNo = generateNumbers();
-
-      await contractTx(
-        api,
-        activeAccount.address,
-        contract,
-        "sellProduct",
-        undefined,
-        [productsDetails.productCode,
-        productsDetails.quantity,
-        productsDetails.quantityUnits,
-        [productsDetails.rawMaterials],
-          "5Dy1SCkxhsGWGSzZoJpGjEvdopwxqZzK5Avn2c5jB2QmueF3",
-          serialNo,
-        ],
-        (sth) => {
-          if (sth?.status.isInBlock) {
-            customToast({
-              title: "Sale intialized",
-              description: "Sale intialized successfully",
-              status: "success",
-            });
-            setLoading(false);
-          }
-        }
-      );
-    } catch (err) {
-      console.log(err);
-      customToast({
-        title: "Error",
-        description: "Something went wrong",
-        status: "error",
-      });
-    } finally {
-      setLoading(false);
-    }
+  const triggerModal = (item: IProductSold| IProduct) => {
+    setProductSold(item)
+    setShowModal(true)
   }
 
-  useInterval(() => fetchAllProducts(), 3000);
+  
+
+  // useInterval(() => fetchAllProducts(), 3000);
 
   useEffect(() => {
     fetchProducts();
@@ -138,6 +93,7 @@ const ViewProducts: NextPageWithLayout = () => {
       <Head>
         <title>AgriTrace | Products </title>
       </Head>
+      <SaleModal open={showModal} setOpen={setShowModal} productsDetails={productSold} />
       <Text px={50} fontSize={"2xl"} fontWeight={"semibold"}>
         Products
       </Text>
@@ -251,7 +207,7 @@ const ViewProducts: NextPageWithLayout = () => {
                           loadingText="Initiating sale"
                           colorScheme="red"
                           size="sm"
-                          onClick={() => InitiateSale({ productsDetails: item })}
+                          onClick={() => triggerModal(item)}
                           isDisabled={checkProductInTransactions(productSale,
                             item.productCode
                           )}
