@@ -48,3 +48,14 @@ export interface IStakeholderInfo {
   manufacturer: IManufacturer;
   distributor: IDistributor;
 }
+
+export interface IProductItem {
+  name: string;
+  quantity: number;
+  quantityUnits: string;
+  batchNo: number;
+  timestamp: number;
+  addedby: string;
+  rawMaterials: number[];
+  productCode: string;
+}

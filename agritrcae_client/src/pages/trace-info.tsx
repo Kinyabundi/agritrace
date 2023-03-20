@@ -22,11 +22,12 @@ import {
   useInkathon,
   useRegisteredContract,
 } from "@scio-labs/use-inkathon";
-import { ContractID } from "@/types/Contracts";
+import { ContractID, IRawMaterial } from "@/types/Contracts";
 import { toast } from "react-hot-toast";
 import {
   IBacktrace,
   IEntity,
+  IProductItem,
   IProductSale,
   IStakeholderInfo,
 } from "@/types/Transaction";
@@ -68,10 +69,16 @@ const TraceInfo: NextPageWithLayout = () => {
   const { testBackTrace, getAllStakeholderInfo } = useTransaction();
   const [traceInfo, setTraceInfo] = useState<IBacktrace>();
   const [stakeholderInfo, setStakeholderInfo] = useState<IStakeholderInfo>();
+  const [productItem, setProductItem] = useState<IProductItem>();
+  const [rawMaterials, setRawMaterials] = useState<IRawMaterial[]>([]);
   const [serialNo, setSerialNo] = useState<string>();
   const { activeSigner, api, activeAccount } = useInkathon();
   const { contract: transactionContract } = useRegisteredContract(
     ContractID.Transactions
+  );
+
+  const { contract: entityRegistry } = useRegisteredContract(
+    ContractID.EntityRegistry
   );
 
   const fetchTraceBack = async () => {
@@ -136,6 +143,48 @@ const TraceInfo: NextPageWithLayout = () => {
 
       toast.success("Backtrace info fetched successfully", { id });
 
+      // toast for getting product info
+      toast.loading("Getting product info ...", { id });
+
+      // get product info
+      const product_details = await contractQuery(
+        api,
+        activeAccount.address,
+        entityRegistry,
+        "getProduct",
+        {},
+        [backtrace_results.productTransaction.productCode]
+      );
+
+      const product_item = unwrapResultOrDefault(
+        product_details,
+        {} as IProductItem
+      );
+
+      setProductItem(product_item);
+
+      // toast for getting raw materials info
+      toast.loading("Getting raw materials info ...", { id });
+
+      // get raw materials info
+      const raw_materials_results = await contractQuery(
+        api,
+        activeAccount.address,
+        entityRegistry,
+        "getEntitiesByBatchNos",
+        {},
+        [product_item.rawMaterials]
+      );
+
+      const raw_materials = unwrapResultOrDefault(
+        raw_materials_results,
+        [] as IRawMaterial[]
+      );
+
+      setRawMaterials(raw_materials);
+
+      toast.loading("Getting stakeholder info ...", { id });
+
       // get stakeholder info
       const stakeholder_results = await getAllStakeholderInfo(
         backtrace_results.productTransaction.buyer,
@@ -153,8 +202,7 @@ const TraceInfo: NextPageWithLayout = () => {
     testBackTrace();
   }, []);
 
-  console.log("traceInfo", traceInfo);
-  console.log("stakeholderInfo", stakeholderInfo);
+  console.log(rawMaterials);
 
   return (
     <>
@@ -280,7 +328,7 @@ const TraceInfo: NextPageWithLayout = () => {
           </Stack>
         </Box>
       </Box>
-      {traceInfo && (
+      {stakeholderInfo && (
         <Box>
           <Heading textAlign={"center"} py={5}>
             Trace results for serial no: {serialNo}
@@ -289,6 +337,8 @@ const TraceInfo: NextPageWithLayout = () => {
             serial_no={serialNo}
             backtraceInfo={traceInfo}
             stakeholderInfo={stakeholderInfo}
+            productItem={productItem}
+            rawMaterials={rawMaterials}
           />
         </Box>
       )}

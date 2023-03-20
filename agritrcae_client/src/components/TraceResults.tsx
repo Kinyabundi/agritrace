@@ -1,4 +1,8 @@
-import { IBacktrace, IStakeholderInfo } from "@/types/Transaction";
+import {
+  IBacktrace,
+  IProductItem,
+  IStakeholderInfo,
+} from "@/types/Transaction";
 import { IoIosSchool } from "react-icons/io";
 import {
   VerticalTimeline,
@@ -9,8 +13,10 @@ import { HiTruck } from "react-icons/hi";
 import { Heading, Text } from "@chakra-ui/react";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en.json";
-import { GiMilkCarton } from "react-icons/gi";
+import { GiCardDraw, GiMilkCarton, GiTruck } from "react-icons/gi";
 import { FaSellsy } from "react-icons/fa";
+import { TbMilk } from "react-icons/tb";
+import { IRawMaterial } from "@/types/Contracts";
 
 TimeAgo.addLocale(en);
 
@@ -20,12 +26,16 @@ interface TraceInfo {
   serial_no: number | string;
   stakeholderInfo: IStakeholderInfo;
   backtraceInfo: IBacktrace;
+  productItem: IProductItem;
+  rawMaterials: IRawMaterial[];
 }
 
 const TraceResults = ({
   serial_no,
   stakeholderInfo,
   backtraceInfo,
+  productItem,
+  rawMaterials,
 }: TraceInfo) => {
   return (
     <div>
@@ -105,53 +115,57 @@ const TraceResults = ({
         </VerticalTimelineElement>
         <VerticalTimelineElement
           className="vertical-timeline-element--work"
-          date="2006 - 2008"
+          date={timeAgo.format(
+            new Date(productItem?.timestamp ?? 0),
+            "twitter-now"
+          )}
           iconStyle={{ background: "rgb(33, 150, 243)", color: "#fff" }}
-          icon={<IoIosSchool />}
+          icon={<TbMilk />}
         >
-          <h3 className="vertical-timeline-element-title">Web Designer</h3>
-          <h4 className="vertical-timeline-element-subtitle">
-            San Francisco, CA
-          </h4>
-          <p>User Experience, Visual Design</p>
+          <Heading>Product Details</Heading>
+          <Text>Product Name: {productItem?.name}</Text>
+          <Text>
+            Added At:{" "}
+            {timeAgo.format(
+              new Date(productItem?.timestamp ?? 0),
+              "twitter-now"
+            )}
+          </Text>
+          <Text>
+            Product Description: {productItem?.quantity}{" "}
+            {productItem?.quantityUnits}
+          </Text>
         </VerticalTimelineElement>
         <VerticalTimelineElement
           className="vertical-timeline-element--education"
-          date="April 2013"
+          date={timeAgo.format(
+            new Date(backtraceInfo.entityTransactions[0].createdAt ?? 0),
+            "twitter-now"
+          )}
           iconStyle={{ background: "rgb(233, 30, 99)", color: "#fff" }}
-          icon={<IoIosSchool />}
+          icon={<GiCardDraw />}
         >
-          <h3 className="vertical-timeline-element-title">
-            Content Marketing for Web, Mobile and Social Media
-          </h3>
-          <h4 className="vertical-timeline-element-subtitle">Online Course</h4>
-          <p>Strategy, Social Media</p>
+          <Heading>Raw Materials Supplier Info</Heading>
+          <Text>Supplier Name: {stakeholderInfo?.supplier?.name}</Text>
+          <Text>Supplier Address: {stakeholderInfo?.supplier?.address}</Text>
+          <Text>Supplier Location: {stakeholderInfo?.supplier?.location}</Text>
         </VerticalTimelineElement>
         <VerticalTimelineElement
           className="vertical-timeline-element--education"
-          date="November 2012"
+          date={timeAgo.format(
+            new Date(rawMaterials[0].timestamp ?? 0),
+            "twitter-now"
+          )}
           iconStyle={{ background: "rgb(233, 30, 99)", color: "#fff" }}
-          icon={<IoIosSchool />}
+          icon={<GiTruck />}
         >
-          <h3 className="vertical-timeline-element-title">
-            Agile Development Scrum Master
-          </h3>
-          <h4 className="vertical-timeline-element-subtitle">Certification</h4>
-          <p>Creative Direction, User Experience, Visual Design</p>
-        </VerticalTimelineElement>
-        <VerticalTimelineElement
-          className="vertical-timeline-element--education"
-          date="2002 - 2006"
-          iconStyle={{ background: "rgb(233, 30, 99)", color: "#fff" }}
-          icon={<IoIosSchool />}
-        >
-          <h3 className="vertical-timeline-element-title">
-            Bachelor of Science in Interactive Digital Media Visual Imaging
-          </h3>
-          <h4 className="vertical-timeline-element-subtitle">
-            Bachelor Degree
-          </h4>
-          <p>Creative Direction, Visual Design</p>
+          <Heading>Product Raw Materials Utilized</Heading>
+          {rawMaterials.map((rawMaterial) => (
+            <Text>
+              {rawMaterial.name} : {rawMaterial.quantity}{" "}
+              {rawMaterial.quantityUnit}
+            </Text>
+          ))}
         </VerticalTimelineElement>
         <VerticalTimelineElement
           iconStyle={{ background: "rgb(16, 204, 82)", color: "#fff" }}

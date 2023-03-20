@@ -35,9 +35,7 @@ import { concatRawMaterials, generateNumbers } from "@/utils/utils";
 
 const AddProduct: NextPageWithLayout = () => {
   const { activeSigner, api, activeAccount } = useInkathon();
-  const { contract } = useRegisteredContract(
-    ContractID.EntityRegistry
-  );
+  const { contract } = useRegisteredContract(ContractID.EntityRegistry);
   const { user, whichAccount } = useAuth(
     (state) => ({
       user: state.user,
@@ -244,21 +242,22 @@ const AddProduct: NextPageWithLayout = () => {
               value={productCode}
               setValue={setProductCode}
             /> */}
-              <FormControl>
+            <FormControl>
               <FormLabel>Product Code</FormLabel>
               <InputGroup>
-
-                <Input placeholder='Product Code'
+                <Input
+                  placeholder="Product Code"
                   value={productCode}
                   onChange={(e) => setProductCode(e.target.value)}
                 />
-                <InputRightElement
-                >
-                  <Button onClick={() => setProductCode(generateNumbers(8))}
+                <InputRightElement>
+                  <Button
+                    onClick={() =>
+                      setProductCode(generateNumbers(8) as unknown as string)
+                    }
                   >
                     Generate
                   </Button>
-
                 </InputRightElement>
               </InputGroup>
             </FormControl>
@@ -272,6 +271,7 @@ const AddProduct: NextPageWithLayout = () => {
               formLabel="Select RawMaterial Used"
               options={rawMaterials ? concatRawMaterials(rawMaterials) : []}
               onChange={(newVal, _) => {
+                // @ts-ignore
                 let newArr = Array.from(newVal).map((item) => item?.value);
                 setSelectRawMaterials(newArr);
               }}
