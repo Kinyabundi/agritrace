@@ -1,6 +1,11 @@
 import { ContractID, IProductSold, TransactionStatus } from "@/types/Contracts";
 import { IManufacturer } from "@/types/Manufacturer";
-import { IBacktrace, IEntity, IProductSale } from "@/types/Transaction";
+import {
+  IBacktrace,
+  IEntity,
+  IProductSale,
+  IStakeholderInfo,
+} from "@/types/Transaction";
 import { testFetchBackTrace } from "@/utils/utils";
 import {
   contractQuery,
@@ -77,21 +82,22 @@ const useTransaction = () => {
     }
   }, [activeAccount]);
 
-  const getTransactionsByStatus = useCallback(async (status
-    : TransactionStatus) => {
-    if (contract && api && activeAccount) {
-      const results = await contractQuery(
-        api,
-        activeAccount?.address,
-        contract,
-        "getTransactionsByStatus",
-        {},
-         [status, activeAccount?.address]
-      );
-      return unwrapResultOrError(results);
-    }
-  }, [activeAccount]);
-
+  const getTransactionsByStatus = useCallback(
+    async (status: TransactionStatus) => {
+      if (contract && api && activeAccount) {
+        const results = await contractQuery(
+          api,
+          activeAccount?.address,
+          contract,
+          "getTransactionsByStatus",
+          {},
+          [status, activeAccount?.address]
+        );
+        return unwrapResultOrError(results);
+      }
+    },
+    [activeAccount]
+  );
 
   const getBackTraceInfo = useCallback(async () => {
     if (contract && api && activeAccount) {
@@ -149,7 +155,23 @@ const useTransaction = () => {
     }
   }, []);
 
-  
+  const getAllStakeholderInfo = useCallback(
+    async (distributor: string, manufacturer: string, supplier: string) => {
+      if (stakeholderContract && api && activeAccount) {
+        const distributorResult = await contractQuery(
+          api,
+          activeAccount.address,
+          stakeholderContract,
+          "getStakeholdersBacktraceInfo",
+          {},
+          [distributor, manufacturer, supplier]
+        );
+
+        return unwrapResultOrDefault(distributorResult, {} as IStakeholderInfo);
+      }
+    },
+    [activeAccount]
+  );
 
   return {
     getAllEntities,
@@ -158,7 +180,8 @@ const useTransaction = () => {
     getBackTraceInfo,
     testBackTrace,
     getManufacturersTransactions,
-    getTransactionsByStatus
+    getTransactionsByStatus,
+    getAllStakeholderInfo,
   };
 };
 

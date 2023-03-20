@@ -1,5 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
-import { IoIosSchool } from "react-icons/io";
+import { ReactNode, useEffect, useState } from "react";
 import { NextPageWithLayout } from "@/types/Layout";
 import AuthLayout from "@/layouts/AuthLayout";
 import useTransaction from "@/hooks/useTransaction";
@@ -25,8 +24,16 @@ import {
 } from "@scio-labs/use-inkathon";
 import { ContractID } from "@/types/Contracts";
 import { toast } from "react-hot-toast";
-import { IEntity, IProductSale } from "@/types/Transaction";
+import {
+  IBacktrace,
+  IEntity,
+  IProductSale,
+  IStakeholderInfo,
+} from "@/types/Transaction";
 import { testFetchBackTrace } from "@/utils/utils";
+import { IDistributor } from "@/types/Distributor";
+import { IManufacturer } from "@/types/Manufacturer";
+import { ISupplier } from "@/types/Supplier";
 
 interface FeatureProps {
   children: ReactNode;
@@ -58,8 +65,9 @@ const Feature = ({ children }: FeatureProps) => (
 );
 
 const TraceInfo: NextPageWithLayout = () => {
-  const { testBackTrace } = useTransaction();
-  const [traceInfo, setTraceInfo] = useState("th");
+  const { testBackTrace, getAllStakeholderInfo } = useTransaction();
+  const [traceInfo, setTraceInfo] = useState<IBacktrace>();
+  const [stakeholderInfo, setStakeholderInfo] = useState<IStakeholderInfo>();
   const [serialNo, setSerialNo] = useState<string>();
   const { activeSigner, api, activeAccount } = useInkathon();
   const { contract: transactionContract } = useRegisteredContract(
@@ -124,16 +132,29 @@ const TraceInfo: NextPageWithLayout = () => {
         serialNo
       );
 
+      setTraceInfo(backtrace_results);
+
       toast.success("Backtrace info fetched successfully", { id });
 
+      // get stakeholder info
+      const stakeholder_results = await getAllStakeholderInfo(
+        backtrace_results.productTransaction.buyer,
+        backtrace_results.productTransaction.seller,
+        backtrace_results.entityTransactions[0].seller
+      );
 
-      
+      setStakeholderInfo(stakeholder_results);
+
+      toast.success("Stakeholder info fetched successfully", { id });
     }
   };
 
   useEffect(() => {
     testBackTrace();
   }, []);
+
+  console.log("traceInfo", traceInfo);
+  console.log("stakeholderInfo", stakeholderInfo);
 
   return (
     <>
@@ -262,9 +283,13 @@ const TraceInfo: NextPageWithLayout = () => {
       {traceInfo && (
         <Box>
           <Heading textAlign={"center"} py={5}>
-            Trace results for serial no: 627728383883
+            Trace results for serial no: {serialNo}
           </Heading>
-          <TraceResults />
+          <TraceResults
+            serial_no={serialNo}
+            backtraceInfo={traceInfo}
+            stakeholderInfo={stakeholderInfo}
+          />
         </Box>
       )}
     </>

@@ -1,10 +1,13 @@
+import { IDistributor } from "./Distributor";
+import { IManufacturer } from "./Manufacturer";
+import { ISupplier } from "./Supplier";
+
 export enum TransactionStatus {
   Initiated = "Initiated",
   InProgress = "InProgress",
   Completed = "Completed",
   Reverted = "Reverted",
 }
-
 
 // Create Array of Transaction Status
 export const transactionStatusArray = Object.keys(TransactionStatus).map(
@@ -38,4 +41,10 @@ export interface IProductSale {
 export interface IBacktrace {
   productTransaction: IProductSale;
   entityTransactions: IEntity[];
+}
+
+export interface IStakeholderInfo {
+  supplier: ISupplier;
+  manufacturer: IManufacturer;
+  distributor: IDistributor;
 }
