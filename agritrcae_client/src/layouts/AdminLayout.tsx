@@ -21,6 +21,7 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
+  Button,
 } from "@chakra-ui/react";
 import {
   FiHome,
@@ -32,8 +33,8 @@ import {
   FiBell,
   FiChevronDown,
 } from "react-icons/fi";
-import { RiSwapFill } from "react-icons/ri";
-import { GiSwapBag } from "react-icons/gi";
+import { RiArrowDownSLine, RiSwapFill } from "react-icons/ri";
+import { GiMilkCarton, GiSwapBag } from "react-icons/gi";
 import { BsCreditCard } from "react-icons/bs";
 import { FaPeopleCarry } from "react-icons/fa";
 import { MdAccountBalanceWallet, MdPeople } from "react-icons/md";
@@ -42,6 +43,7 @@ import ConnectButton from "@/components/ConnectButton";
 import useManufacturer from "@/hooks/useManufacturer";
 import { AiOutlineMessage } from "react-icons/ai";
 import { IManufacturer } from "@/types/Manufacturer";
+import TextLink from "@/components/TextLink";
 
 interface LinkItemProps {
   name: string;
@@ -54,18 +56,20 @@ const LinkItems: Array<LinkItemProps> = [
     icon: RiSwapFill,
     href: `/admin/dashboard`,
   },
-  { name: "Manufacturers", icon: FaPeopleCarry, href: "/admin/view_manufacturers" },
-  { name: "Suppliers", icon: MdAccountBalanceWallet, href: "/admin/view-suppliers" },
-  { name: "Products", icon: MdAccountBalanceWallet, href: "/admin/products" },
-  { name: "RawMaterials", icon: MdAccountBalanceWallet, href: "/admin/rawMaterials" },
-
+  {
+    name: "Manufacturers",
+    icon: FaPeopleCarry,
+    href: "/admin/view-manufacturers",
+  },
+  {
+    name: "Suppliers",
+    icon: MdPeople,
+    href: "/admin/view-suppliers",
+  },
+  { name: "Products", icon: GiMilkCarton, href: "/admin/products" },
 ];
 
-export default function AdminLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function AdminLayout({ children }: { children: ReactNode }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { getManufacturerAcccount } = useManufacturer();
   const [manufacturer, setManufacturer] = useState<IManufacturer>();
@@ -108,8 +112,7 @@ export default function AdminLayout({
         </DrawerContent>
       </Drawer>
       {/* mobilenav */}
-      <MobileNav onOpen={onOpen}
-       manufacturerName={manufacturer} />
+      <MobileNav onOpen={onOpen} manufacturerName={manufacturer} />
 
       <Box ml={{ base: 0, md: 60 }} p="4">
         {children}
@@ -145,6 +148,30 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           {link.name}
         </NavItem>
       ))}
+      <Box mx={"4"}>
+        <Menu>
+          <MenuButton
+            as={Button}
+            rightIcon={<RiArrowDownSLine />}
+            p={4}
+            w={"full"}
+            bg={"transparent"}
+            _hover={{
+              bg: "cyan.400",
+              color: "white",
+            }}
+            leftIcon={<GiSwapBag />}
+          >
+            Raw Materials
+          </MenuButton>
+          <MenuList>
+            <TextLink href={"/admin/raw-materials"}>
+              <MenuItem>Added</MenuItem>
+            </TextLink>
+            <MenuItem>In Transaction</MenuItem>
+          </MenuList>
+        </Menu>
+      </Box>
     </Box>
   );
 };

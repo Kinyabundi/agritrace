@@ -171,7 +171,7 @@ const ViewManufacturers: NextPageWithLayout = () => {
                         variant="solid"
                         colorScheme="red"
                         size="sm"
-                      //  onClick={fetchManufacturers}
+                        //  onClick={fetchManufacturers}
                       >
                         View Suppliers
                       </Button>

@@ -1,29 +1,9 @@
-import { ReactNode, useEffect, useState } from "react";
-import { NextPageWithLayout } from "@/types/Layout";
-import AuthLayout from "@/layouts/AuthLayout";
-import useTransaction from "@/hooks/useTransaction";
 import TraceResults from "@/components/TraceResults";
-import {
-  Box,
-  Button,
-  chakra,
-  Flex,
-  GridItem,
-  Heading,
-  Icon,
-  Input,
-  SimpleGrid,
-  Stack,
-  VisuallyHidden,
-} from "@chakra-ui/react";
-import {
-  contractQuery,
-  unwrapResultOrDefault,
-  useInkathon,
-  useRegisteredContract,
-} from "@scio-labs/use-inkathon";
+import useTimeout from "@/hooks/useTimeout";
+import useTransaction from "@/hooks/useTransaction";
+import AuthLayout from "@/layouts/AuthLayout";
 import { ContractID, IRawMaterial } from "@/types/Contracts";
-import { toast } from "react-hot-toast";
+import { NextPageWithLayout } from "@/types/Layout";
 import {
   IBacktrace,
   IEntity,
@@ -32,9 +12,26 @@ import {
   IStakeholderInfo,
 } from "@/types/Transaction";
 import { testFetchBackTrace } from "@/utils/utils";
-import { IDistributor } from "@/types/Distributor";
-import { IManufacturer } from "@/types/Manufacturer";
-import { ISupplier } from "@/types/Supplier";
+import {
+  Box,
+  chakra,
+  Flex,
+  GridItem,
+  Heading,
+  Icon,
+  SimpleGrid,
+  Spinner,
+  Stack,
+} from "@chakra-ui/react";
+import {
+  contractQuery,
+  unwrapResultOrDefault,
+  useInkathon,
+  useRegisteredContract,
+} from "@scio-labs/use-inkathon";
+import { useRouter } from "next/router";
+import { ReactNode, useState } from "react";
+import { toast } from "react-hot-toast";
 
 interface FeatureProps {
   children: ReactNode;
@@ -65,38 +62,42 @@ const Feature = ({ children }: FeatureProps) => (
   </Flex>
 );
 
-const TraceInfo: NextPageWithLayout = () => {
-  const { testBackTrace, getAllStakeholderInfo } = useTransaction();
-  const [traceInfo, setTraceInfo] = useState<IBacktrace>();
-  const [stakeholderInfo, setStakeholderInfo] = useState<IStakeholderInfo>();
-  const [productItem, setProductItem] = useState<IProductItem>();
-  const [rawMaterials, setRawMaterials] = useState<IRawMaterial[]>([]);
-  const [serialNo, setSerialNo] = useState<string>();
-  const { activeSigner, api, activeAccount } = useInkathon();
-  const { contract: transactionContract } = useRegisteredContract(
-    ContractID.Transactions
-  );
-
+const Trace: NextPageWithLayout = () => {
+  const router = useRouter();
+  const { api } = useInkathon();
+  const { contract } = useRegisteredContract(ContractID.Transactions);
   const { contract: entityRegistry } = useRegisteredContract(
     ContractID.EntityRegistry
   );
+  const { serial_no } = router.query;
+  const [traceInfo, setTraceInfo] = useState<IBacktrace>();
+  const [productItem, setProductItem] = useState<IProductItem>();
+  const [rawMaterials, setRawMaterials] = useState<IRawMaterial[]>([]);
+  const [stakeholderInfo, setStakeholderInfo] = useState<IStakeholderInfo>();
+  const { getAllStakeholderInfo } = useTransaction();
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const [adminAddress, _] = useState<string>(
+    "5EBzvf1j5CwKEVmLxKSxGppoTLKHWqfNfXhXjJmHvCvorm1j"
+  );
 
   const fetchTraceBack = async () => {
-    if (!activeAccount || !activeSigner || !api || !transactionContract) {
-      toast.error("Please connect to your wallet");
+    if (!api || !contract) {
+      toast.error("Traceback API not ready");
       return;
     }
 
     const id = toast.loading("Fetching Trace Back Info...");
 
-    if (transactionContract && api && activeAccount) {
+    if (contract && api) {
+      setLoading(true);
       try {
         // toast for querying products
         toast.loading("Validating Serial No 🕵🏽...", { id });
         const product_results = await contractQuery(
           api,
-          activeAccount.address,
-          transactionContract,
+          adminAddress,
+          contract,
           "getAllProductTransactions",
           {}
         );
@@ -108,7 +109,7 @@ const TraceInfo: NextPageWithLayout = () => {
 
         // checking if serial no exists
         const serial_no_exists = product_transactions.some(
-          (product) => product.serialNo === serialNo
+          (product) => product.serialNo === (serial_no as string)
         );
 
         if (!serial_no_exists) {
@@ -119,8 +120,8 @@ const TraceInfo: NextPageWithLayout = () => {
         // get entities
         const entity_results = await contractQuery(
           api,
-          activeAccount.address,
-          transactionContract,
+          adminAddress,
+          contract,
           "getAllTransactions",
           {}
         );
@@ -137,7 +138,7 @@ const TraceInfo: NextPageWithLayout = () => {
         const backtrace_results = testFetchBackTrace(
           product_transactions,
           entity_transactions,
-          serialNo
+          serial_no as string
         );
 
         setTraceInfo(backtrace_results);
@@ -150,7 +151,7 @@ const TraceInfo: NextPageWithLayout = () => {
         // get product info
         const product_details = await contractQuery(
           api,
-          activeAccount.address,
+          adminAddress,
           entityRegistry,
           "getProduct",
           {},
@@ -170,7 +171,7 @@ const TraceInfo: NextPageWithLayout = () => {
         // get raw materials info
         const raw_materials_results = await contractQuery(
           api,
-          activeAccount.address,
+          adminAddress,
           entityRegistry,
           "getEntitiesByBatchNos",
           {},
@@ -197,16 +198,16 @@ const TraceInfo: NextPageWithLayout = () => {
 
         toast.success("Stakeholder info fetched successfully", { id });
       } catch (err) {
-        toast.error("An error was encountered", { id });
+        toast.error("Error fetching trace back info", { id });
+      } finally {
+        setLoading(false);
       }
     }
   };
 
-  useEffect(() => {
-    testBackTrace();
-  }, []);
+  // fetch the trace back after 3000 onMount to ensure that api and contract are loaded
 
-  console.log(rawMaterials);
+  useTimeout(() => fetchTraceBack(), 3000);
 
   return (
     <>
@@ -254,54 +255,7 @@ const TraceInfo: NextPageWithLayout = () => {
             AgriTrace Serial No Back Trace for Products in supply chain using
             blockchain technology
           </chakra.p>
-          <SimpleGrid
-            as="form"
-            w={{
-              base: "full",
-              md: 7 / 12,
-            }}
-            columns={{
-              base: 1,
-              lg: 6,
-            }}
-            spacing={3}
-            pt={1}
-            mx="auto"
-            mb={8}
-          >
-            <GridItem
-              as="label"
-              colSpan={{
-                base: "auto",
-                lg: 4,
-              }}
-            >
-              <VisuallyHidden>Enter Serial to Do Trace back</VisuallyHidden>
-              <Input
-                mt={0}
-                size="lg"
-                placeholder="Enter Serial No to Do Trace back"
-                onChange={(e) => setSerialNo(e.target.value)}
-                value={serialNo}
-              />
-            </GridItem>
-            <Button
-              as={GridItem}
-              w="full"
-              variant="solid"
-              colSpan={{
-                base: "auto",
-                lg: 2,
-              }}
-              size="lg"
-              type="submit"
-              colorScheme="teal"
-              cursor="pointer"
-              onClick={fetchTraceBack}
-            >
-              Trace
-            </Button>
-          </SimpleGrid>
+
           <Stack
             display="flex"
             direction={{
@@ -332,24 +286,58 @@ const TraceInfo: NextPageWithLayout = () => {
           </Stack>
         </Box>
       </Box>
-      {stakeholderInfo && (
-        <Box>
-          <Heading textAlign={"center"} py={5}>
-            Trace results for serial no: {serialNo}
-          </Heading>
-          <TraceResults
-            serial_no={serialNo}
-            backtraceInfo={traceInfo}
-            stakeholderInfo={stakeholderInfo}
-            productItem={productItem}
-            rawMaterials={rawMaterials}
-          />
-        </Box>
+      {loading ? (
+        <SimpleGrid
+          as="form"
+          w={{
+            base: "full",
+            md: 7 / 12,
+          }}
+          columns={{
+            base: 1,
+            lg: 6,
+          }}
+          spacing={3}
+          pt={1}
+          mx="auto"
+          mb={8}
+        >
+          <GridItem
+            as="label"
+            colSpan={{
+              base: "auto",
+              lg: 4,
+            }}
+          >
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="blue.500"
+              size="xl"
+            />
+          </GridItem>
+        </SimpleGrid>
+      ) : (
+        stakeholderInfo && (
+          <Box>
+            <Heading textAlign={"center"} py={5}>
+              Trace results for serial no: {serial_no as string}
+            </Heading>
+            <TraceResults
+              serial_no={serial_no as string}
+              backtraceInfo={traceInfo}
+              stakeholderInfo={stakeholderInfo}
+              productItem={productItem}
+              rawMaterials={rawMaterials}
+            />
+          </Box>
+        )
       )}
     </>
   );
 };
 
-TraceInfo.getLayout = (page) => <AuthLayout>{page}</AuthLayout>;
+Trace.getLayout = (page) => <AuthLayout>{page}</AuthLayout>;
 
-export default TraceInfo;
+export default Trace;

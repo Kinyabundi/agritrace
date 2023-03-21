@@ -1,10 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { NextPageWithLayout } from "@/types/Layout";
-import SupplierLayout from "@/layouts/SupplierLayout";
 import Head from "next/head";
-import { IToastProps } from "@/types/Toast";
 import {
-  contractTx,
   useInkathon,
   useRegisteredContract,
 } from "@scio-labs/use-inkathon";
@@ -15,10 +12,8 @@ import {
   Stack,
   SimpleGrid,
   chakra,
-  Button,
   Text,
   Divider,
-  VStack,
   Select,
 } from "@chakra-ui/react";
 import { truncateHash } from "@/utils/truncateHash";
@@ -30,7 +25,6 @@ import {
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en.json";
 import useTransaction from "@/hooks/useTransaction";
-import { toast } from "react-hot-toast";
 import useInterval from "@/hooks/useInterval";
 import AdminLayout from "@/layouts/AdminLayout";
 
@@ -47,8 +41,9 @@ const RawMaterials: NextPageWithLayout = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [rawMaterials, setRawMaterials] = useState<IEntity[]>([]);
   const { contract } = useRegisteredContract(ContractID.Transactions);
-  const [status, setStatus] = useState<TransactionStatus>(TransactionStatus.Initiated);
-
+  const [status, setStatus] = useState<TransactionStatus>(
+    TransactionStatus.Initiated
+  );
 
   const fetchItems = async () => {
     const items = await getAllEntities();
@@ -64,14 +59,12 @@ const RawMaterials: NextPageWithLayout = () => {
     }
   };
 
+  useInterval(() => {
+    fetchItems();
+  }, 3000);
 
-  useInterval(() => { fetchItems() }, 3000);
-
- 
   useEffect(() => {
-    fetchItemsByStatus(
-      status
-    );
+    fetchItemsByStatus(status);
   }, [activeAccount]);
 
   console.log(rawMaterials);
@@ -84,14 +77,16 @@ const RawMaterials: NextPageWithLayout = () => {
 
       <Flex w="full" align={"center"} justify={"space-between"}>
         <Text px={50} fontSize={"2xl"} fontWeight={"semibold"}>
-        Raw Materials
+          Raw Materials
         </Text>
         <Select
           size={"md"}
           w={"52"}
           placeholder={"Transaction Status"}
           defaultValue={TransactionStatus.Initiated}
-          onChange={(e) => { fetchItemsByStatus(e.target.value as TransactionStatus) }}
+          onChange={(e) => {
+            fetchItemsByStatus(e.target.value as TransactionStatus);
+          }}
         >
           {transactionStatusArray.map((item, i) => (
             <option key={i} value={item}>
@@ -156,7 +151,6 @@ const RawMaterials: NextPageWithLayout = () => {
           <chakra.span color="blue.800" fontWeight="600">
             Buyer
           </chakra.span>
-         
         </SimpleGrid>
         {rawMaterials.length > 0 ? (
           rawMaterials.map((entity) => (

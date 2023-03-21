@@ -19,6 +19,7 @@ import {
   Divider,
   VStack,
   Select,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { truncateHash } from "@/utils/truncateHash";
 import {
@@ -32,6 +33,7 @@ import useTransaction from "@/hooks/useTransaction";
 import { toast } from "react-hot-toast";
 import ManufacturerLayout from "@/layouts/ManufacturerLayout";
 import useInterval from "@/hooks/useInterval";
+import QrCode from "@/components/QrCode";
 
 TimeAgo.addLocale(en);
 
@@ -46,6 +48,7 @@ const ViewSales: NextPageWithLayout = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [products, setProducts] = useState<IProductSale[]>([]);
   const { contract } = useRegisteredContract(ContractID.Transactions);
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
   const fetchProducts = async () => {
     const items = await getManufacturersTransactions();
@@ -55,13 +58,10 @@ const ViewSales: NextPageWithLayout = () => {
   };
 
   useInterval(() => fetchProducts(), 3000);
- 
 
   useEffect(() => {
     fetchProducts();
   }, [activeAccount]);
-
-
 
   console.log(products);
 
@@ -70,7 +70,7 @@ const ViewSales: NextPageWithLayout = () => {
       <Head>
         <title>AgriTrace | Manufacturer | Sales</title>
       </Head>
-
+      <QrCode isOpen={isOpen} onClose={onClose} />
       <Flex w="full" align={"center"} justify={"space-between"}>
         <Text px={50} fontSize={"2xl"} fontWeight={"semibold"}>
           Outgoing Supplies
@@ -136,13 +136,13 @@ const ViewSales: NextPageWithLayout = () => {
             Serial No
           </chakra.span>
           <chakra.span color="blue.800" fontWeight="600">
-            Created
-          </chakra.span>
-          <chakra.span color="blue.800" fontWeight="600">
             Updated
           </chakra.span>
           <chakra.span color="blue.800" fontWeight="600">
             Buyer
+          </chakra.span>
+          <chakra.span color="blue.800" fontWeight="600">
+            Product QR Code
           </chakra.span>
           <chakra.span
             color="blue.800"
@@ -177,6 +177,7 @@ const ViewSales: NextPageWithLayout = () => {
                   px={10}
                   fontWeight="400"
                   fontSize="sm"
+                  justifyContent={"center"}
                 >
                   <chakra.span color="blue.800" fontWeight="600">
                     {product.productCode}
@@ -191,14 +192,14 @@ const ViewSales: NextPageWithLayout = () => {
                     {product.serialNo}
                   </chakra.span>
                   <chakra.span color="blue.800" fontWeight="600">
-                    {timeAgo.format(new Date(product.createdAt))}
-                  </chakra.span>
-                  <chakra.span color="blue.800" fontWeight="600">
                     {timeAgo.format(new Date(product.updatedAt))}
                   </chakra.span>
                   <chakra.span color="blue.800" fontWeight="600">
                     {truncateHash(product.buyer)}
                   </chakra.span>
+                  <Button size={"sm"} onClick={onOpen}>
+                    View QR Code
+                  </Button>
                   <VStack
                     justify={{
                       md: "end",
@@ -206,7 +207,7 @@ const ViewSales: NextPageWithLayout = () => {
                   >
                     {product.status === TransactionStatus.Completed && (
                       <Button variant="solid" colorScheme="teal" size="sm">
-                        Accepted and Completed
+                        <Text isTruncated>Completed</Text>
                       </Button>
                     )}
                     {product.status === TransactionStatus.Initiated && (
@@ -214,7 +215,6 @@ const ViewSales: NextPageWithLayout = () => {
                         Revert
                       </Button>
                     )}
-                   
                   </VStack>
                 </SimpleGrid>
               </Flex>
@@ -239,6 +239,8 @@ const ViewSales: NextPageWithLayout = () => {
   );
 };
 
-ViewSales.getLayout = (page) => <ManufacturerLayout>{page} </ManufacturerLayout>;
+ViewSales.getLayout = (page) => (
+  <ManufacturerLayout>{page} </ManufacturerLayout>
+);
 
 export default ViewSales;

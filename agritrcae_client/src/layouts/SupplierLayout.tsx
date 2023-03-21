@@ -34,12 +34,12 @@ interface LinkItemProps {
 }
 const LinkItems: Array<LinkItemProps> = [
   {
-    name: "View RawMaterials",
+    name: "View Raw Materials",
     icon: RiSwapFill,
     href: "/supplier/view-rawmaterials",
   },
   {
-    name: "AddRawMaterials",
+    name: "Add Raw Materials",
     icon: GiSwapBag,
     href: "/supplier/add-rawmaterial",
   },
