@@ -48,6 +48,7 @@ const ViewSales: NextPageWithLayout = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [products, setProducts] = useState<IProductSale[]>([]);
   const { contract } = useRegisteredContract(ContractID.Transactions);
+  const [selectedSerialNo, setSelectedSerialNo] = useState<string | number>();
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   const fetchProducts = async () => {
@@ -63,14 +64,18 @@ const ViewSales: NextPageWithLayout = () => {
     fetchProducts();
   }, [activeAccount]);
 
-  console.log(products);
+  const openModal = (serial_no: string | number) => {
+    setSelectedSerialNo(serial_no);
+    onOpen();
+  };
+
 
   return (
     <>
       <Head>
         <title>AgriTrace | Manufacturer | Sales</title>
       </Head>
-      <QrCode isOpen={isOpen} onClose={onClose} />
+      <QrCode isOpen={isOpen} onClose={onClose} serial_no={selectedSerialNo} />
       <Flex w="full" align={"center"} justify={"space-between"}>
         <Text px={50} fontSize={"2xl"} fontWeight={"semibold"}>
           Outgoing Supplies
@@ -197,7 +202,10 @@ const ViewSales: NextPageWithLayout = () => {
                   <chakra.span color="blue.800" fontWeight="600">
                     {truncateHash(product.buyer)}
                   </chakra.span>
-                  <Button size={"sm"} onClick={onOpen}>
+                  <Button
+                    size={"sm"}
+                    onClick={() => openModal(product.serialNo)}
+                  >
                     View QR Code
                   </Button>
                   <VStack

@@ -30,7 +30,7 @@ import {
   useRegisteredContract,
 } from "@scio-labs/use-inkathon";
 import { useRouter } from "next/router";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
 interface FeatureProps {
@@ -64,7 +64,7 @@ const Feature = ({ children }: FeatureProps) => (
 
 const Trace: NextPageWithLayout = () => {
   const router = useRouter();
-  const { api } = useInkathon();
+  const { api, activeAccount } = useInkathon();
   const { contract } = useRegisteredContract(ContractID.Transactions);
   const { contract: entityRegistry } = useRegisteredContract(
     ContractID.EntityRegistry
@@ -82,14 +82,15 @@ const Trace: NextPageWithLayout = () => {
   );
 
   const fetchTraceBack = async () => {
-    if (!api || !contract) {
-      toast.error("Traceback API not ready");
+    console.log("Am in");
+    if (!api || !contract || !activeAccount) {
+      toast.error("Please connect to your wallet first");
       return;
     }
 
     const id = toast.loading("Fetching Trace Back Info...");
 
-    if (contract && api) {
+    if (contract && api && activeAccount) {
       setLoading(true);
       try {
         // toast for querying products
@@ -207,7 +208,11 @@ const Trace: NextPageWithLayout = () => {
 
   // fetch the trace back after 3000 onMount to ensure that api and contract are loaded
 
-  useTimeout(() => fetchTraceBack(), 3000);
+  useEffect(() => {
+    setTimeout(() => {
+      fetchTraceBack();
+    }, 3000);
+  }, [serial_no, activeAccount]);
 
   return (
     <>

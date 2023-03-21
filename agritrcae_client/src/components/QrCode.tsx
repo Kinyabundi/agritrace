@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -15,10 +15,19 @@ import { QRCodeCanvas } from "qrcode.react";
 interface QrCodeProps {
   isOpen: boolean;
   onClose: () => void;
+  serial_no: string | number;
 }
 
-const QrCode = ({ isOpen, onClose }: QrCodeProps) => {
-  const [url, setUrl] = useState<string>("https://vercel.vetra.app");
+const QrCode = ({ isOpen, onClose, serial_no }: QrCodeProps) => {
+  const [url, setUrl] = useState<string>("");
+
+  useEffect(() => {
+    if (serial_no) {
+      setUrl(
+        `https://agritrace-git-dev-vingitonga.vercel.app/trace/${serial_no}`
+      );
+    }
+  }, [serial_no]);
 
   const qrCode = (
     <QRCodeCanvas
@@ -43,10 +52,7 @@ const QrCode = ({ isOpen, onClose }: QrCodeProps) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>
-            Product Qr Code of serial no 
-            
-        </ModalHeader>
+        <ModalHeader>Product Qr Code of serial no</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Box>{qrCode}</Box>
