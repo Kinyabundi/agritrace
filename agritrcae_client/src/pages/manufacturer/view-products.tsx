@@ -67,7 +67,7 @@ const ViewProducts: NextPageWithLayout = () => {
       <SaleModal
         open={showModal}
         setOpen={setShowModal}
-        productsDetails={productSold}
+        productsDetails={productSold as IProduct}
       />
       <Text px={50} fontSize={"2xl"} fontWeight={"semibold"}>
         Products

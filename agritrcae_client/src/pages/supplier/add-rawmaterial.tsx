@@ -49,7 +49,7 @@ const AddRawMaterial: NextPageWithLayout = () => {
   const [name, setName] = useState<string>("");
   const [quantity, setQuantity] = useState<number>(0);
   const [quantityUnits, setQuantityUnits] = useState<string>("");
-  const [entityCode, setEntityCode] = useState<string>("");
+  const [entityCode, setEntityCode] = useState<string | number>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [manufacturers, setManufacturers] = useState<IManufacturer[]>([]);
   const [selectedBuyer, setSelectedBuyer] = useState<string>("");
