@@ -1,5 +1,4 @@
 import TraceResults from "@/components/TraceResults";
-import useTimeout from "@/hooks/useTimeout";
 import useTransaction from "@/hooks/useTransaction";
 import AuthLayout from "@/layouts/AuthLayout";
 import { ContractID, IRawMaterial } from "@/types/Contracts";
@@ -29,6 +28,7 @@ import {
   useInkathon,
   useRegisteredContract,
 } from "@scio-labs/use-inkathon";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { ReactNode, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -84,7 +84,6 @@ const Trace: NextPageWithLayout = () => {
   const fetchTraceBack = async () => {
     console.log("Am in");
     if (!api || !contract || !activeAccount) {
-      toast.error("Please connect to your wallet first");
       return;
     }
 
@@ -216,6 +215,9 @@ const Trace: NextPageWithLayout = () => {
 
   return (
     <>
+    <Head>
+        <title>AgriTrace Serial No Back Trace</title>
+    </Head>
       <Box px={4} py={32} mx="auto">
         <Box
           w={{

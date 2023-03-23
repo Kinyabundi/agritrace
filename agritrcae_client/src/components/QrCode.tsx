@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
-  Box,
   Button,
+  Flex,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -10,7 +10,8 @@ import {
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/react";
-import { QRCodeCanvas } from "qrcode.react";
+import html2canvas from "html2canvas";
+import { QRCode } from "react-qrcode-logo";
 
 interface QrCodeProps {
   isOpen: boolean;
@@ -20,33 +21,28 @@ interface QrCodeProps {
 
 const QrCode = ({ isOpen, onClose, serial_no }: QrCodeProps) => {
   const [url, setUrl] = useState<string>("");
+  const qrRef = useRef(null);
+
+  const downloadQR = () => {
+    html2canvas(document.querySelector("#react-qrcode-logo") as any, {
+      useCORS: true,
+    }).then(function (canvas) {
+      const link = document.createElement("a");
+      link.download = `QRCode-${serial_no}.png`;
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+  };
 
   useEffect(() => {
     if (serial_no) {
       setUrl(
-        `https://agritrace-git-dev-vingitonga.vercel.app/trace/${serial_no}`
+        `http://192.168.0.100:3000/trace/${serial_no}`
       );
     }
   }, [serial_no]);
 
-  const qrCode = (
-    <QRCodeCanvas
-      value={url}
-      size={256}
-      bgColor={"#ffffff"}
-      fgColor={"#000000"}
-      level={"L"}
-      includeMargin={true}
-      imageSettings={{
-        src: "https://media.istockphoto.com/id/1028104580/vector/realistic-3d-milk-carton-packing-isolated-on-white.jpg?s=612x612&w=0&k=20&c=TkAEtVfkxcyex7vDmpel2YU6UdFDOumxiXXOiIALd6o=",
-        x: null,
-        y: null,
-        height: 30,
-        width: 30,
-        excavate: true,
-      }}
-    />
-  );
+  // https://agritrace-q6fg5t0pe-vingitonga.vercel.app/trace/${serial_no}
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -55,13 +51,17 @@ const QrCode = ({ isOpen, onClose, serial_no }: QrCodeProps) => {
         <ModalHeader>Product Qr Code of serial no</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Box>{qrCode}</Box>
+          <Flex ref={qrRef} justify={"center"} align={"center"}>
+            <QRCode value={url} size={300} qrStyle={"dots"} />
+          </Flex>
         </ModalBody>
         <ModalFooter>
           <Button colorScheme="blue" mr={3} onClick={onClose}>
             Close
           </Button>
-          <Button colorScheme={"teal"}>Print Qr Code</Button>
+          <Button colorScheme={"teal"} onClick={downloadQR}>
+            Download Qr Code
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
