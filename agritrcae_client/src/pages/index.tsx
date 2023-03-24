@@ -3,13 +3,22 @@ import { NextPageWithLayout } from "@/types/Layout";
 import HomeLayout from "@/layouts/HomeLayout";
 import useAuth from "@/hooks/store/useAuth";
 import { Role } from "@/types/Manufacturer";
+import { useMemo } from "react";
+import useDidHydrate from "@/hooks/useDidHydrate";
 
 const Home: NextPageWithLayout = () => {
   const bg = useColorModeValue("white", "gray.800");
+  const { didHydrate } = useDidHydrate();
 
-  const user = useAuth((state) => state.user);
+  const userData = useAuth((state) => state.user);
 
-  console.log(user);
+  const user = useMemo(() => {
+    if (didHydrate) {
+      return userData;
+    }
+
+    return null;
+  }, [didHydrate, userData]);
 
   return (
     <Box pos="relative" overflow="hidden" bg={bg} mt={10}>

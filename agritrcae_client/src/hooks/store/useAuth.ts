@@ -3,12 +3,13 @@ import { ISupplier } from "@/types/Supplier";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import _ from "lodash";
+import { IDistributor } from "@/types/Distributor";
 
 export interface IAuthStore {
   hasAccount: boolean;
   setHasAccount: (status: boolean) => void;
-  user: IManufacturer | ISupplier | null;
-  setUser: (user: IManufacturer | ISupplier | null) => void;
+  user: IManufacturer | ISupplier | IDistributor | null;
+  setUser: (user: IManufacturer | ISupplier | IDistributor | null) => void;
   prevAccount: IManufacturer | ISupplier | null;
   setPrevAccount: (user: IManufacturer | ISupplier | null) => void;
   getSpecificUser: (userType: Role) => IManufacturer | ISupplier;
