@@ -59,8 +59,9 @@ const IncomingRawMaterials: NextPageWithLayout = () => {
     }
   };
 
-  useInterval (() => { fetchEntities() }, 5000);
-
+  useInterval(() => {
+    fetchEntities();
+  }, 5000);
 
   const customToast = ({
     title,
@@ -115,25 +116,22 @@ const IncomingRawMaterials: NextPageWithLayout = () => {
     fetchEntities();
   }, [activeAccount]);
 
-    const rejectEntity = useCallback(
-      async (entityCode: IEntity) => {
-        if (contract && api && activeAccount) {
-          const results = await contractQuery(
-            api,
-            activeAccount?.address,
-            contract,
-            "reject",
-            {},
-            [entityCode]
-          );
-          return unwrapResultOrError(results);
-        }
-      },
-      [activeAccount]
-    );
-  
- 
-
+  const rejectEntity = useCallback(
+    async (entityCode: string) => {
+      if (contract && api && activeAccount) {
+        const results = await contractQuery(
+          api,
+          activeAccount?.address,
+          contract,
+          "reject",
+          {},
+          [entityCode]
+        );
+        return unwrapResultOrError(results);
+      }
+    },
+    [activeAccount]
+  );
 
   return (
     <>
