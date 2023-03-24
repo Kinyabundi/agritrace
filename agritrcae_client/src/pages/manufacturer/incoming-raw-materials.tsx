@@ -19,7 +19,7 @@ import {
   TransactionStatus,
   transactionStatusArray,
 } from "@/types/Transaction";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
 import { truncateHash } from "@/utils/truncateHash";
@@ -28,6 +28,8 @@ import {
   useInkathon,
   useRegisteredContract,
   contractTx,
+  contractQuery,
+  unwrapResultOrError,
 } from "@scio-labs/use-inkathon";
 import { ContractID } from "@/types/Contracts";
 import { IToastProps } from "@/types/Toast";
@@ -112,6 +114,26 @@ const IncomingRawMaterials: NextPageWithLayout = () => {
   useEffect(() => {
     fetchEntities();
   }, [activeAccount]);
+
+    const rejectEntity = useCallback(
+      async (entityCode: IEntity) => {
+        if (contract && api && activeAccount) {
+          const results = await contractQuery(
+            api,
+            activeAccount?.address,
+            contract,
+            "reject",
+            {},
+            [entityCode]
+          );
+          return unwrapResultOrError(results);
+        }
+      },
+      [activeAccount]
+    );
+  
+ 
+
 
   return (
     <>
@@ -285,7 +307,7 @@ const IncomingRawMaterials: NextPageWithLayout = () => {
                           variant="solid"
                           colorScheme="red"
                           size="sm"
-                          isDisabled={entity.status !== "Initiated"}
+                          onClick={() => rejectEntity(entity.entityCode)}
                         >
                           Reject
                         </Button>

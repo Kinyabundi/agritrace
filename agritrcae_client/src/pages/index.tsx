@@ -184,14 +184,22 @@ const Home: NextPageWithLayout = () => {
                       user
                         ? user?.role === Role.MANUFACTURER
                           ? "/manufacturer/dashboard"
-                          : "/supplier/dashboard"
+                          : user?.role === Role.SUPPLIER
+                          ? "/supplier/dashboard"
+                          : user?.role === Role.DISTRIBUTOR
+                          ? "/distributor/dashboard"
+                          : "/onboarding/manufacturer"
                         : "/onboarding/manufacturer"
                     }
                   >
                     {user
                       ? user?.role === Role.MANUFACTURER
                         ? "Go to Dashboard"
-                        : "Go to Dashboard"
+                        : user?.role === Role.SUPPLIER
+                        ? "Go to Dashboard"
+                        : user?.role === Role.DISTRIBUTOR
+                        ? "Go to Dashboard"
+                        : "Get Started"
                       : "Get Started"}
                   </chakra.a>
                 </Box>

@@ -13,4 +13,5 @@ export interface IManufacturer {
 export enum Role {
   MANUFACTURER = 'Manufacturer',
   SUPPLIER = 'Supplier',
+  DISTRIBUTOR = 'Distributor',
 }
