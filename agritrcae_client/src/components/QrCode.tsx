@@ -37,12 +37,11 @@ const QrCode = ({ isOpen, onClose, serial_no }: QrCodeProps) => {
   useEffect(() => {
     if (serial_no) {
       setUrl(
-        `http://192.168.0.100:3000/trace/${serial_no}`
+        `https://agritrace.vercel.app/trace/${serial_no}`
       );
     }
   }, [serial_no]);
 
-  // https://agritrace-q6fg5t0pe-vingitonga.vercel.app/trace/${serial_no}
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
