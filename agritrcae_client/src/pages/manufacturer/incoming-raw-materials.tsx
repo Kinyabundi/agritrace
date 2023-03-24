@@ -112,22 +112,32 @@ const IncomingRawMaterials: NextPageWithLayout = () => {
     }
   };
 
-  useEffect(() => {
-    fetchEntities();
-  }, [activeAccount]);
+  useInterval(() => fetchEntities(), 3000);
 
   const rejectEntity = useCallback(
     async (entityCode: string) => {
       if (contract && api && activeAccount) {
-        const results = await contractQuery(
-          api,
-          activeAccount?.address,
-          contract,
-          "reject",
-          {},
-          [entityCode]
-        );
-        return unwrapResultOrError(results);
+        try {
+          const id = loadingToast.loading("Rejecting incoming raw material...");
+          api.setSigner(activeSigner);
+          await contractTx(
+            api,
+            activeAccount?.address,
+            contract,
+            "reject",
+            {},
+            [entityCode],
+            ({ status }) => {
+              if (status.isInBlock) {
+                loadingToast.success("Raw material rejected", { id });
+                fetchEntities();
+              }
+            }
+          );
+        } catch (err) {
+          console.log(err);
+          loadingToast.error("Error rejecting raw material");
+        }
       }
     },
     [activeAccount]
